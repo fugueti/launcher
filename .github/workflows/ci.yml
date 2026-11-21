@@ -1,15 +1,15 @@
 name: CI
 
-# Pull requests to main: unit tests.
-# Pushes to main: unit tests, then the signed nightly build replaces the "nightly" release
+# Pull requests and pushes to main or a *-dev branch (e.g. 17-dev): unit tests.
+# Pushes to main also build the signed nightly, which replaces the "nightly" release
 # (the in-app updater of app.fugueti.launcher.nightly reads that release).
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, '*-dev']
     paths-ignore: ['**.md', 'docs/**', 'art/**', 'LICENSE.txt', 'COPYING']
   push:
-    branches: [main]
+    branches: [main, '*-dev']
     paths-ignore: ['**.md', 'docs/**', 'art/**', 'LICENSE.txt', 'COPYING']
   workflow_dispatch:
 
@@ -40,7 +40,8 @@ jobs:
 
   nightly:
     needs: test
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # Only main publishes nightlies: the in-app updater follows main's "nightly" release.
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: write
