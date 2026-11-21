@@ -1,20 +1,14 @@
+# Categories for GitHub's generated release notes (labels on merged pull requests).
 changelog:
   exclude:
     labels:
-      - bot
-    authors:
-      - renovate[bot]
-      - lawnchair-bot
-      - crowdin-bot
+      - skip-changelog
   categories:
-    - title: 🪄 Features & 🐛 Bugfixes
-      labels:
-        - '*'
-      exclude:
-        labels:
-          - dependencies
-          - github_actions
-          - housekeeping
+    - title: ✨ Features
+      labels: [enhancement, feature]
+    - title: 🐛 Bug fixes
+      labels: [bug]
     - title: 🧹 Housekeeping
-      labels:
-        - housekeeping
+      labels: [chore, dependencies, documentation, ci]
+    - title: Other changes
+      labels: ['*']

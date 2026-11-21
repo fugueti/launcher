@@ -72,36 +72,54 @@ any launcher need a small bridge app. Fugueti's is **Fugueti Feed**, signed with
 While the feed is on and Fugueti Feed is missing, Fugueti shows a red warning at the top of its
 settings with a link to the download.
 
-## Upstream base
+## Repository layout
 
-| Component | Base |
+| Folder | Contents |
 |---|---|
-| Lawnchair | `16-dev` (Launcher3 from Android 16, compiled against API 37) |
-| AOSP Launcher3 | Android 16 (through Lawnchair). Moving to Launcher3 from Android 17 will follow Lawnchair's own rebase. |
+| `fugueti/` | Fugueti's own code: gesture engine, About, backup helpers, Nova import, strings and tests |
+| `lawnchair/` | Lawnchair's app layer (settings, search, icons, feed…), with Fugueti changes marked in place |
+| `src/`, `res/`, `quickstep/`, `src_plugins/` | AOSP Launcher3 and Quickstep (Recents integration) |
+| `platform_frameworks_libs_systemui/`, `systemUI/`, `wmshell/`, `compatLib/`, `modules/`, … | AOSP libraries and per Android version compatibility layers |
+| `prebuilts/libs/` | AOSP JARs the build compiles against (see its README) |
+| `github/`, `nightly/` | Per channel manifests and the nightly icon |
+| `art/` | Icon sources; `docs/`: README images and gesture docs |
+
+Fugueti started from Lawnchair 16 (`16-dev`, Launcher3 from Android 16, compiled against API 37)
+and is now maintained independently; moving to Launcher3 from Android 17 is done in this
+repository.
 
 ## Building
 
 Requirements: JDK 21 or newer, Android SDK with `platforms;android-37.2` and `build-tools;37.0.0`.
 
 ```bash
-git clone --recurse-submodules https://github.com/victorwalter/fugueti-launcher
+git clone https://github.com/victorwalter/fugueti-launcher
 cd fugueti-launcher
-./gradlew assembleLawnWithQuickstepGithubRelease
+./gradlew assembleLawnWithQuickstepGithubRelease    # release app
+./gradlew assembleLawnWithQuickstepNightlyRelease   # nightly app (app.fugueti.launcher.nightly)
 ```
 
-The APK lands in `build/outputs/apk/lawnWithQuickstepGithub/release/`.
+The APKs land in `build/outputs/apk/lawnWithQuickstep<Channel>/release/`.
 Release signing reads `keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`),
 which is git-ignored; without it the build is signed with the debug key.
 
-Gesture engine unit tests:
+Unit tests (gesture engine, Nova import, backup, strings):
 
 ```bash
-./gradlew testLawnWithQuickstepGithubDebugUnitTest --tests 'app.fugueti.gestures.*'
+./gradlew testLawnWithQuickstepGithubDebugUnitTest --tests 'app.fugueti.*'
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
 
 ## License
 
 Lawnchair and Launcher3 code is under the Apache License 2.0 ([LICENSE.txt](LICENSE.txt)).
 Fugueti code (`fugueti/` and the files marked "Modified by Fugueti Launcher contributors")
 is under GPL-3.0-or-later ([COPYING](COPYING)), which makes the combined app GPL-3.0-or-later.
-See also [README-LAWNCHAIR.md](README-LAWNCHAIR.md).
+
+## Credits
+
+Fugueti is built on [Lawnchair](https://github.com/LawnchairLauncher/lawnchair) by the Lawnchair
+team and contributors, and on Launcher3 from the
+[Android Open Source Project](https://android.googlesource.com/platform/packages/apps/Launcher3/).
+Their copyright and license notices are kept in the source files.
