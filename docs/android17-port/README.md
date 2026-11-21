@@ -8,7 +8,7 @@ Files listed under *Conflicts* still contain `<<<<<<<` markers. Tick items as th
 Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 
 - [ ] `src/com/android/launcher3/Workspace.java` (659 lines of ours)
-- [ ] `quickstep/src/com/android/quickstep/util/BaseDepthControllerImpl.java` (521 lines of ours)
+- [x] `quickstep/src/com/android/quickstep/util/BaseDepthControllerImpl.java` (521 lines of ours)
 - [ ] `src/com/android/launcher3/Hotseat.java` (412 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/QuickstepTestInformationHandler.java` (319 lines of ours)
 - [ ] `src/com/android/launcher3/allapps/ActivityAllAppsContainerView.java` (312 lines of ours)
@@ -32,7 +32,7 @@ Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 - [ ] `src/com/android/launcher3/graphics/ShapeDelegate.kt` (105 lines of ours)
 - [x] `src/com/android/launcher3/CellLayout.java` (101 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/util/ScalingWorkspaceRevealAnim.kt` (96 lines of ours)
-- [ ] `quickstep/src/com/android/launcher3/statehandlers/DepthController.java` (92 lines of ours)
+- [x] `quickstep/src/com/android/launcher3/statehandlers/DepthController.java` (92 lines of ours)
 - [x] `modules/widgetpicker/build.gradle.kts` (89 lines of ours)
 - [x] `src/com/android/launcher3/views/OptionsPopupView.java` (89 lines of ours)
 - [ ] `src/com/android/launcher3/preview/PreviewSurfaceRenderer.java` (86 lines of ours)

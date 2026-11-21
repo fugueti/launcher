@@ -51,12 +51,6 @@ import app.lawnchair.preferences2.PreferenceManager2;
  * @param <STATE> state associated with the container.
  * @param <CONTAINER> the StatefulContainer.
  */
-<<<<<<< HEAD
-public class DepthController extends BaseDepthControllerImpl implements StateHandler<LauncherState>,
-        BaseActivity.MultiWindowModeChangedListener {
-    @VisibleForTesting
-    final ViewTreeObserver.OnDrawListener mOnDrawListener = this::onLauncherDraw;
-=======
 public class DepthController<
         STATE extends BaseState<STATE>,
         CONTAINER extends Context & StatefulContainer<STATE>>
@@ -64,7 +58,6 @@ public class DepthController<
         implements StateHandler<STATE> {
     public static final float DEPTH_0_PERCENT = 0f;
     public static final float DEPTH_70_PERCENT = 0.7f;
->>>>>>> aosp/android17-release
 
     @VisibleForTesting
     final ViewTreeObserver.OnDrawListener mOnDrawListener = this::onContainerDraw;
@@ -78,18 +71,13 @@ public class DepthController<
     private boolean mIsOnDrawListenerAdded = false;
     private boolean mRemoveOnDrawListenerCancelled = false;
 
-<<<<<<< HEAD
+    // Lawnchair: wallpaper depth effect preference
     private final boolean mEnableDepth;
 
-    public DepthController(QuickstepLauncher launcher) {
-        super(launcher);
-        var prefs = PreferenceManager2.getInstance(launcher);
-        var pref = prefs.getWallpaperDepthEffect();
-        mEnableDepth = PreferenceCacheExtensionsKt.firstCached(pref);
-=======
     public DepthController(CONTAINER container, ListenableRef<Boolean> blurState) {
         super(container, blurState);
->>>>>>> aosp/android17-release
+        mEnableDepth = PreferenceCacheExtensionsKt.firstCached(
+                PreferenceManager2.getInstance(container).getWallpaperDepthEffect());
     }
 
     private void onContainerDraw() {
@@ -121,20 +109,7 @@ public class DepthController<
         mOnAttachListener = new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View view) {
-<<<<<<< HEAD
-                if (Utilities.ATLEAST_S) {
-                    try {
-                            UI_HELPER_EXECUTOR.execute(() ->
-                                    CrossWindowBlurListeners.getInstance().addListener(
-                                            mLauncher.getMainExecutor(), mCrossWindowBlurListener));
-                    } catch (Throwable t) {
-                        // LC-Ignored
-                    }
-                }
-                mLauncher.getScrimView().addOpaquenessListener(mOpaquenessListener);
-=======
                 mContainer.getScrimView().addOpaquenessListener(mOpaquenessListener);
->>>>>>> aosp/android17-release
 
                 // To handle the case where window token is invalid during last setDepth call.
                 applyDepthAndBlur();
@@ -150,36 +125,6 @@ public class DepthController<
     }
 
     /**
-<<<<<<< HEAD
-     * Cleans up after this controller so it can be garbage collected without leaving traces.
-     */
-    public void dispose() {
-        removeSecondaryListeners();
-
-        if (mLauncher.getRootView() != null && mOnAttachListener != null) {
-            mLauncher.getRootView().removeOnAttachStateChangeListener(mOnAttachListener);
-            mOnAttachListener = null;
-        }
-    }
-
-    private void removeSecondaryListeners() {
-        if (Utilities.ATLEAST_S) {
-            try {
-                UI_HELPER_EXECUTOR.execute(() ->
-                    CrossWindowBlurListeners.getInstance()
-                        .removeListener(mCrossWindowBlurListener));
-            } catch (Throwable t) {
-                // LC-Ignored
-            }
-        }
-        if (mOpaquenessListener != null) {
-            mLauncher.getScrimView().removeOpaquenessListener(mOpaquenessListener);
-        }
-    }
-
-    /**
-=======
->>>>>>> aosp/android17-release
      * Sets if the underlying activity is started or not
      */
     public void setActivityStarted(boolean isStarted) {
@@ -209,15 +154,10 @@ public class DepthController<
     @Override
     public void setStateWithAnimation(STATE toState, StateAnimationConfig config,
             PendingAnimation animation) {
-<<<<<<< HEAD
-        if (config.hasAnimationFlag(SKIP_DEPTH_CONTROLLER)
-                || mIgnoreStateChangesDuringMultiWindowAnimation) {
+        if (config.hasAnimationFlag(SKIP_DEPTH_CONTROLLER)) {
             if (toState == LauncherState.NORMAL) {
                 clearWorkspaceRenderEffects();
             }
-=======
-        if (config.hasAnimationFlag(SKIP_DEPTH_CONTROLLER)) {
->>>>>>> aosp/android17-release
             return;
         }
 
@@ -226,7 +166,7 @@ public class DepthController<
                 config.getInterpolator(ANIM_DEPTH, LINEAR));
         if (toState == LauncherState.NORMAL) {
             animation.addEndListener(success -> {
-                if (mLauncher.getStateManager().getState() == LauncherState.NORMAL) {
+                if (mContainer.getStateManager().getState() == LauncherState.NORMAL) {
                     clearWorkspaceRenderEffects();
                     applyDepthAndBlur();
                 }
@@ -235,11 +175,18 @@ public class DepthController<
     }
 
     /**
+     * Lawnchair: clears the blur {@link android.graphics.RenderEffect} from the workspace and
+     * hotseat, so an interrupted transition cannot leave icons blurred. Only the Launcher
+     * controller has workspace targets.
+     */
+    public void clearWorkspaceRenderEffects() { }
+
+    /**
      * Clears a stuck workspace icon blur after resume when settled on home.
      */
     public void clearStuckBlurOnResumeIfHome() {
-        if (mLauncher.getStateManager().getState() == LauncherState.NORMAL
-                && !mLauncher.getStateManager().isInTransition()) {
+        if (mContainer.getStateManager().getState() == LauncherState.NORMAL
+                && !mContainer.getStateManager().isInTransition()) {
             clearWorkspaceRenderEffects();
             applyDepthAndBlur();
         }
@@ -251,13 +198,13 @@ public class DepthController<
             if (LawnchairQuickstepCompat.ATLEAST_R && mEnableDepth) {
                 ensureDependencies();
                 super.applyDepthAndBlur();
-            } else if (mLauncher.getStateManager().getState() == LauncherState.NORMAL
-                    && !mLauncher.getStateManager().isInTransition()) {
+            } else if (mContainer.getStateManager().getState() == LauncherState.NORMAL
+                    && !mContainer.getStateManager().isInTransition()) {
                 clearWorkspaceRenderEffects();
             }
         } catch (Throwable t) {
             // LC-Ignored
-            if (mLauncher.getStateManager().getState() == LauncherState.NORMAL) {
+            if (mContainer.getStateManager().getState() == LauncherState.NORMAL) {
                 try {
                     clearWorkspaceRenderEffects();
                 } catch (Throwable ignored) {

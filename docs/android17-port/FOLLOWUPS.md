@@ -45,3 +45,4 @@ Check these when the tree compiles.
   when wmshell is updated. Check `getRemoteTransition` accepts an `IRemoteTransition`.
 - `AllAppsProfile.createAllAppsProfile(..., cellHeightMultiplier)`: pass Lawnchair's drawer row height from `DeviceProfile`.
 - `lawnchair/src/com/android/app/tracing/TracingShim.kt`: stand-in for the non-vendored tracinglib (`traceSection`, `TraceUtils.trace`, `TraceStateLogger`); replace with the real lib if it gets vendored.
+- Depth/blur: `BaseDepthControllerImpl` rebuilt from AOSP 17 (lazy `EarlyWakeupInfo`, guarded hidden APIs, zoom only on R+). The cross-window blur state now comes from a `ListenableRef` passed by the caller: check the caller guards `CrossWindowBlurListeners` (S+) like Lawnchair did. Lawnchair's stuck-blur fix uses `DepthController.clearWorkspaceRenderEffects()`, implemented in `LauncherDepthController`.

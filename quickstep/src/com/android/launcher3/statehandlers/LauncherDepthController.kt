@@ -22,6 +22,7 @@ import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.android.launcher3.Flags
 import com.android.launcher3.LauncherState
+import com.android.launcher3.Utilities
 import com.android.launcher3.uioverrides.QuickstepLauncher
 import com.android.launcher3.util.ListenableRef
 
@@ -43,6 +44,8 @@ class LauncherDepthController(
     /** Returns `true` if the workspace should be blurred. This return value is only for tests. */
     @VisibleForTesting
     fun blurWorkspaceDepthTargets(): Boolean {
+        // Lawnchair: RenderEffect needs Android 12
+        if (!Utilities.ATLEAST_S) return false
         if (Flags.allAppsSurface()) {
             // AllApps is in a separate layer, so we use background blur and don't blur views.
             return false
@@ -71,5 +74,13 @@ class LauncherDepthController(
         )
         launcher.depthBlurTargets.forEach { it.setRenderEffect(blurEffect) }
         return shouldBlurWorkspace
+    }
+
+    override fun clearWorkspaceRenderEffects() {
+        if (!Utilities.ATLEAST_S) return
+        launcher.depthBlurTargets.forEach {
+            it.setRenderEffect(null)
+            it.invalidate()
+        }
     }
 }
