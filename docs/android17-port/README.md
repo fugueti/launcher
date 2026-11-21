@@ -7,9 +7,9 @@ Files listed under *Conflicts* still contain `<<<<<<<` markers. Tick items as th
 
 Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 
-- [ ] `src/com/android/launcher3/Workspace.java` (659 lines of ours)
+- [x] `src/com/android/launcher3/Workspace.java` (659 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/util/BaseDepthControllerImpl.java` (521 lines of ours)
-- [ ] `src/com/android/launcher3/Hotseat.java` (412 lines of ours)
+- [x] `src/com/android/launcher3/Hotseat.java` (412 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/QuickstepTestInformationHandler.java` (319 lines of ours)
 - [ ] `src/com/android/launcher3/allapps/ActivityAllAppsContainerView.java` (312 lines of ours)
 - [ ] `quickstep/src/com/android/launcher3/uioverrides/QuickstepLauncher.java` (301 lines of ours)

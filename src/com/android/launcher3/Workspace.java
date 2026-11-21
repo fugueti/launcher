@@ -503,22 +503,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         DeviceProfile grid = mLauncher.getDeviceProfile();
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mPageIndicator.getLayoutParams();
         // Set insets for page indicator
-<<<<<<< HEAD
-        Rect padding = grid.workspacePadding;
-        if (grid.isVerticalBarLayout()) {
-            lp.leftMargin = padding.left + grid.workspaceCellPaddingXPx;
-            lp.rightMargin = padding.right + grid.workspaceCellPaddingXPx;
-            lp.bottomMargin = padding.bottom;
-        } else {
-            lp.leftMargin = lp.rightMargin = 0;
-            lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-            lp.bottomMargin = grid.hotseatBarSizePx - grid.workspaceCellPaddingXPx;
-        }
-=======
         lp.topMargin = lp.leftMargin = lp.rightMargin = 0;
         lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
         lp.bottomMargin = grid.getHotseatProfile().getBarSizePx();
->>>>>>> aosp/android17-release
         mPageIndicator.setLayoutParams(lp);
     }
 
@@ -794,7 +781,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      */
     public void bindAndInitFirstWorkspaceScreen() {
         // Add the first page
-<<<<<<< HEAD
         CellLayout firstPage = insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
         if (!PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getEnableSmartspace())) {
             mFirstPagePinnedItem = null;
@@ -823,9 +809,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 mFirstPagePinnedItem, 0, R.id.search_container_workspace, lp, true)) {
             Log.e(TAG, "Failed to add to item at (0, 0) to CellLayout");
         }
-=======
-        insertNewWorkspaceScreen(Workspace.FIRST_SCREEN_ID, getChildCount());
->>>>>>> aosp/android17-release
     }
 
     public void removeAllWorkspaceScreens() {
@@ -1267,18 +1250,18 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             int id = mWorkspaceScreens.keyAt(i);
             CellLayout cl = mWorkspaceScreens.valueAt(i);
             // FIRST_SCREEN_ID can never be removed.
-<<<<<<< HEAD
             if (shouldPreserveEmptyScreenWhenStripping(
                     id, persistedScreenIds, isExtraEmptyScreen(id))) {
                 continue;
             }
-            if ((!PreferenceCacheExtensionsKt.firstCached(PreferenceManager2.INSTANCE.get(getContext()).getEnableSmartspace(), PreferenceManager2.INSTANCE.get(getContext())) || id > FIRST_SCREEN_ID)
-                    && cl.getShortcutsAndWidgets().getChildCount() == 0) {
+            // Lawnchair: the first screen only stays when the smartspace is shown there
+            boolean smartspaceEnabled = PreferenceCacheExtensionsKt.firstCached(
+                    PreferenceManager2.INSTANCE.get(getContext()).getEnableSmartspace());
+            if ((!smartspaceEnabled || id > FIRST_SCREEN_ID)
+                    && cl.getShortcutsAndWidgets().getChildCount() == 0
+                    && !cl.isDropPending()) {
                 removeScreens.add(id);
             }
-=======
-            if (canRemoveEmptyScreen(id, cl)) removeScreens.add(id);
->>>>>>> aosp/android17-release
         }
 
         // When two panel home is enabled we only remove an empty page if both visible pages are
@@ -1519,9 +1502,20 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 break;
             }
         }
-<<<<<<< HEAD
-        if (!mIsEventOverFirstPagePinnedItem) {
-            mIsEventOverFirstPagePinnedItem = isEventOverQsb(mXDown, mYDown);
+        if (targetPage == null) return;
+
+        // Find the item at the original down point
+        final float[] tempFXY = new float[] {x, y};
+        Utilities.mapCoordInSelfToDescendant(targetPage, this, tempFXY);
+        int[] coordinates = new int[2];
+        targetPage.pointToCellExact((int) tempFXY[0], (int) tempFXY[1], coordinates);
+        View targetItem = targetPage.getChildAt(coordinates[0], coordinates[1]);
+
+        mIsDownOverHorizontalScrollContent =
+                (targetItem instanceof ScrollableContent sc) && sc.canScrollHorizontally();
+        // Lawnchair: don't start scrolling the workspace from the smartspace widget
+        if (!mIsDownOverHorizontalScrollContent) {
+            mIsDownOverHorizontalScrollContent = isEventOverQsb(x, y);
         }
     }
 
@@ -1548,19 +1542,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 return true;
         }
         return false;
-=======
-        if (targetPage == null) return;
-
-        // Find the item at the original down point
-        final float[] tempFXY = new float[] {x, y};
-        Utilities.mapCoordInSelfToDescendant(targetPage, this, tempFXY);
-        int[] coordinates = new int[2];
-        targetPage.pointToCellExact((int) tempFXY[0], (int) tempFXY[1], coordinates);
-        View targetItem = targetPage.getChildAt(coordinates[0], coordinates[1]);
-
-        mIsDownOverHorizontalScrollContent =
-                (targetItem instanceof ScrollableContent sc) && sc.canScrollHorizontally();
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -3072,15 +3053,12 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
     }
 
-<<<<<<< HEAD
     /** LC-Note: isDragWidget() being unused is intended to make placing widget on dock possible */
     private boolean isDragWidget(DragObject d) {
         return (d.dragInfo instanceof LauncherAppWidgetInfo ||
                 d.dragInfo instanceof PendingAddWidgetInfo);
     }
 
-=======
->>>>>>> aosp/android17-release
     public void onDragOver(DragObject d) {
         handleLauncherStateForDrag(d);
 
@@ -3214,15 +3192,10 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private boolean setDropLayoutForDragObject(DragObject d, float centerX, float centerY) {
         CellLayout layout = null;
         if (shouldUseHotseatAsDropLayout(d)) {
-<<<<<<< HEAD
             layout = resolveHotseatDropLayout(d);
         } else if (!isDragObjectOverSmartSpace(d)) {
             // If the object is over qsb/smartspace, we don't want to highlight anything.
 
-=======
-            layout = mLauncher.getHotseat();
-        } else {
->>>>>>> aosp/android17-release
             // Check neighbour pages
             layout = checkDragObjectIsOverNeighbourPages(d, centerX);
 
@@ -3270,7 +3243,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     }
 
     private boolean shouldUseHotseatAsDropLayout(DragObject dragObject) {
-<<<<<<< HEAD
         // LC-Note: isDragWidget(dragObject) being removed is intended to make placing widget on dock possible 
         
         if (mLauncher.getHotseat() == null
@@ -3287,13 +3259,6 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             return false;
         }
         getViewBoundsRelativeToWorkspace(mFirstPagePinnedItem, mTempRect);
-=======
-        Hotseat hotseat = mLauncher.getHotseat();
-        if (hotseat == null || !hotseat.isValidDropTarget(dragObject)) {
-            return false;
-        }
-        getViewBoundsRelativeToWorkspace(hotseat.getShortcutsAndWidgets(), mTempRect);
->>>>>>> aosp/android17-release
         return mTempRect.contains(dragObject.x, dragObject.y);
     }
 

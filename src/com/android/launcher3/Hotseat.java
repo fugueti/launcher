@@ -136,7 +136,6 @@ public class Hotseat extends FrameLayout implements Insettable {
 
     public Hotseat(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-<<<<<<< HEAD
         mActivity = ActivityContext.lookupContext(context);
 
         preferenceManager2 = PreferenceManager2.getInstance(context);
@@ -186,9 +185,6 @@ public class Hotseat extends FrameLayout implements Insettable {
             mQsb = LayoutInflater.from(context).inflate(layoutId, this,
                     false);
         }
-=======
-        mQsb = LauncherComponentProvider.get(context).getQsbWidgetFactory().createView(this);
->>>>>>> aosp/android17-release
 
         addView(mQsb);
 
@@ -290,7 +286,7 @@ public class Hotseat extends FrameLayout implements Insettable {
             return 0;
         }
         DeviceProfile dp = mActivity.getDeviceProfile();
-        int numColumns = dp.numShownHotseatIcons;
+        int numColumns = dp.getHotseatProfile().getNumShownIcons();
         int localRank = getLocalRank(rank, dp);
         return localRank % numColumns;
     }
@@ -305,7 +301,7 @@ public class Hotseat extends FrameLayout implements Insettable {
             return countY - (rank + 1);
         }
         DeviceProfile dp = mActivity.getDeviceProfile();
-        int numColumns = dp.numShownHotseatIcons;
+        int numColumns = dp.getHotseatProfile().getNumShownIcons();
         int localRank = getLocalRank(rank, dp);
         return localRank / numColumns;
     }
@@ -316,12 +312,12 @@ public class Hotseat extends FrameLayout implements Insettable {
             return 0;
         }
         DeviceProfile dp = mActivity.getDeviceProfile();
-        int slotsPerPage = Math.max(1, dp.numShownHotseatIcons * dp.numHotseatRows);
+        int slotsPerPage = Math.max(1, dp.getHotseatProfile().getNumShownIcons() * dp.numHotseatRows);
         return rank / slotsPerPage;
     }
 
     private static int getLocalRank(int rank, DeviceProfile dp) {
-        int slotsPerPage = Math.max(1, dp.numShownHotseatIcons * dp.numHotseatRows);
+        int slotsPerPage = Math.max(1, dp.getHotseatProfile().getNumShownIcons() * dp.numHotseatRows);
         return rank % slotsPerPage;
     }
 
@@ -347,7 +343,6 @@ public class Hotseat extends FrameLayout implements Insettable {
         mPagedView.resetPages(hasVerticalHotseat, mWorkspace, dp);
 
         if (bubbleBarEnabled) {
-<<<<<<< HEAD
             for (CellLayout page : getPageLayouts()) {
                 if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
                     page.getShortcutsAndWidgets().setTranslationProvider(
@@ -359,34 +354,12 @@ public class Hotseat extends FrameLayout implements Insettable {
             if (mQsb instanceof HorizontalInsettableView) {
                 HorizontalInsettableView insettableQsb = (HorizontalInsettableView) mQsb;
                 if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
-                    final float insetFraction = (float) dp.iconSizePx / dp.hotseatQsbWidth;
-=======
-            if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
-                getShortcutsAndWidgets().setTranslationProvider(
-                        cellX -> dp.getHotseatAdjustedTranslation(getContext(), cellX));
-                if (mQsb instanceof HorizontalInsettableView) {
-                    HorizontalInsettableView insettableQsb = (HorizontalInsettableView) mQsb;
-                    final float insetFraction =
-                            (float) dp.getWorkspaceProfile().getIconSizePx()
-                                    / dp.getHotseatProfile().getQsbWidth();
-                    // post this to the looper so that QSB has a chance to redraw itself, e.g.
-                    // after device rotation
->>>>>>> aosp/android17-release
+                    final float insetFraction = (float) dp.getWorkspaceProfile().getIconSizePx() / dp.getHotseatProfile().getQsbWidth();
                     mQsb.post(() -> insettableQsb.setHorizontalInsets(insetFraction));
                 } else {
                     insettableQsb.setHorizontalInsets(0);
                 }
             }
-<<<<<<< HEAD
-=======
-        }
-
-        resetCellSize(dp);
-        if (hasVerticalHotseat) {
-            setGridSize(1, dp.getHotseatProfile().getNumShownIcons());
-        } else {
-            setGridSize(dp.getHotseatProfile().getNumShownIcons(), 1);
->>>>>>> aosp/android17-release
         }
     }
 
@@ -564,7 +537,6 @@ public class Hotseat extends FrameLayout implements Insettable {
         int paddingBottom = getPaddingBottom();
 
         DeviceProfile dp = mActivity.getDeviceProfile();
-<<<<<<< HEAD
         boolean showIndicator = mPagedView.isPagingEnabled() && !dp.isVerticalBarLayout();
         int indicatorSpace = showIndicator ? mPageIndicatorHeight : 0;
 
@@ -586,20 +558,14 @@ public class Hotseat extends FrameLayout implements Insettable {
         }
 
         int width;
-        if (dp.isQsbInline) {
-            width = dp.hotseatQsbWidth;
+        if (dp.getHotseatProfile().isQsbInline()) {
+            width = dp.getHotseatProfile().getQsbWidth();
         } else {
             width = mPagedView.getMeasuredWidth();
         }
 
         mQsb.measure(makeMeasureSpec(Math.max(0, width), MeasureSpec.EXACTLY),
                 makeMeasureSpec(dp.getHotseatProfile().getQsbHeight(), MeasureSpec.EXACTLY));
-=======
-        mQsb.measure(
-                makeMeasureSpec(dp.getHotseatProfile().getQsbWidth(), MeasureSpec.EXACTLY),
-                makeMeasureSpec(dp.getHotseatProfile().getQsbHeight(), MeasureSpec.EXACTLY)
-        );
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -633,14 +599,8 @@ public class Hotseat extends FrameLayout implements Insettable {
 
         int qsbMeasuredWidth = mQsb.getMeasuredWidth();
         int left;
-<<<<<<< HEAD
-        if (dp.isQsbInline) {
-            int qsbSpace = dp.hotseatBorderSpace;
-=======
-        DeviceProfile dp = mActivity.getDeviceProfile();
         if (dp.getHotseatProfile().isQsbInline()) {
             int qsbSpace = dp.getHotseatProfile().getBorderSpace();
->>>>>>> aosp/android17-release
             left = Utilities.isRtl(getResources()) ? r - getPaddingRight() + qsbSpace
                     : l + getPaddingLeft() - qsbMeasuredWidth - qsbSpace;
         } else {
@@ -684,7 +644,6 @@ public class Hotseat extends FrameLayout implements Insettable {
         return mQsb;
     }
 
-<<<<<<< HEAD
     /** Delegates to the current page's shortcuts container. */
     @Nullable
     public ShortcutAndWidgetContainer getShortcutsAndWidgets() {
@@ -697,18 +656,6 @@ public class Hotseat extends FrameLayout implements Insettable {
     public DragAndDropAccessibilityDelegate getDragAndDropAccessibilityDelegate() {
         CellLayout page = getCurrentPageLayout();
         return page != null ? page.getDragAndDropAccessibilityDelegate() : null;
-=======
-    @Nullable
-    @Override
-    public View mapOverItems(ItemOperator op) {
-        if (Flags.enableQsbOnHotseat()
-                && mQsb != null
-                && mQsb.getTag() instanceof ItemInfo info
-                && op.evaluate(info, mQsb)) {
-            return mQsb;
-        }
-        return super.mapOverItems(op);
->>>>>>> aosp/android17-release
     }
 
     /** Dumps the Hotseat internal state */
