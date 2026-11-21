@@ -68,25 +68,8 @@ import app.lawnchair.preferences.PreferenceManager;
  */
 public class PreviewItemManager {
 
-<<<<<<< HEAD
-=======
     private static final String TAG = "PreviewItemManager";
 
-    private static final FloatProperty<PreviewItemManager> CURRENT_PAGE_ITEMS_TRANS_X =
-            new FloatProperty<PreviewItemManager>("currentPageItemsTransX") {
-                @Override
-                public void setValue(PreviewItemManager manager, float v) {
-                    manager.mCurrentPageItemsTransX = v;
-                    manager.onParamsChanged();
-                }
-
-                @Override
-                public Float get(PreviewItemManager manager) {
-                    return manager.mCurrentPageItemsTransX;
-                }
-            };
-
->>>>>>> aosp/android17-release
     private final Context mContext;
     private final FolderIcon mIcon;
     @VisibleForTesting
@@ -112,12 +95,7 @@ public class PreviewItemManager {
         mContext = icon.getContext();
         mIcon = icon;
         mIconSize = ActivityContext.lookupContext(
-<<<<<<< HEAD
-                mContext).getDeviceProfile().folderChildIconSizePx;
-=======
                 mContext).getDeviceProfile().getFolderProfile().getChildIconSizePx();
-        mClipThreshold = dpToPx(1f);
->>>>>>> aosp/android17-release
     }
 
     /**
@@ -211,24 +189,8 @@ public class PreviewItemManager {
         // The items are drawn in coordinates relative to the preview offset
         PreviewBackground bg = mIcon.getFolderBackground();
         Path clipPath = bg.getClipPath().getPath();
-<<<<<<< HEAD
         PointF firstPageOffset = new PointF(bg.basePreviewOffsetX, bg.basePreviewOffsetY);
         drawParams(canvas, mFirstPageParams, firstPageOffset, /* shouldClipPath */ false, clipPath);
-=======
-        float firstPageItemsTransX = 0;
-        if (mShouldSlideInFirstPage) {
-            PointF firstPageOffset = new PointF(bg.basePreviewOffsetX + mCurrentPageItemsTransX,
-                    bg.basePreviewOffsetY);
-            boolean shouldClip = mCurrentPageItemsTransX > mClipThreshold;
-            drawParams(canvas, mCurrentPageParams, firstPageOffset, shouldClip, clipPath);
-            firstPageItemsTransX = -ITEM_SLIDE_IN_OUT_DISTANCE_PX + mCurrentPageItemsTransX;
-        }
-
-        PointF firstPageOffset = new PointF(bg.basePreviewOffsetX + firstPageItemsTransX,
-                bg.basePreviewOffsetY);
-        boolean shouldClipFirstPage = firstPageItemsTransX < -mClipThreshold;
-        drawParams(canvas, mFirstPageParams, firstPageOffset, shouldClipFirstPage, clipPath);
->>>>>>> aosp/android17-release
         canvas.restoreToCount(saveCount);
     }
 
@@ -449,16 +411,13 @@ public class PreviewItemManager {
      */
     @VisibleForTesting
     public void setDrawable(PreviewItemDrawingParams p, ItemInfo item) {
-<<<<<<< HEAD
-        // Lawnchair: Find the correct folder size depending on which parent owned them
-        int iconSize = getChildIconSize();
-=======
         setDrawableInternal(p, item, true /* loadHighResIcon */);
     }
 
     private void setDrawableInternal(
             PreviewItemDrawingParams p, ItemInfo item, boolean loadHighResIcon) {
->>>>>>> aosp/android17-release
+        // Lawnchair: Find the correct folder size depending on which parent owned them
+        int iconSize = getChildIconSize();
         if (item instanceof WorkspaceItemInfo wii) {
             if (wii.shouldShowPendingIcon()) {
                 p.drawable = newPendingIcon(wii, mContext, FLAG_THEMED);
@@ -515,7 +474,7 @@ public class PreviewItemManager {
             aid.startExitAnimation(() -> {
                 p.drawable = wii.newIcon(mContext, FLAG_THEMED);
                 if (p.drawable != null) {
-                    p.drawable.setBounds(0, 0, mIconSize, mIconSize);
+                    p.drawable.setBounds(0, 0, getChildIconSize(), getChildIconSize());
                     p.drawable.setCallback(mIcon);
                 }
                 mIcon.invalidate();

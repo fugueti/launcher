@@ -16,7 +16,6 @@
 
 package com.android.launcher3.model;
 
-<<<<<<< HEAD
 import static android.os.Process.myUserHandle;
 import static com.android.launcher3.BuildConfigs.WIDGET_ON_FIRST_SCREEN;
 import static com.android.launcher3.Flags.enableLauncherBrMetricsFixed;
@@ -24,12 +23,7 @@ import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
 import static com.android.launcher3.icons.CacheableShortcutInfo.convertShortcutsToCacheableShortcuts;
 import static com.android.launcher3.icons.cache.CacheLookupFlag.DEFAULT_LOOKUP_FLAG;
 import static com.android.launcher3.folder.FolderGridOrganizer.createFolderGridOrganizer;
-=======
-import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
-import static com.android.launcher3.icons.CacheableShortcutInfo.convertShortcutsToCacheableShortcuts;
-import static com.android.launcher3.icons.cache.CacheLookupFlag.DEFAULT_LOOKUP_FLAG;
 import static com.android.launcher3.model.FirstScreenBroadcastHelper.DISABLE_INSTALLED_APPS_BROADCAST;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.model.ModelUtils.WIDGET_FILTER;
 import static com.android.launcher3.model.ModelUtils.currentScreenContentFilter;
 import static com.android.launcher3.model.data.AppsListData.FLAG_HAS_SHORTCUT_PERMISSION;
@@ -671,42 +665,21 @@ public class LoaderTask implements Runnable {
                 Log.e("LC-LoaderTask", "Failed to get activity list for user " + user, e);
                 apps = Collections.emptyList();
             }
-<<<<<<< HEAD
-            // Fail if we don't have any apps
-            if (apps == null || apps.isEmpty()) {
-                if (myUserHandle().equals(user)) {
-                    return allActivityList;
-                } else {
-                    continue;
-                }
-            }
-            // Query UserManager directly for current quiet mode state to avoid stale cached values
-            boolean quietMode = mUserManager.isQuietModeEnabled(user);
-            // Update the cached state for consistency
-            mUserManagerState.updateUserQuietMode(mUserCache, user, quietMode);
-
-            if (Flags.enablePrivateSpace()) {
-                if (mUserCache.getUserInfo(user).isWork()) {
-                    isWorkProfileQuiet |= quietMode;
-                } else if (mUserCache.getUserInfo(user).isPrivate()) {
-                    isPrivateProfileQuiet |= quietMode;
-=======
             boolean quietMode = cachedUserInfo.isQuietModeEnabled();
 
             if (Flags.enablePrivateSpace()) {
+                // Lawnchair: several work/private profiles may exist; any quiet one counts
                 if (iconInfo.isWork()) {
-                    isWorkProfileQuiet = quietMode;
+                    isWorkProfileQuiet |= quietMode;
                 } else if (iconInfo.isPrivate()) {
-                    isPrivateProfileQuiet = quietMode;
->>>>>>> aosp/android17-release
+                    isPrivateProfileQuiet |= quietMode;
                 }
             }
             // Create the ApplicationInfos
             for (int i = 0; i < apps.size(); i++) {
                 LauncherActivityInfo app = apps.get(i);
-<<<<<<< HEAD
-                AppInfo appInfo = new AppInfo(app, mUserCache.getUserInfo(user),
-                        ApiWrapper.INSTANCE.get(mContext), mPmHelper, quietMode);
+                AppInfo appInfo = new AppInfo(app, cachedUserInfo,
+                        ApiWrapper.INSTANCE.get(mContext), mPmHelper, mAutomationRepo);
                 try {
                     if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
                         if (app.getApplicationInfo().isArchived) {
@@ -716,17 +689,6 @@ public class LoaderTask implements Runnable {
                             SessionInfo si = mInstallingPkgsCached != null ? mInstallingPkgsCached.get(
                                     new PackageUserKey(appPackageName, user))
                                     : mSessionHelper.getActiveSessionInfo(user,
-=======
-                AppInfo appInfo = new AppInfo(app, cachedUserInfo,
-                        ApiWrapper.INSTANCE.get(mContext), mPmHelper, mAutomationRepo);
-                if (Flags.enableSupportForArchiving() && app.getApplicationInfo().isArchived) {
-                    // For archived apps, include progress info in case there is a pending
-                    // install session post restart of device.
-                    String appPackageName = app.getApplicationInfo().packageName;
-                    SessionInfo si = mInstallingPkgsCached != null ? mInstallingPkgsCached.get(
-                            new PackageUserKey(appPackageName, user))
-                            : mSessionHelper.getActiveSessionInfo(user,
->>>>>>> aosp/android17-release
                                     appPackageName);
                             if (si != null) {
                                 appInfo.runtimeStatusFlags |= FLAG_INSTALL_SESSION_ACTIVE;
@@ -747,26 +709,6 @@ public class LoaderTask implements Runnable {
             allActivityList.addAll(apps);
         }
 
-<<<<<<< HEAD
-        if (FeatureFlags.PROMISE_APPS_IN_ALL_APPS.get()) {
-            // get all active sessions and add them to the all apps list
-            for (PackageInstaller.SessionInfo info :
-                    mSessionHelper.getAllVerifiedSessions()) {
-                AppInfo promiseAppInfo = mBgAllAppsList.addPromiseApp(
-                        mContext,
-                        PackageInstallInfo.fromInstallingState(info),
-                        false);
-
-                if (promiseAppInfo != null) {
-                    allAppsItemRequestInfos.add(new IconRequestInfo<>(
-                            promiseAppInfo,
-                            /* launcherActivityInfo= */ null,
-                            promiseAppInfo.getMatchingLookupFlag().withThemeIcon(false)));
-                }
-            }
-        }
-=======
->>>>>>> aosp/android17-release
         Trace.beginSection("LoadAllAppsIconsInBulk");
 
         try {

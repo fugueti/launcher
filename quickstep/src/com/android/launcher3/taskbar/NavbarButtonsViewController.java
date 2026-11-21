@@ -55,10 +55,6 @@ import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_Q
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_SCREEN_PINNING;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_SHORTCUT_HELPER_SHOWING;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_VOICE_INTERACTION_WINDOW_SHOWING;
-<<<<<<< HEAD
-import static com.android.window.flags2.Flags.predictiveBackThreeButtonNav;
-=======
->>>>>>> aosp/android17-release
 
 import android.animation.Animator;
 import android.animation.ArgbEvaluator;
@@ -824,21 +820,7 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         if (mBackButton == null) {
             return;
         }
-<<<<<<< HEAD
-        boolean predictiveBackThreeButtonNav;
-        try {
-            predictiveBackThreeButtonNav = predictiveBackThreeButtonNav();
-        } catch (Throwable t) {
-            predictiveBackThreeButtonNav = false;
-        }
-        if (predictiveBackThreeButtonNav) {
-            setupBackButtonAccessibility(mBackButton, accessibilityDelegate);
-        } else {
-            mBackButton.setAccessibilityDelegate(accessibilityDelegate);
-        }
-=======
         setupBackButtonAccessibility(mBackButton, accessibilityDelegate);
->>>>>>> aosp/android17-release
     }
 
     public void setWallpaperVisible(boolean isVisible) {
@@ -1050,17 +1032,7 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         buttonView.setImageResource(drawableId);
         buttonView.setContentDescription(parent.getContext().getString(
                 navButtonController.getButtonContentDescription(buttonType)));
-<<<<<<< HEAD
-        boolean predictiveBackThreeButtonNav;
-        try {
-            predictiveBackThreeButtonNav = predictiveBackThreeButtonNav();
-        } catch (Throwable t) {
-            predictiveBackThreeButtonNav = false;
-        }
-        if (predictiveBackThreeButtonNav && buttonType == BUTTON_BACK) {
-=======
         if (buttonType == BUTTON_BACK) {
->>>>>>> aosp/android17-release
             // set up special touch listener for back button to support predictive back
             setupBackButtonAccessibility(buttonView, null);
             setBackButtonTouchListener(buttonView, navButtonController);
@@ -1266,13 +1238,10 @@ public class NavbarButtonsViewController implements TaskbarControllers.LoggableT
         if (mFloatingRotationButton != null) {
             mFloatingRotationButton.hide();
             mFloatingRotationButton = null;
-<<<<<<< HEAD
-=======
         }
         if (mSettingCacheSafeCloseable != null) {
             mSettingCacheSafeCloseable.close();
             mSettingCacheSafeCloseable = null;
->>>>>>> aosp/android17-release
         }
 
         moveNavButtonsBackToTaskbarWindow();

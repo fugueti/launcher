@@ -55,7 +55,6 @@ import com.android.launcher3.display.DisplayController;
 import com.android.launcher3.display.LauncherDisplayInfo;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.model.data.ItemInfo;
-import com.android.launcher3.testing.TestInformationHandler;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.ActivityOptionsWrapper;
@@ -113,14 +112,10 @@ public abstract class BaseActivity extends Activity implements ActivityContext {
     private final SavedStateRegistryController mSavedStateRegistryController =
             SavedStateRegistryController.create(this);
     private final LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
-<<<<<<< HEAD
-    private final WeakCleanupSet mCleanupSet = new WeakCleanupSet(this);
-    
-    // Keep a reference to the helper to manually dispatch events on older APIs
-    private final LifecycleHelper mLifecycleHelper;
-=======
     private final WeakCleanupSet mCleanupSet = new WeakCleanupSet(this, getUiExecutor());
->>>>>>> aosp/android17-release
+
+    // Lawnchair: keep a reference to the helper to manually dispatch events on older APIs
+    private final LifecycleHelper mLifecycleHelper;
 
     protected volatile DeviceProfile mDeviceProfile;
     protected SystemUiController mSystemUiController;
@@ -213,16 +208,10 @@ public abstract class BaseActivity extends Activity implements ActivityContext {
 
     public BaseActivity() {
         mSavedStateRegistryController.performAttach();
-<<<<<<< HEAD
         mLifecycleHelper = new LifecycleHelper(this, mSavedStateRegistryController, mLifecycleRegistry);
         if (Utilities.ATLEAST_Q) {
             registerActivityLifecycleCallbacks(mLifecycleHelper);
         }
-=======
-        registerActivityLifecycleCallbacks(
-                new LifecycleHelper(this, mSavedStateRegistryController, mLifecycleRegistry));
-        TestInformationHandler.trackUiSurface(this);
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -283,16 +272,15 @@ public abstract class BaseActivity extends Activity implements ActivityContext {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-<<<<<<< HEAD
         if (!Utilities.ATLEAST_Q) {
             mLifecycleHelper.onActivityCreated(this, savedInstanceState);
         }
-=======
 
         // Cache displayId as it is a binder call.
-        Display display = getDisplay();
+        // Lawnchair: Activity.getDisplay() needs Android 11
+        Display display = Utilities.ATLEAST_R ? getDisplay()
+                : getWindowManager().getDefaultDisplay();
         mDisplayId = display != null ? display.getDisplayId() : Display.DEFAULT_DISPLAY;
->>>>>>> aosp/android17-release
         registerBackDispatcher();
 
         // TODO: b/362720616 - Investigate the impact of adding listener using correct displayId.
@@ -579,23 +567,7 @@ public abstract class BaseActivity extends Activity implements ActivityContext {
         return wrapper;
     }
 
-<<<<<<< HEAD
-    protected WindowBounds getMultiWindowDisplaySize() {
-        if (Utilities.ATLEAST_R) {
-            return WindowBounds.fromWindowMetrics(getWindowManager().getCurrentWindowMetrics());
-        } else {
-            Display display = getWindowManager().getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            return new WindowBounds(size.x, size.y, size.x, size.y, -1);
-        }
-    }
-
-    @Override
-    public void onDisplayInfoChanged(Context context, Info info, int flags) {
-=======
     protected void onDisplayInfoChanged(LauncherDisplayInfo info, int flags) {
->>>>>>> aosp/android17-release
         if ((flags & CHANGE_ROTATION) != 0 && mDeviceProfile.isVerticalBarLayout()) {
             reapplyUi();
         }

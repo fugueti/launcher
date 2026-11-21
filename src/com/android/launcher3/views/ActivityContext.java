@@ -17,12 +17,8 @@ package com.android.launcher3.views;
 
 import static android.window.SplashScreen.SPLASH_SCREEN_STYLE_SOLID_COLOR;
 
-<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.WIDGETS_ENABLED;
-=======
-import static com.android.launcher3.BuildConfig.WIDGETS_ENABLED;
 import static com.android.launcher3.LauncherModel.useModelRepositoryBinding;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.LauncherSettings.Animation.DEFAULT_NO_ICON;
 import static com.android.launcher3.Utilities.allowBGLaunch;
 import static com.android.launcher3.Utilities.shouldReduceWorkspaceBlurUsage;
@@ -238,8 +234,6 @@ public interface ActivityContext extends SavedStateRegistryOwner {
         return null;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Returns a stream of system shortcuts supported for the given item info.
      *
@@ -258,7 +252,6 @@ public interface ActivityContext extends SavedStateRegistryOwner {
      */
     default void refreshAndBindWidgetsForPackageUser(@Nullable PackageUserKey packageUser) {}
 
->>>>>>> aosp/android17-release
     /** @return {@code true} if all apps background blur is enabled */
     default boolean isAllAppsBackgroundBlurEnabled() {
         return !shouldReduceWorkspaceBlurUsage(asContext()) && WindowBlurState.getInstance(
@@ -407,76 +400,7 @@ public interface ActivityContext extends SavedStateRegistryOwner {
      * Hides the keyboard if it is visible
      */
     default void hideKeyboard() {
-<<<<<<< HEAD
-        View root = getDragLayer();
-        if (root == null) {
-            return;
-        }
-        if (Utilities.ATLEAST_R) {
-            Preconditions.assertUIThread();
-            // Hide keyboard with WindowInsetsController if could. In case hideSoftInputFromWindow may
-            // get ignored by input connection being finished when the screen is off.
-            //
-            // In addition, inside IMF, the keyboards are closed asynchronously that launcher no longer
-            // need to post to the message queue.
-            final WindowInsetsController wic = root.getWindowInsetsController();
-            WindowInsets insets = root.getRootWindowInsets();
-            boolean isImeShown = insets != null && insets.isVisible(WindowInsets.Type.ime());
-            if (wic != null) {
-                // Only hide the keyboard if it is actually showing.
-                if (isImeShown) {
-                    // this method cannot be called cross threads
-                    wic.hide(WindowInsets.Type.ime());
-                    getStatsLogManager().logger().log(LAUNCHER_ALLAPPS_KEYBOARD_CLOSED);
-                }
-    
-                // If the WindowInsetsController is not null, we end here regardless of whether we hid
-                // the keyboard or not.
-                return;
-            }
-        }
-
-        InputMethodManager imm = root.getContext().getSystemService(InputMethodManager.class);
-        IBinder token = root.getWindowToken();
-        if (imm != null && token != null) {
-            UI_HELPER_EXECUTOR.execute(() -> {
-                if (imm.hideSoftInputFromWindow(token, 0)) {
-                    // log keyboard close event only when keyboard is actually closed
-                    MAIN_EXECUTOR.execute(() ->
-                            getStatsLogManager().logger().log(LAUNCHER_ALLAPPS_KEYBOARD_CLOSED));
-                }
-            });
-        }
-    }
-
-    /**
-     * Returns if the connected keyboard is a hardware keyboard.
-     */
-    default boolean isHardwareKeyboard() {
-        return Configuration.KEYBOARD_QWERTY
-                == ((Context) this).getResources().getConfiguration().keyboard;
-    }
-
-    /**
-     * Returns if the software keyboard (including input toolbar) is hidden. Hardware
-     * keyboards do not display on screen by default.
-     */
-    default boolean isSoftwareKeyboardHidden() {
-        if (isHardwareKeyboard()) {
-            return true;
-        } else {
-            View dragLayer = getDragLayer();
-            WindowInsets insets = dragLayer.getRootWindowInsets();
-            if (insets == null) {
-                return false;
-            }
-            WindowInsetsCompat insetsCompat =
-                    WindowInsetsCompat.toWindowInsetsCompat(insets, dragLayer);
-            return !insetsCompat.isVisible(WindowInsetsCompat.Type.ime());
-        }
-=======
         getActivityComponent().getKeyboardStateManager().hideKeyboard();
->>>>>>> aosp/android17-release
     }
 
     /**
@@ -620,13 +544,9 @@ public interface ActivityContext extends SavedStateRegistryOwner {
 
     default CellPosMapper getCellPosMapper() {
         DeviceProfile dp = getDeviceProfile();
-<<<<<<< HEAD
-        return new CellPosMapper(dp.isVerticalBarLayout(), dp.numShownHotseatIcons,
-                dp.numHotseatRows, dp.numHotseatPages);
-=======
+        // Lawnchair: the dock can have several rows and pages
         return new CellPosMapper(dp.isVerticalBarLayout(),
-                dp.getHotseatProfile().getNumShownIcons());
->>>>>>> aosp/android17-release
+                dp.getHotseatProfile().getNumShownIcons(), dp.numHotseatRows, dp.numHotseatPages);
     }
 
     /** Returns a writer for updating model properties */

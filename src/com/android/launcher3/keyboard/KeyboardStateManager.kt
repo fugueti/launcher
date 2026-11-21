@@ -23,6 +23,7 @@ import android.view.WindowInsets.Type
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.WindowInsetsCompat
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.launcher3.dagger.ActivityContextSingleton
 import com.android.launcher3.keyboard.KeyboardStateManager.KeyboardState.HIDE
 import com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_KEYBOARD_CLOSED
@@ -76,26 +77,29 @@ class KeyboardStateManager @Inject constructor(private val activityContext: Acti
         //
         // In addition, inside IMF, the keyboards are closed asynchronously that launcher no longer
         // need to post to the message queue.
-        val wic = root.windowInsetsController
-        val insets = root.rootWindowInsets
-        val isImeShown = insets != null && insets.isVisible(Type.ime())
+        // Lawnchair: WindowInsetsController needs Android 11; older ones use the IMM below
+        if (Utilities.ATLEAST_R) {
+            val wic = root.windowInsetsController
+            val insets = root.rootWindowInsets
+            val isImeShown = insets != null && insets.isVisible(Type.ime())
 
-        Log.d(TAG, "isImeShown: $isImeShown")
+            Log.d(TAG, "isImeShown: $isImeShown")
 
-        if (wic == null) {
-            Log.d(TAG, "hideKeyboard: WIC IS NULL")
-        } else {
-            // Only hide the keyboard if it is actually showing.
-            if (isImeShown) {
-                // this method cannot be called cross threads
-                Log.d(TAG, "hideKeyboard: calling wic.hide() because isImeShown is true")
-                wic.hide(Type.ime())
-                activityContext.statsLogManager.logger().log(LAUNCHER_ALLAPPS_KEYBOARD_CLOSED)
+            if (wic == null) {
+                Log.d(TAG, "hideKeyboard: WIC IS NULL")
+            } else {
+                // Only hide the keyboard if it is actually showing.
+                if (isImeShown) {
+                    // this method cannot be called cross threads
+                    Log.d(TAG, "hideKeyboard: calling wic.hide() because isImeShown is true")
+                    wic.hide(Type.ime())
+                    activityContext.statsLogManager.logger().log(LAUNCHER_ALLAPPS_KEYBOARD_CLOSED)
+                }
+
+                // If the WindowInsetsController is not null, we end here regardless of whether we hid
+                // the keyboard or not.
+                return
             }
-
-            // If the WindowInsetsController is not null, we end here regardless of whether we hid
-            // the keyboard or not.
-            return
         }
 
         val imm = root.context.getSystemService(InputMethodManager::class.java)

@@ -871,56 +871,17 @@ public abstract class RecentsView<
 
         mContainer = RecentsViewContainer.containerFromContext(context);
         mContainerInterface = mContainer.getContainerInterface();
-<<<<<<< HEAD
-        mOrientationState = new RecentsOrientedState(
-                context, mContainerInterface, this::animateRecentsRotationInPlace);
-        final int rotation;
-        rotation = Utilities.ATLEAST_R ? mContainer.getDisplay().getRotation() : WindowConfiguration.ROTATION_UNDEFINED;
-        mOrientationState.setRecentsRotation(rotation);
-
-        // Start Recents Dependency graph
-        if (enableRefactorTaskThumbnail()) {
-            RecentsDependencies recentsDependencies =
-                    RecentsDependencies.maybeInitialize(context, ProductionDispatchers.INSTANCE);
-            String scopeId = recentsDependencies.createRecentsViewScope(context);
-            mRecentsViewModel = new RecentsViewModel(
-                    recentsDependencies.inject(RecentTasksRepository.class, scopeId),
-                    recentsDependencies.inject(RecentsViewData.class, scopeId),
-                    mContainer.getDisplay().getDisplayId()
-            );
-            mHelper = new RecentsViewModelHelper(
-                    mRecentsViewModel,
-                    recentsDependencies.inject(CoroutineScope.class, scopeId),
-                    recentsDependencies.inject(DispatcherProvider.class, scopeId)
-            );
-
-            recentsDependencies.provide(RecentsRotationStateRepository.class, scopeId,
-                    () -> new RecentsRotationStateRepositoryImpl(mOrientationState));
-
-            recentsDependencies.provide(RecentsDeviceProfileRepository.class, scopeId,
-                    () -> new RecentsDeviceProfileRepositoryImpl(mContainer));
-
-            recentsDependencies.provide(AppTimersRepository.class, scopeId,
-                    () -> new AppTimersRepositoryImpl(
-                            context.getApplicationContext().getSystemService(LauncherApps.class),
-                            recentsDependencies.inject(DispatcherProvider.class, scopeId)
-                    ));
-        } else {
-            mRecentsViewModel = null;
-            mHelper = null;
-        }
-
-=======
 
         initialiseInjectables();
         mUtils = mUtilsFactory.create(this);
         mDismissUtils = mDismissUtilsFactory.create(this);
 
         mOrientationState.setRotationChangeListener(this::animateRecentsRotationInPlace);
-        final int rotation = mContainer.getDisplay().getRotation();
+        // Lawnchair: Activity.getDisplay() needs Android 11
+        final int rotation = Utilities.ATLEAST_R ? mContainer.getDisplay().getRotation()
+                : WindowConfiguration.ROTATION_UNDEFINED;
         mOrientationState.setRecentsRotation(rotation);
 
->>>>>>> aosp/android17-release
         mScrollHapticMinGapMillis = getResources()
                 .getInteger(R.integer.recentsScrollHapticMinGapMillis);
         mFastFlingVelocity = getResources()
@@ -930,21 +891,9 @@ public abstract class RecentsView<
                 .inflate(R.layout.overview_clear_all_button, this, false);
         mClearAllButton.setOnClickListener(this::dismissAllTasks);
 
-<<<<<<< HEAD
-        boolean isMultipleDesktopFrontendEnabledOnDisplay;
-        if (false) {
-            isMultipleDesktopFrontendEnabledOnDisplay = DesktopModeStatus.isMultipleDesktopFrontendEnabledOnDisplay(mContext,
-                mContainer.getDisplay());
-        } else {
-            isMultipleDesktopFrontendEnabledOnDisplay = false;
-        }
-
-        if (isMultipleDesktopFrontendEnabledOnDisplay) {
-=======
         mIsMultipleDesktopFrontendEnabled = mDesktopState.isDesktopModeSupportedOnDisplay(
                 mContainer.getDisplay());
         if (mIsMultipleDesktopFrontendEnabled) {
->>>>>>> aosp/android17-release
             mAddDesktopButton = (AddDesktopButton) LayoutInflater.from(context).inflate(
                     R.layout.overview_add_desktop_button, this, false);
             mAddDesktopButton.setOnClickListener(view -> {
@@ -1104,9 +1053,7 @@ public abstract class RecentsView<
         // RecentsViewContainer provided dependencies.
         mSplitSelectStateController = splitController;
         mDesktopRecentsTransitionController = desktopRecentsTransitionController;
-<<<<<<< HEAD
         mActionsView.setClearAllClickListener(this::dismissAllTasks);
-=======
         // Set in launcher to be in sync with the other Surface transactions e.g. in
         // BaseDepthController for applying blur.
         mSyncTransactionApplier = surfaceTransactionApplier;
@@ -1133,7 +1080,6 @@ public abstract class RecentsView<
         ViewEx.registerLifecycleTask(this,
                 () -> mSystemUiProxy.getPipAnimationListeners().register(mIPipAnimationListener));
         updateEmptyMessage();
->>>>>>> aosp/android17-release
     }
 
     public SplitSelectStateController getSplitSelectController() {
@@ -1631,13 +1577,8 @@ public abstract class RecentsView<
     @Override
     protected void onPageEndTransition() {
         super.onPageEndTransition();
-<<<<<<< HEAD
         if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logOnPageEndTransition(getNextPage());
-        if (!mContainer.getDeviceProfile().getDeviceProperties().isTablet()) {
-=======
-        ActiveGestureProtoLogProxy.logOnPageEndTransition(getNextPage());
         if (!mContainer.getDeviceProfile().getDeviceProperties().isLargeScreen()) {
->>>>>>> aosp/android17-release
             mActionsView.updateDisabledFlags(OverviewActionsView.DISABLED_SCROLLING, false);
         }
         InteractionJankMonitorWrapper.end(Cuj.CUJ_RECENTS_SCROLLING);
