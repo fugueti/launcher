@@ -17,6 +17,7 @@
 package com.android.launcher3.statemanager;
 
 import static android.animation.ValueAnimator.areAnimatorsEnabled;
+import com.android.launcher3.Utilities;
 
 import static com.android.launcher3.Utilities.getTrimmedStackTrace;
 import static com.android.launcher3.anim.AnimatorPlaybackController.callListenerCommandRecursively;
@@ -33,7 +34,6 @@ import android.os.Looper;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 
-import com.android.launcher3.Utilities;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.LauncherUiState;
 import com.android.launcher3.anim.AnimationSuccessListener;
@@ -258,18 +258,10 @@ public class StateManager<S extends BaseState<S>, T extends StatefulContainer<S>
 
     private void goToState(
             S state, boolean animated, long delay, AnimatorListener listener) {
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
+        if (Utilities.ATLEAST_S) {
             StateManagerProtoLogProxy.logGoToState(
                     mState, state, getTrimmedStackTrace("StateManager.goToState"));
-        } else if (DEBUG) {
-            Log.d(TAG, "goToState - fromState: " + mState + ", toState: " + state
-                    + ", partial trace:\n" + getTrimmedStackTrace("StateManager.goToState"));
         }
-=======
-        StateManagerProtoLogProxy.logGoToState(
-                mState, state, getTrimmedStackTrace("StateManager.goToState"));
->>>>>>> aosp/android17-release
 
         animated &= areAnimatorsEnabled();
         if (getState() == state) {
@@ -356,19 +348,10 @@ public class StateManager<S extends BaseState<S>, T extends StatefulContainer<S>
      */
     public AnimatorSet createAtomicAnimation(
             S fromState, S toState, StateAnimationConfig config) {
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
+        if (Utilities.ATLEAST_S) {
             StateManagerProtoLogProxy.logCreateAtomicAnimation(
                     mState, toState, getTrimmedStackTrace("StateManager.createAtomicAnimation"));
-        } else if (DEBUG) {
-            Log.d(TAG, "createAtomicAnimation - fromState: " + fromState + ", toState: " + toState
-                    + ", partial trace:\n" + getTrimmedStackTrace(
-                            "StateManager.createAtomicAnimation"));
         }
-=======
-        StateManagerProtoLogProxy.logCreateAtomicAnimation(
-                mState, toState, getTrimmedStackTrace("StateManager.createAtomicAnimation"));
->>>>>>> aosp/android17-release
 
         PendingAnimation builder = new PendingAnimation(config.duration);
         prepareForAtomicAnimation(fromState, toState, config);
@@ -444,16 +427,8 @@ public class StateManager<S extends BaseState<S>, T extends StatefulContainer<S>
         }
         mContainer.onStateSetStart(mState);
 
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
-            StateManagerProtoLogProxy.logOnStateTransitionStart(state);
-        } else if (DEBUG) {
-            Log.d(TAG, "onStateTransitionStart - state: " + state);
-        }
-=======
-        StateManagerProtoLogProxy.logOnStateTransitionStart(state);
+        if (Utilities.ATLEAST_S) StateManagerProtoLogProxy.logOnStateTransitionStart(state);
 
->>>>>>> aosp/android17-release
         for (int i = mListeners.size() - 1; i >= 0; i--) {
             mListeners.get(i).onStateTransitionStart(state);
         }
@@ -471,30 +446,14 @@ public class StateManager<S extends BaseState<S>, T extends StatefulContainer<S>
             setRestState(null);
         }
 
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
-            StateManagerProtoLogProxy.logOnStateTransitionEnd(state);
-        } else if (DEBUG) {
-            Log.d(TAG, "onStateTransitionEnd - state: " + state);
-        }
-=======
-        StateManagerProtoLogProxy.logOnStateTransitionEnd(state);
->>>>>>> aosp/android17-release
+        if (Utilities.ATLEAST_S) StateManagerProtoLogProxy.logOnStateTransitionEnd(state);
         for (int i = mListeners.size() - 1; i >= 0; i--) {
             mListeners.get(i).onStateTransitionComplete(state);
         }
     }
 
     private void onRepeatStateSetAborted(S state) {
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
-            StateManagerProtoLogProxy.logOnRepeatStateSetAborted(state);
-        } else if (DEBUG) {
-            Log.d(TAG, "onRepeatStateSetAborted - state: " + state);
-        }
-=======
-        StateManagerProtoLogProxy.logOnRepeatStateSetAborted(state);
->>>>>>> aosp/android17-release
+        if (Utilities.ATLEAST_S) StateManagerProtoLogProxy.logOnRepeatStateSetAborted(state);
         mContainer.onRepeatStateSetAborted(state);
     }
 
@@ -530,20 +489,11 @@ public class StateManager<S extends BaseState<S>, T extends StatefulContainer<S>
      * Cancels the current animation.
      */
     public void cancelAnimation() {
-<<<<<<< HEAD
-        if (enableStateManagerProtoLog() && Utilities.ATLEAST_S) {
+        if (Utilities.ATLEAST_S) {
             StateManagerProtoLogProxy.logCancelAnimation(
                     mConfig.currentAnimation != null,
                     getTrimmedStackTrace("StateManager.cancelAnimation"));
-        } else if (DEBUG && mConfig.currentAnimation != null) {
-            Log.d(TAG, "cancelAnimation - with ongoing animation"
-                    + ", partial trace:\n" + getTrimmedStackTrace("StateManager.cancelAnimation"));
         }
-=======
-        StateManagerProtoLogProxy.logCancelAnimation(
-                mConfig.currentAnimation != null,
-                getTrimmedStackTrace("StateManager.cancelAnimation"));
->>>>>>> aosp/android17-release
         mConfig.reset();
         // It could happen that a new animation is set as a result of an endListener on the
         // existing animation.

@@ -67,9 +67,6 @@ import com.android.launcher3.ActivityInteractor;
 import com.android.launcher3.AsyncAnimatorPlaybackController;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.InvariantDeviceProfile;
-import com.android.launcher3.Launcher;
-import com.android.launcher3.LauncherAppState;
-import com.android.launcher3.Utilities;
 import com.android.launcher3.InvariantDeviceProfile.OnIDPChangeListener;
 import com.android.launcher3.LauncherInteractor;
 import com.android.launcher3.LauncherPrefChangeListener;
@@ -103,8 +100,6 @@ import com.android.quickstep.dagger.SysUIConnectionSingleton;
 import com.android.quickstep.util.ContextualSearchInvoker;
 import com.android.quickstep.util.SystemUiFlagUtils;
 import com.android.quickstep.views.RecentsViewContainer;
-//import com.android.server.am.Flags;
-import com.android.systemui.shared.recents.model.Task;
 import com.android.quickstep.views.RecentsViewContainerInteractor;
 import com.android.quickstep.window.RecentsWindowManager;
 import com.android.systemui.shared.statusbar.phone.BarTransitions;
@@ -125,8 +120,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import app.lawnchair.LawnchairApp;
-
 /**
  * Class to manage taskbar lifecycle
  */
@@ -145,9 +138,6 @@ public class TaskbarManagerImpl {
     private static final Uri NAV_BAR_KIDS_MODE = Settings.Secure.getUriFor(
             Settings.Secure.NAV_BAR_KIDS_MODE);
 
-    private static final LooperExecutor TASKBAR_UI_THREAD =
-            new LooperExecutor("TASKBAR_UI_THREAD", THREAD_PRIORITY_FOREGROUND);
-
     private final Context mBaseContext;
     private final int mPrimaryDisplayId;
     private final TaskbarNavButtonCallbacks mNavCallbacks;
@@ -161,13 +151,8 @@ public class TaskbarManagerImpl {
     private final DisplayManager mDisplayManager;
     private final SystemUiProxy mSystemUiProxy;
 
-<<<<<<< HEAD
-    private final SimpleBroadcastReceiver mShutdownReceiver;
-    private final DisplaysWithDecorationsRepositoryCompat mDisplaysWithDecorationsRepositoryCompat;
-=======
     private final MutableListenableStream<TaskbarUIController> mPrimaryDisplayUiControllerStream =
             new MutableListenableStream<>();
->>>>>>> aosp/android17-release
 
     // The source for this provider is set when Launcher is available
     // We use 'non-destroyable' version here so the original provider won't be destroyed
@@ -316,20 +301,6 @@ public class TaskbarManagerImpl {
         mActivityManagerWrapper = activityManagerWrapper;
         mDesktopState = desktopState;
 
-<<<<<<< HEAD
-        SettingsCache.INSTANCE.get(mPrimaryWindowContext)
-                .register(USER_SETUP_COMPLETE_URI, mOnSettingsChangeListener);
-        SettingsCache.INSTANCE.get(mPrimaryWindowContext)
-                .register(NAV_BAR_KIDS_MODE, mOnSettingsChangeListener);
-        if (Utilities.ATLEAST_BAKLAVA_1 && DesktopExperienceFlags.ENABLE_SYS_DECORS_CALLBACKS_VIA_WM.isTrue()
-                && DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()) {
-            displaysWithDecorationsRepositoryCompat
-                    .registerDisplayDecorationListener(this, dispatcher);
-        } else {
-            SystemDecorationChangeObserver.getINSTANCE().get(mPrimaryWindowContext)
-                    .registerDisplayDecorationListener(this);
-            addSystemDecorationForDisplaysAtBoot();
-=======
         // Only initialize this context when the user is truly locked. Thus, check unlock state
         // separately from mUserUnlocked, which starts at false until TIS calls onUserUnlocked().
         // TIS can recreate after the user is unlocked, where it notifies unlock immediately. Also,
@@ -338,7 +309,6 @@ public class TaskbarManagerImpl {
         mUserUnlocked = lockedUserState.isUserUnlocked();
         if (!mUserUnlocked) {
             mBootAppContext = new TaskbarBootAppContext(mBaseContext);
->>>>>>> aosp/android17-release
         }
 
         mResources = displayModelFactory.newModel(dispatcher, this::initPerDisplayResource);
@@ -518,31 +488,6 @@ public class TaskbarManagerImpl {
      * source of truth of taskbar visibility 2) when post boot animation dialog is dismissed
      * (in such case launcher will invoke this API directly).
      */
-<<<<<<< HEAD
-    private void addSystemDecorationForDisplaysAtBoot() {
-        if (mDisplayManager == null) {
-            return;
-        }
-
-        for (Display display : mDisplayManager.getDisplays()) {
-            onDisplayAddSystemDecorations(display.getDisplayId());
-        }
-    }
-
-    public LooperExecutor getPerWindowUiExecutor() {
-        return TASKBAR_UI_THREAD;
-    }
-
-    private void handleDisplayUpdatesForPerceptibleTasks() {
-        // 1. When desktop mode changes, detect eligibility for perceptible tasks.
-        // 2. When no longer eligible for perceptible tasks, turn off and clean up.
-        mSupportsFreeformWindowsManagement = getFreeformWindowsManagementInfo();
-        if (eligibleForPerceptibleTasks()) {
-            if (mTaskStackListener == null) {
-                mTaskStackListener = new PerceptibleTaskListener();
-                TaskStackChangeListeners.getInstance()
-                        .registerTaskStackListener(mTaskStackListener);
-=======
     public void updateTaskbarsVisibility() {
         mPrimaryResource.debugMsg("updateTaskbarsVisibility");
         mResources.forEach(resource -> {
@@ -550,7 +495,6 @@ public class TaskbarManagerImpl {
             if (taskbar != null) {
                 resource.getRootLayout().setVisibility(
                         getTaskbarVisibility(taskbar.isUserSetupComplete()));
->>>>>>> aosp/android17-release
             }
         });
     }
@@ -1051,68 +995,7 @@ public class TaskbarManagerImpl {
         }
     }
 
-<<<<<<< HEAD
-    /**
-     * Called when the manager is no longer needed
-     */
-    public void destroy() {
-        debugPrimaryTaskbar("TaskbarManager#destroy()");
-        mRecentsViewContainer = null;
-        debugPrimaryTaskbar("destroy: removing activity callbacks");
-        DesktopVisibilityController.INSTANCE.get(
-                mPrimaryWindowContext).unregisterTaskbarDesktopModeListener(
-                mTaskbarDesktopModeListener);
-        removeActivityCallbacksAndListeners();
-        destroySharedStateForAllDisplays();
-        if (mGrowthBroadcastReceiver != null) {
-            mGrowthBroadcastReceiver.unregisterReceiverSafely();
-        }
-
-        removeRecreationListener(mPrimaryDisplayId);
-
-        if (LawnchairApp.isRecentsEnabled()) {
-            SettingsCache.INSTANCE.get(mPrimaryWindowContext)
-                .unregister(USER_SETUP_COMPLETE_URI, mOnSettingsChangeListener);
-            SettingsCache.INSTANCE.get(mPrimaryWindowContext)
-                .unregister(NAV_BAR_KIDS_MODE, mOnSettingsChangeListener);
-        }
-        // Lawnchair-TODO: DesktopExperienceFlags.ENABLE_SYS_DECORS_CALLBACKS_VIA_WM.isTrue()
-        //                && DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()
-        if (false) {
-            mDisplaysWithDecorationsRepositoryCompat.unregisterDisplayDecorationListener(this);
-        } else {
-            SystemDecorationChangeObserver.getINSTANCE().get(mPrimaryWindowContext)
-                    .unregisterDisplayDecorationListener(this);
-        }
-        debugPrimaryTaskbar("destroy: unregistering component callbacks");
-        removeAndUnregisterComponentCallbacks(mPrimaryDisplayId);
-        mShutdownReceiver.unregisterReceiverSafely();
-        if (mTaskStackListener != null) {
-            mTaskStackListener.unregisterListener();
-        }
-
-        debugPrimaryTaskbar("destroy: destroying all taskbars!");
-        removeWindowContextFromMap(mPrimaryDisplayId);
-        destroyAllTaskbars();
-        debugPrimaryTaskbar("destroy: finished!");
-    }
-
-    private boolean eligibleForPerceptibleTasks() {
-        // Perceptible tasks feature (oom boosting) is eligible for android PC devices, and
-        // other android devices that supports free form windows
-        //
-        // - isAndroidPC is set per device (in this case, desktop devices)
-        // - supportsFreeformWindowsManagement is dynamic, and is to be used for the use-case where
-        // user plugs in their device to external displays
-        // Lawnchair-TODO: AM Flags, perceptibleTasks
-        //return Flags.perceptibleTasks()
-        //        && (mIsAndroidPC || mSupportsFreeformWindowsManagement);
-        return false;
-    }
-
-=======
     @AnyThread
->>>>>>> aosp/android17-release
     public @Nullable TaskbarActivityContext getCurrentActivityContext() {
         return getTaskbarForDisplay(mPrimaryDisplayId);
     }
@@ -1268,15 +1151,9 @@ public class TaskbarManagerImpl {
     }
 
     private boolean isExternalDisplay(int displayId) {
-<<<<<<< HEAD
         // LC-Ignored: Intentional, all Android desktop flags are disabled
-        //DesktopExperienceFlags.ENABLE_TASKBAR_CONNECTED_DISPLAYS.isTrue()
-        return false && (
-                mPrimaryDisplayId != displayId);
-=======
-        return DesktopExperienceFlags.ENABLE_TASKBAR_CONNECTED_DISPLAYS.isTrue()
-                && (mPrimaryDisplayId != displayId);
->>>>>>> aosp/android17-release
+        // (DesktopExperienceFlags.ENABLE_TASKBAR_CONNECTED_DISPLAYS)
+        return false && (mPrimaryDisplayId != displayId);
     }
 
     private int getFocusedDisplayId() {

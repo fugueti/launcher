@@ -79,24 +79,20 @@ data class AllAppsProfile(
             inv: InvariantDeviceProfile,
             metric: DisplayMetrics,
             typeIndex: Int,
-<<<<<<< HEAD
-            scale: Float,
-            iconSizePx: Int,
-            iconDrawablePaddingOriginalPx: Int,
-            cellHeightMultiplier: Float = 1f,
-=======
             res: Resources,
             context: Context,
             allAppsTopPadding: Int,
             workspaceProfile: WorkspaceProfile,
             deviceProperties: DeviceProperties,
             displayOptionSpec: DisplayOptionSpec,
->>>>>>> aosp/android17-release
+            // Lawnchair: drawer row height preference
+            cellHeightMultiplier: Float = 1f,
         ): AllAppsProfile {
             val allAppsBorderSpacePx =
                 calculateAllAppsBorderSpacePx(inv, metric, typeIndex, workspaceProfile.scale)
             var allAppsCellHeightPx =
-                (pxFromDp(inv.allAppsCellSize[typeIndex].y, metric, cellHeightMultiplier) + allAppsBorderSpacePx.y)
+                (pxFromDp(inv.allAppsCellSize[typeIndex].y, metric, cellHeightMultiplier) +
+                    allAppsBorderSpacePx.y)
             var allAppsIconSizePx = pxFromDp(inv.allAppsIconSize[typeIndex], metric)
             val allAppsIconTextSizePx =
                 pxFromSp(inv.allAppsIconTextSize[typeIndex], metric).toFloat()
@@ -219,15 +215,13 @@ data class AllAppsProfile(
             metric: DisplayMetrics,
             typeIndex: Int,
             scale: Float,
-<<<<<<< HEAD
-            cellHeightMultiplier: Float = 1f,
-=======
             deviceProperties: DeviceProperties,
             displayOptionSpec: DisplayOptionSpec,
             context: Context,
             allAppsTopPadding: Int,
             workspaceProfile: WorkspaceProfile,
->>>>>>> aosp/android17-release
+            // Lawnchair: drawer row height preference
+            cellHeightMultiplier: Float = 1f,
         ): AllAppsProfile {
             val allAppsBorderSpacePx = calculateAllAppsBorderSpacePx(inv, metric, typeIndex, scale)
             val allAppsIconSizePx = max(1, pxFromDp(inv.allAppsIconSize[typeIndex], metric, scale))
@@ -248,10 +242,13 @@ data class AllAppsProfile(
 
             return AllAppsProfile(
                 borderSpacePx = allAppsBorderSpacePx,
+                // AllApps cells don't have real space between cells,
+                // so we add the border space to the cell height
                 cellHeightPx =
                     (pxFromDp(inv.allAppsCellSize.get(typeIndex).y, metric, cellHeightMultiplier) +
                         allAppsBorderSpacePx.y),
                 iconSizePx = allAppsIconSizePx,
+                // We need the double conversion to keep the original behaviour
                 iconTextSizePx =
                     (pxFromSp(inv.allAppsIconTextSize[typeIndex], metric).toFloat() * scale)
                         .toInt()
@@ -413,18 +410,13 @@ data class AllAppsProfile(
             metric: DisplayMetrics,
             isScalableGrid: Boolean,
             typeIndex: Int,
-<<<<<<< HEAD
-            scale: Float,
-            iconSizePx: Int,
-            iconDrawablePaddingOriginalPx: Int,
-            cellHeightMultiplier: Float = 1f,
-=======
             workspaceProfile: WorkspaceProfile,
             deviceProperties: DeviceProperties,
             context: Context,
             allAppsTopPadding: Int,
             displayOptionSpec: DisplayOptionSpec,
->>>>>>> aosp/android17-release
+            // Lawnchair: drawer row height preference
+            cellHeightMultiplier: Float = 1f,
         ) =
             when {
                 isScalableGrid -> {
@@ -432,28 +424,18 @@ data class AllAppsProfile(
                         inv = inv,
                         metric = metric,
                         typeIndex = typeIndex,
-<<<<<<< HEAD
-                        scale = scale,
-                        iconSizePx = iconSizePx,
-                        iconDrawablePaddingOriginalPx = iconDrawablePaddingOriginalPx,
-                        cellHeightMultiplier = cellHeightMultiplier,
-=======
                         res = res,
                         context = context,
                         allAppsTopPadding = allAppsTopPadding,
                         workspaceProfile = workspaceProfile,
                         deviceProperties = deviceProperties,
                         displayOptionSpec = displayOptionSpec,
->>>>>>> aosp/android17-release
+                        cellHeightMultiplier = cellHeightMultiplier,
                     )
                 }
 
                 else -> {
                     createAllAppsProfileNonScalable(
-<<<<<<< HEAD
-                        res, inv, metric, typeIndex, scale,
-                        cellHeightMultiplier = cellHeightMultiplier,
-=======
                         res = res,
                         inv = inv,
                         metric = metric,
@@ -464,7 +446,7 @@ data class AllAppsProfile(
                         allAppsTopPadding = allAppsTopPadding,
                         workspaceProfile = workspaceProfile,
                         displayOptionSpec = displayOptionSpec,
->>>>>>> aosp/android17-release
+                        cellHeightMultiplier = cellHeightMultiplier,
                     )
                 }
             }

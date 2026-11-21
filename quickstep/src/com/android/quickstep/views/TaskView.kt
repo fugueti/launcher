@@ -29,7 +29,6 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.FloatProperty
@@ -42,8 +41,6 @@ import android.view.ViewStub
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.annotation.IntDef
-import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.core.animation.doOnCancel
 import androidx.core.view.isGone
@@ -715,7 +712,6 @@ constructor(
         getTaskIcons().forEach { (icon, _) -> icon.layoutDirection = deviceLayoutDirection }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         updatePivots()
@@ -873,7 +869,8 @@ constructor(
         }
     }
 
-    override fun onAttachedToWindow() {
+    override fun onAttachedToWindow() =
+        traceSection("TaskView.onAttachedToWindow") {
             super.onAttachedToWindow()
             // TaskView binds the ViewModel during onBind, and unbinds it in onRecycle. So it
             // should start listening here.
@@ -884,7 +881,8 @@ constructor(
                 }
         }
 
-    private fun updateTaskViewState(state: TaskTileUiState) {
+    private fun updateTaskViewState(state: TaskTileUiState) =
+        traceSection("TaskView.updateTaskViewState") {
             sysUiStatusNavFlags = state.sysUiStatusNavFlags
 
             // Updating containers
@@ -991,9 +989,6 @@ constructor(
         container: TaskContainer,
         width: Int,
         height: Int,
-<<<<<<< HEAD
-    ): ThumbnailPosition {
-=======
     ): ThumbnailPosition =
         traceSection("TaskView.updateThumbnailMatrix") {
             // TODO: b/428764855: Refactor `TaskViewModel` to include Split data.
@@ -1005,7 +1000,6 @@ constructor(
                         SplitScreenConstants.SPLIT_POSITION_BOTTOM_OR_RIGHT
                     else -> SplitScreenConstants.SPLIT_POSITION_UNDEFINED
                 }
->>>>>>> aosp/android17-release
             val thumbnailPosition =
                 viewModel.getThumbnailPosition(
                     container.thumbnailData,
@@ -1020,7 +1014,8 @@ constructor(
             return thumbnailPosition
         }
 
-    override fun onDetachedFromWindow() {
+    override fun onDetachedFromWindow() =
+        traceSection("TaskView.onDetachedFromWindow") {
             super.onDetachedFromWindow()
             cancelJobs()
         }
@@ -1050,19 +1045,12 @@ constructor(
             }
         }
 
-<<<<<<< HEAD
-            coroutineScope.launch(dispatcherProvider.lightweightBackground) {
-                    coroutineJobsToCancel.forEach {
-                        it.cancel("TaskView detaching from window")
-                    }
-                }
-=======
         coroutineScope.launch(lightweightBackgroundDispatcher) {
             traceSection("TaskView.onDetachedFromWindow.cancellingJobs") {
                 coroutineJobsToCancel.forEach { it.cancel("TaskView detaching from window") }
->>>>>>> aosp/android17-release
             }
         }
+    }
 
     /** Updates this task view to the given {@param task}. */
     open fun bind(
@@ -1086,12 +1074,6 @@ constructor(
         onBind(orientedState, taskOverlayFactory)
     }
 
-<<<<<<< HEAD
-    protected open fun onBind(orientedState: RecentsOrientedState) {
-            if (enableRefactorTaskThumbnail()) {
-                    Log.d(TAG, "onBind $context ${orientedState.containerInterface}")
-                    viewModel!!.bind(*taskIds)
-=======
     protected open fun onBind(
         orientedState: RecentsOrientedState,
         taskOverlayFactory: TaskOverlayFactory,
@@ -1103,7 +1085,6 @@ constructor(
             traceSection("TaskView.onBind.bindViewModel") {
                 Log.d(TAG, "onBind $context ${orientedState.containerInterface}")
                 viewModel.bind(type, *taskIds)
->>>>>>> aosp/android17-release
             }
 
             taskContainers.forEach { container ->
@@ -1143,22 +1124,11 @@ constructor(
         @IdRes digitalWellbeingBannerId: Int,
         @StagePosition stagePosition: Int,
         taskOverlayFactory: TaskOverlayFactory,
-<<<<<<< HEAD
-    ): TaskContainer {
-            val iconView = findViewById<View>(iconViewId) as TaskViewIcon
-            val taskContentView =
-                if (enableRefactorTaskContentView()) findViewById<View>(taskContentViewId)
-                else findViewById(thumbnailViewId)
-            val snapshotView =
-                if (enableRefactorTaskContentView()) taskContentView.findViewById(thumbnailViewId)
-                else taskContentView
-=======
     ): TaskContainer =
         traceSection("TaskView.createTaskContainer") {
             val iconView = findViewById<IconAppChipView>(iconViewId)
             val taskContentView = findViewById<TaskContentView>(taskContentViewId)
             val snapshotView = taskContentView.findViewById<TaskThumbnailView>(thumbnailViewId)!!
->>>>>>> aosp/android17-release
 
             val digitalWellBeingToast: DigitalWellBeingToast? =
                 if (enableRefactorDigitalWellbeingToast()) {
@@ -1190,7 +1160,8 @@ constructor(
     /** Check if given `taskId` is tracked in this view */
     fun containsTaskId(taskId: Int) = getTaskContainerById(taskId) != null
 
-    open fun setOrientationState(orientationState: RecentsOrientedState) {
+    open fun setOrientationState(orientationState: RecentsOrientedState) =
+        traceSection("TaskView.setOrientationState") {
             this.orientedState = orientationState
             getTaskIcons().forEach { (icon, _) -> icon.setIconOrientation(orientationState) }
             setThumbnailOrientation(orientationState)
@@ -1276,87 +1247,6 @@ constructor(
         }
     }
 
-<<<<<<< HEAD
-    /**
-     * See [TaskDataChanges]
-     *
-     * @param visible If this task view will be visible to the user in overview or hidden
-     */
-    fun onTaskListVisibilityChanged(visible: Boolean) {
-        onTaskListVisibilityChanged(visible, FLAG_UPDATE_ALL)
-    }
-
-    /**
-     * See [TaskDataChanges]
-     *
-     * @param visible If this task view will be visible to the user in overview or hidden
-     */
-    open fun onTaskListVisibilityChanged(visible: Boolean, @TaskDataChanges changes: Int) {
-        cancelPendingLoadTasks()
-        val recentsModel = RecentsModel.INSTANCE.get(context)
-        // These calls are no-ops if the data is already loaded, try and load the high
-        // resolution thumbnail if the state permits
-        if (needsUpdate(changes, FLAG_UPDATE_THUMBNAIL) && !enableRefactorTaskThumbnail()) {
-            taskContainers.forEach {
-                if (visible) {
-                    recentsModel.thumbnailCache
-                        .getThumbnailInBackground(it.task) { thumbnailData ->
-                            it.task.thumbnail = thumbnailData
-                            it.thumbnailViewDeprecated.setThumbnail(it.task, thumbnailData)
-                        }
-                        ?.also { request -> pendingThumbnailLoadRequests.add(request) }
-                } else {
-                    it.thumbnailViewDeprecated.setThumbnail(null, null)
-                    // Reset the task thumbnail reference as well (it will be fetched from the
-                    // cache or reloaded next time we need it)
-                    it.task.thumbnail = null
-                }
-            }
-        }
-        if (
-            needsUpdate(changes, FLAG_UPDATE_ICON) &&
-                !(enableOverviewIconMenu() && enableRefactorTaskThumbnail())
-        ) {
-            taskContainers.forEach {
-                if (visible) {
-                    recentsModel.iconCache
-                        .getIconInBackground(it.task) { icon, contentDescription, title ->
-                            it.task.icon = icon
-                            it.task.titleDescription = contentDescription
-                            it.task.title = title
-                            onIconLoaded(it)
-                        }
-                        ?.also { request -> pendingIconLoadRequests.add(request) }
-                } else {
-                    onIconUnloaded(it)
-                }
-            }
-        }
-        if (needsUpdate(changes, FLAG_UPDATE_CORNER_RADIUS)) {
-            thumbnailFullscreenParams.updateCornerRadius(context)
-        }
-    }
-
-    protected open fun needsUpdate(@TaskDataChanges dataChange: Int, @TaskDataChanges flag: Int) =
-        (dataChange and flag) == flag
-
-    protected open fun cancelPendingLoadTasks() {
-            pendingThumbnailLoadRequests.forEach { it.cancel() }
-            pendingThumbnailLoadRequests.clear()
-            pendingIconLoadRequests.forEach { it.cancel() }
-            pendingIconLoadRequests.clear()
-        }
-
-    protected open fun setIconState(container: TaskContainer, state: TaskData?) {
-            if (enableOverviewIconMenu()) {
-                if (state is TaskData.Data) {
-                    setIcon(container.iconView, state.icon)
-                    container.iconView.setText(state.title)
-                } else {
-                    setIcon(container.iconView, null)
-                    container.iconView.setText(null)
-                }
-=======
     protected open fun setIconState(container: TaskContainer, state: TaskData?) =
         traceSection("TaskView.setIconState") {
             if (state is TaskData.Data) {
@@ -1365,7 +1255,6 @@ constructor(
             } else {
                 setIcon(container.iconView, null)
                 container.iconView.setText(null)
->>>>>>> aosp/android17-release
             }
         }
 
@@ -1652,7 +1541,11 @@ constructor(
             )
             if (
                 !ActivityManagerWrapper.getInstance()
-                    .startActivityFromRecents(firstTaskContainer.task.key, if (Utilities.ATLEAST_Q) opts else null)
+                    .startActivityFromRecents(
+                        firstTaskContainer.task.key,
+                        // Lawnchair: launch options are rejected before Android 10
+                        if (Utilities.ATLEAST_Q) opts else null,
+                    )
             ) {
                 Log.d(TAG, "launchWithoutAnimation - task launch failed")
                 // If the call to start activity failed, then post the result immediately,

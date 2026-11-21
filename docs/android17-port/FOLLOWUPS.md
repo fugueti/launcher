@@ -36,3 +36,12 @@ Check these when the tree compiles.
 - `NotificationListener` lost its static listener API upstream; Lawnchair hooks were reapplied and `getInstanceIfConnected()` kept (static connected instance). Check Lawnchair callers of the removed `addNotificationsChangedListener`.
 - `QuickstepKeyGestureEventsManager` implements hidden Android 16 APIs; `AllAppsActionManager` now uses it lazily (Android 16+ only). `TISBinder` still injects it directly: check it is only created when Recents is enabled.
 - Lawnchair removed `testing/TestInformationHandler`; AOSP 17 code calls `TestInformationHandler.trackUiSurface(...)` (dropped in BaseActivity, check other callers).
+- `QuickstepTransitionManager`: rebuilt from AOSP 17 with Lawnchair's compat calls
+  (`LawnchairQuickstepCompat` remote transitions / `makeRemoteAnimation`, try/catch around
+  `registerRemoteAnimations`, `mCustomAnimation` only on 16+). AOSP moved `SpringAnimRunner` and
+  `RemoteAnimationCoordinateTransfer` to `launcher3/remoteanimations/` (Kotlin): update
+  `LawnchairFloatingSurfaceView`. Rotation now comes from `AnimatedSurface` (wmshell shared):
+  re-add Lawnchair's `NoSuchFieldError` guard for `RemoteAnimationTarget.rotationChange` there
+  when wmshell is updated. Check `getRemoteTransition` accepts an `IRemoteTransition`.
+- `AllAppsProfile.createAllAppsProfile(..., cellHeightMultiplier)`: pass Lawnchair's drawer row height from `DeviceProfile`.
+- `lawnchair/src/com/android/app/tracing/TracingShim.kt`: stand-in for the non-vendored tracinglib (`traceSection`, `TraceUtils.trace`, `TraceStateLogger`); replace with the real lib if it gets vendored.
