@@ -96,11 +96,7 @@ interface ShapeDelegate {
         override fun addToPath(path: PathWrapper, offsetX: Float, offsetY: Float, radius: Float) {
             addToPath(path.path, offsetX, offsetY, radius)
             path.setBounds(offsetX, offsetY, offsetX + radius * 2, offsetY + radius * 2)
-<<<<<<< HEAD
-            path.setCornerRadius(radius)
-=======
             path.cornerRadius = radius
->>>>>>> aosp/android17-release
         }
     }
 
@@ -141,11 +137,7 @@ interface ShapeDelegate {
             val cy = radius + offsetY
             val cr = radius * radiusRatio
             path.setBounds(cx - radius, cy - radius, cx + radius, cy + radius)
-<<<<<<< HEAD
-            path.setCornerRadius(cr)
-=======
             path.cornerRadius = cr
->>>>>>> aosp/android17-release
         }
 
         override fun <T> createRevealAnimator(
@@ -164,11 +156,7 @@ interface ShapeDelegate {
                 val bottom = (1 - progress) * startRect.bottom + progress * endRect.bottom
                 path.path.addRoundRect(left, top, right, bottom, radius, radius, Path.Direction.CW)
                 path.setBounds(left, top, right, bottom)
-<<<<<<< HEAD
-                path.setCornerRadius(radius)
-=======
                 path.cornerRadius = radius
->>>>>>> aosp/android17-release
             }
             return if (useFolderSpringAnimation(target)) {
                 ClipSpringAnimBuilder(target, pathProvider).toAnim(isReversed)
@@ -266,13 +254,7 @@ interface ShapeDelegate {
                 path.path.set(morph.toPath(progress, path.path))
                 path.estimateBoundsFromPath()
             }
-<<<<<<< HEAD
-            val shouldUseSpringAnimation =
-                Flags.enableLauncherIconShapes() && Flags.enableExpressiveFolderExpansion()
-            return if (shouldUseSpringAnimation) {
-=======
             return if (useFolderSpringAnimation(target)) {
->>>>>>> aosp/android17-release
                 ClipSpringAnimBuilder(target, pathProvider).toAnim(isReversed)
             } else {
                 ClipAnimBuilder(target, pathProvider).toAnim(isReversed)
@@ -384,7 +366,6 @@ interface ShapeDelegate {
         private const val SPRING_DAMPING_SHAPE_POSITION = 0.8f
 
         fun pickBestShape(shapeStr: String): ShapeDelegate {
-<<<<<<< HEAD
             // LC-Note: config_icon_mask is a framework resource that a ROM overlay can replace
             // with an unparsable value (seen in the wild with a line break inside a coordinate).
             // Fall back to the platform default mask instead of failing launcher startup.
@@ -397,31 +378,14 @@ interface ShapeDelegate {
                     } catch (e: Exception) {
                         Log.e(TAG, "Error parsing icon mask", e)
                         null
-=======
-            val baseShape =
-                if (shapeStr.isNotEmpty()) {
-                    PathParser.createPathFromPathData(shapeStr)
-                } else {
-                    AdaptiveIconDrawable(null, ColorDrawable(Color.BLACK)).let {
-                        it.setBounds(0, 0, DEFAULT_PATH_SIZE_INT, DEFAULT_PATH_SIZE_INT)
-                        it.iconMask
->>>>>>> aosp/android17-release
                     }
                 }
             val baseShape =
-                parsedPath?.apply {
-                    transform(
-                        Matrix().apply {
-                            setScale(
-                                AREA_CALC_SIZE / DEFAULT_PATH_SIZE,
-                                AREA_CALC_SIZE / DEFAULT_PATH_SIZE,
-                            )
-                        }
-                    )
-                } ?: AdaptiveIconDrawable(null, ColorDrawable(Color.BLACK)).let {
-                    it.setBounds(0, 0, AREA_CALC_SIZE, AREA_CALC_SIZE)
-                    it.iconMask
-                }
+                parsedPath
+                    ?: AdaptiveIconDrawable(null, ColorDrawable(Color.BLACK)).let {
+                        it.setBounds(0, 0, DEFAULT_PATH_SIZE_INT, DEFAULT_PATH_SIZE_INT)
+                        it.iconMask
+                    }
             // Ignore a mask that failed to parse, so it is not parsed a second time below.
             return pickBestShape(baseShape, if (parsedPath != null) shapeStr else "")
         }

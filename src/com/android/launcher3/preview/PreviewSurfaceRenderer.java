@@ -49,7 +49,6 @@ import androidx.annotation.UiThread;
 
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherPrefs;
-import com.android.launcher3.Utilities;
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.graphics.GridCustomizationsProxy;
 import com.android.launcher3.preview.PreviewContext.PreviewAppComponent;
@@ -171,14 +170,10 @@ public class PreviewSurfaceRenderer {
                 context.createDisplayContext(display),
                 gridName,
                 widgetHostId,
-<<<<<<< HEAD
-                layoutXml);
-=======
                 layoutXml,
                 mWorkspacePageId,
                 bundle.getBoolean(KEY_WORKSPACE_ITEMS_LABELS_HIDDEN, false)
         );
->>>>>>> aosp/android17-release
 
         mViewRoot = new FrameLayout(mPreviewContext);
         mAppComponent = (PreviewAppComponent) LauncherComponentProvider.get(mPreviewContext);
@@ -278,12 +273,9 @@ public class PreviewSurfaceRenderer {
     private boolean updateColorOverrides(Bundle bundle) {
         Boolean oldDarkMode = mDarkMode;
         SparseIntArray oldColorsOverride = mPreviewColorOverride;
-<<<<<<< HEAD
-=======
         int[] oldSeedColorList = mSeedColorList;
         int oldThemeStyle = mThemeStyle;
 
->>>>>>> aosp/android17-release
         mDarkMode =
                 bundle.containsKey(KEY_DARK_MODE) ? bundle.getBoolean(KEY_DARK_MODE) : null;
 
@@ -301,14 +293,9 @@ public class PreviewSurfaceRenderer {
             mPreviewColorOverride = null;
         }
         return  !Objects.equals(oldDarkMode, mDarkMode)
-<<<<<<< HEAD
-                || mPreviewColorOverride != null
-                || oldColorsOverride != null;
-=======
                 || !Arrays.equals(oldSeedColorList, mSeedColorList)
                 || oldThemeStyle != mThemeStyle
                 || mPreviewColorOverride != oldColorsOverride;
->>>>>>> aosp/android17-release
     }
 
     /***
@@ -349,16 +336,7 @@ public class PreviewSurfaceRenderer {
             mColorsOverride = localColorExtractor
                     .applyColorsOverride(context, mWallpaperColors);
         } else {
-<<<<<<< HEAD
-            WallpaperColors wallpaperColors = Utilities.ATLEAST_O_MR1
-                    ? WallpaperManager.getInstance(context).getWallpaperColors(FLAG_SYSTEM)
-                    : null;
-            wallpaperColorResources = wallpaperColors == null ? null
-                    : LocalColorExtractor.newInstance(context)
-                            .generateColorsOverride(wallpaperColors);
-=======
             mColorsOverride = null;
->>>>>>> aosp/android17-release
         }
 
         final LauncherPreviewRenderer oldRenderer = mCurrentRenderer;
@@ -384,23 +362,6 @@ public class PreviewSurfaceRenderer {
         view.setScaleX(scale);
         view.setScaleY(scale);
 
-<<<<<<< HEAD
-        if (!Flags.newCustomizationPickerUi()) {
-            view.setAlpha(mSkipAnimations ? 1 : 0);
-            view.animate().alpha(1)
-                    .setInterpolator(new AccelerateDecelerateInterpolator())
-                    .setDuration(FADE_IN_ANIMATION_DURATION)
-                    .start();
-            mSurfaceControlViewHost.setView(
-                    view,
-                    view.getMeasuredWidth(),
-                    view.getMeasuredHeight()
-            );
-            return;
-        }
-
-=======
->>>>>>> aosp/android17-release
         LayoutParams lp = new LayoutParams(view.getMeasuredWidth(), view.getMeasuredHeight());
         lp.gravity = Gravity.CENTER;
         view.setLayoutParams(lp);
