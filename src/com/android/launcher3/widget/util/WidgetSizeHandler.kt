@@ -58,19 +58,6 @@ constructor(
         spanY: Int,
         executor: Executor = Executors.UI_HELPER_EXECUTOR,
     ) {
-<<<<<<< HEAD
-        Executors.UI_HELPER_EXECUTOR.execute {
-            try {
-                val widgetManager = AppWidgetManager.getInstance(context)
-                val sizeOptions = WidgetSizes.getWidgetSizeOptions(context, info.provider, spanX, spanY) ?: return@execute
-                val currentOptions = widgetManager.getAppWidgetOptions(widgetId)
-                if (sizeOptions.getWidgetSizeList() != currentOptions?.getWidgetSizeList()) {
-                    widgetManager.updateAppWidgetOptions(widgetId, sizeOptions)
-                }
-            } catch (e: Exception) {
-                // Ignore widget options update errors (e.g. invalid or stale widget id)
-            }
-=======
         updateSizeRangesAsyncInternal(widgetId, executor) { getWidgetSizeOptions(spanX, spanY) }
     }
 
@@ -98,21 +85,24 @@ constructor(
     ) {
         if (widgetId <= 0) return
         executor.execute {
-            val widgetManager = AppWidgetManager.getInstance(context)
-            if (widgetManager.getAppWidgetInfo(widgetId) == null) {
-                return@execute
+            try {
+                val widgetManager = AppWidgetManager.getInstance(context)
+                if (widgetManager.getAppWidgetInfo(widgetId) == null) {
+                    return@execute
+                }
+                val sizeOptions = widgetSizeOptionsProvider.invoke()
+                val widgetOptions = widgetManager.getAppWidgetOptions(widgetId)
+                if (
+                    (sizeOptions.getWidgetSizeList() != widgetOptions.getWidgetSizeList()) ||
+                        (sizeOptions.getBoolean(MONO_THEME_ENABLED) !=
+                            widgetOptions.getBoolean(MONO_THEME_ENABLED)) ||
+                        (sizeOptions.getBoolean(USE_DISABLED_PREVIEW_WHEN_MASKED) !=
+                            widgetOptions.getBoolean(USE_DISABLED_PREVIEW_WHEN_MASKED))
+                )
+                    widgetManager.updateAppWidgetOptions(widgetId, sizeOptions)
+            } catch (e: Exception) {
+                // Lawnchair: ignore widget options update errors (e.g. invalid or stale widget id)
             }
-            val sizeOptions = widgetSizeOptionsProvider.invoke()
-            val widgetOptions = widgetManager.getAppWidgetOptions(widgetId)
-            if (
-                (sizeOptions.getWidgetSizeList() != widgetOptions.getWidgetSizeList()) ||
-                    (sizeOptions.getBoolean(MONO_THEME_ENABLED) !=
-                        widgetOptions.getBoolean(MONO_THEME_ENABLED)) ||
-                    (sizeOptions.getBoolean(USE_DISABLED_PREVIEW_WHEN_MASKED) !=
-                        widgetOptions.getBoolean(USE_DISABLED_PREVIEW_WHEN_MASKED))
-            )
-                widgetManager.updateAppWidgetOptions(widgetId, sizeOptions)
->>>>>>> aosp/android17-release
         }
     }
 

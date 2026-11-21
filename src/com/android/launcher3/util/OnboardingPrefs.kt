@@ -86,11 +86,8 @@ object OnboardingPrefs {
 
     @JvmField val TASKBAR_SEARCH_EDU_SEEN = backedUpItem("launcher.taskbar_search_edu_seen", false)
 
-<<<<<<< HEAD
     @JvmField
     val EDIT_MODE_PAGE_STRIP_TIP_SEEN =
         backedUpItem("launcher.edit_mode_page_strip_tip_seen", false)
-=======
     @JvmField val TASKBAR_SEEN_EDU_FLAGS = backedUpItem("launcher.taskbar_seen_edu_flags", 0)
->>>>>>> aosp/android17-release
 }

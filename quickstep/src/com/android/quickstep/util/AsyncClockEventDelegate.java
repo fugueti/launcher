@@ -63,11 +63,7 @@ import javax.inject.Inject;
  * is only loaded when {@link #asClockEventDelegate()} is called from API 35+ code paths.
  */
 @LauncherAppSingleton
-<<<<<<< HEAD
-public class AsyncClockEventDelegate implements OnChangeListener, SafeCloseable {
-=======
-public class AsyncClockEventDelegate extends ClockEventDelegate implements SafeCloseable {
->>>>>>> aosp/android17-release
+public class AsyncClockEventDelegate implements SafeCloseable {
 
     public static final DaggerSingletonObject<AsyncClockEventDelegate> INSTANCE =
             new DaggerSingletonObject<>(QuickstepBaseAppComponent::getAsyncClockEventDelegate);

@@ -95,19 +95,12 @@ constructor(
         val attachListener =
             object : OnAttachStateChangeListener {
 
-<<<<<<< HEAD
                 override fun onViewAttachedToWindow(_view: View) {
                     // Lawnchair: Leave the settings window alone!!
                     view.setViewTreeLifecycleOwner(this@BaseContext)
                     view.setViewTreeSavedStateRegistryOwner(this@BaseContext)
-                    lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-=======
-                override fun onViewAttachedToWindow(view: View) {
-                    view.rootView.setViewTreeLifecycleOwner(this@BaseContext)
-                    view.rootView.setViewTreeSavedStateRegistryOwner(this@BaseContext)
                     lifecycleRegistryWrapper.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
                     updateState()
->>>>>>> aosp/android17-release
 
                     val treeObserver = _view.viewTreeObserver
 

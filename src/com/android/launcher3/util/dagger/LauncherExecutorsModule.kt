@@ -34,19 +34,11 @@ import com.google.common.util.concurrent.MoreExecutors
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-<<<<<<< HEAD
-
-/**
- * Module that provides the executors for Launcher3 as per the [ExecutorsModule]
- * interface.
- */
-=======
 import java.util.concurrent.Executor
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 
 /** Module that provides the executors for Launcher3 as per the [ExecutorsModule] interface. */
->>>>>>> aosp/android17-release
 @Module
 abstract class LauncherExecutorsModule {
 

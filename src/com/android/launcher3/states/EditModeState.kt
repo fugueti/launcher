@@ -33,8 +33,8 @@ class EditModeState(id: Int) : LauncherState(id, StatsLogManager.LAUNCHER_STATE_
                 FLAG_WORKSPACE_INACCESSIBLE or
                 FLAG_DISABLE_RESTORE_EXCEPT_UI_MODE_CHANGE or
                 FLAG_WORKSPACE_ICONS_CAN_BE_DRAGGED or
-<<<<<<< HEAD
-                FLAG_WORKSPACE_HAS_BACKGROUNDS)
+                FLAG_WORKSPACE_HAS_BACKGROUNDS or
+                FLAG_WORKSPACE_ICONS_BEING_DRAGGED)
 
         private fun getEditModePageStripHeightPx(launcher: Launcher): Int =
             launcher.resources.getDimensionPixelSize(R.dimen.edit_mode_page_strip_height)
@@ -94,10 +94,6 @@ class EditModeState(id: Int) : LauncherState(id, StatsLogManager.LAUNCHER_STATE_
             val actualCellTop = myCenter - cellTopFromCenter * scale
             return ScaleAndTranslation(scale, 0f, top - actualCellTop)
         }
-=======
-                FLAG_WORKSPACE_HAS_BACKGROUNDS or
-                FLAG_WORKSPACE_ICONS_BEING_DRAGGED)
->>>>>>> aosp/android17-release
     }
 
     override fun getTransitionDuration(context: ActivityContext, isToState: Boolean) = 150

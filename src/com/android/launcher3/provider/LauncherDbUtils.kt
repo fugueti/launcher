@@ -248,7 +248,6 @@ object LauncherDbUtils {
         }
 
         // Drop the unused columns
-<<<<<<< HEAD
         try {
             db.run {
                 execSQL("ALTER TABLE ${LauncherSettings.Favorites.TABLE_NAME} DROP COLUMN iconPackage;")
@@ -260,10 +259,6 @@ object LauncherDbUtils {
             // Compat users upgrade from Lawnchair 13, see https://github.com/LawnchairLauncher/lawnchair/issues/3881.
             removeColumn(db, TABLE_NAME, "iconPackage")
             removeColumn(db, TABLE_NAME, "iconResource")
-=======
-        db.run {
-            execSQL("ALTER TABLE $TABLE_NAME DROP COLUMN iconPackage;")
-            execSQL("ALTER TABLE $TABLE_NAME DROP COLUMN iconResource;")
         }
     }
 
@@ -320,7 +315,6 @@ object LauncherDbUtils {
             FileLog.e(TAG, "updateBackupIcons: Failed to update backup icons in Launcher db.", e)
         } finally {
             loaderCursor.close()
->>>>>>> aosp/android17-release
         }
     }
 

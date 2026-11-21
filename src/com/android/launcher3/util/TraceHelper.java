@@ -81,18 +81,12 @@ public class TraceHelper {
     @SuppressWarnings("NewApi")
     @SuppressLint("NewApi")
     public SafeCloseable allowIpcs(String rpcName) {
-<<<<<<< HEAD
-        int cookie = Random.Default.nextInt();
+        int cookie = RANDOM.nextInt();
         if (Utilities.ATLEAST_Q) {
             Trace.beginAsyncSection(rpcName, cookie);
             return () -> Trace.endAsyncSection(rpcName, cookie);
         }
         return () -> {};
-=======
-        int cookie = RANDOM.nextInt();
-        Trace.beginAsyncSection(rpcName, cookie);
-        return () -> Trace.endAsyncSection(rpcName, cookie);
->>>>>>> aosp/android17-release
     }
 
     /**

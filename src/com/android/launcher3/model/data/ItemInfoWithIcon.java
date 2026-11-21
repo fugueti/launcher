@@ -364,7 +364,6 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
     }
 
     public FastBitmapDrawable newIcon(Context context, @DrawableCreationFlags int creationFlags) {
-<<<<<<< HEAD
         var shouldTheme = PreferenceManager.getInstance(context).getThemedIcons().get();
         return newIcon(context, creationFlags, shouldTheme);
     }
@@ -382,16 +381,15 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
     public FastBitmapDrawable newIcon(Context context, @DrawableCreationFlags int creationFlags,
             boolean shouldTheme) {
         if (!shouldTheme) {
-=======
         ThemeManager themeManager = ThemeManager.INSTANCE.get(context);
         IconShape iconShape = null;
         if (HomeScreenFilesUtilsKt.isFileSystemFileItem(this)) {
             iconShape = themeManager.getFileShapeData();
-        } else if (supportsCustomShapes(creationFlags)) {
+        } else if (Flags.enableLauncherIconShapes() && bitmap.isFullBleed()) {
+            // Lawnchair: apply the icon shape preference whether or not icons are themed
             iconShape = themeManager.getIconShapeData().getValue();
         }
-        if (!themeManager.isIconThemeEnabled()) {
->>>>>>> aosp/android17-release
+        if (!shouldTheme) {
             creationFlags &= ~FLAG_THEMED;
         }
         FastBitmapDrawable drawable = bitmap.newIcon(context, creationFlags, iconShape);

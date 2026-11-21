@@ -112,18 +112,13 @@ public class SessionCommitReceiver extends BroadcastReceiver {
      * - Home Settings preference to add App Icons on Home Screen is set as disabled
      */
     public static boolean isEnabled(Context context, UserHandle user) {
-<<<<<<< HEAD
-        if (Flags.privateSpaceRestrictItemDrag() 
-            && user != null) {
+        if (user != null) {
+            // Lawnchair: only keep private space apps off the home screen when it is locked
             PreferenceManager2 prefs2 = PreferenceManager2.getInstance(context);
             if (PreferenceCacheExtensionsKt.firstCached(prefs2.getLockHomeScreen())
                 && UserCache.getInstance(context).getUserInfo(user).isPrivate()) {
                 return false;
             }
-=======
-        if (user != null && UserCache.getInstance(context).getUserInfo(user).isPrivate()) {
-            return false;
->>>>>>> aosp/android17-release
         }
         return LauncherPrefs.getPrefs(context).getBoolean(ADD_ICON_PREFERENCE_KEY,
                 DefaultsValueProvider.get(context).getAddIconToHome());

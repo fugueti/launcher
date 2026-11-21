@@ -177,15 +177,10 @@ public class DeleteDropTarget extends ButtonDropTarget {
         // Remove the item from launcher and the db, we can ignore the containerInfo in this call
         // because we already remove the drag view from the folder (if the drag originated from
         // a folder) in Folder.beginDrag()
-<<<<<<< HEAD
-        CharSequence announcement = getContext().getString(R.string.item_removed);
-        if (!PreferenceCacheExtensionsKt.firstCached(pref2.getDeckLayout())) {
-            mDropTargetHandler.onAccessibilityDelete(view, item, announcement);
-=======
-        if (canRemove(item)) {
+        // Lawnchair: no accessibility removal in deck layout
+        if (!PreferenceCacheExtensionsKt.firstCached(pref2.getDeckLayout()) && canRemove(item)) {
             mDropTargetHandler.prepareToUndoDelete(item);
             mDropTargetHandler.onDeleteComplete(item, view);
->>>>>>> aosp/android17-release
         }
     }
 }

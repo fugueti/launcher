@@ -65,9 +65,6 @@ public interface WorkspaceLayoutManager {
             Log.d(TAG, "addInScreenFromBind: hotseat inflation with x = " + x
                     + " and y = " + y + " page = " + screenId);
         }
-<<<<<<< HEAD
-        addInScreen(child, info.container, screenId, x, y, info.spanX, info.spanY);
-=======
 
         // b/388022685 adding logs to investigate why tag is sometimes null.
         if (child.getTag() == null) {
@@ -76,7 +73,6 @@ public interface WorkspaceLayoutManager {
         }
 
         addInScreen(child, info.container, presenterPos.screenId, x, y, info.spanX, info.spanY);
->>>>>>> aosp/android17-release
     }
 
     /**

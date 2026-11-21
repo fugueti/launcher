@@ -31,29 +31,8 @@ import javax.inject.Inject;
 /** Extracts the colors we need from the wallpaper at given locations. */
 public class LocalColorExtractor {
 
-<<<<<<< HEAD
-    /** Listener for color changes on a screen location. */
-    public interface Listener {
-        /**
-         * Method called when the colors on a registered location has changed.
-         *
-         * {@code extractedColors} maps the color resources {@code android.R.colors.system_*} to
-         * their value, in a format that can be passed directly to
-         * {@link AppWidgetHostView#setColorResources(SparseIntArray)}.
-         */
-        void onColorsChanged(SparseIntArray extractedColors);
-    }
-
-    /**
-     * Creates a new instance of LocalColorExtractor
-     */
-    public static LocalColorExtractor newInstance(Context context) {
-        return Overrides.getObject(LocalColorExtractor.class, context.getApplicationContext(),
-                R.string.local_colors_extraction_class);
-=======
     @Inject
     public LocalColorExtractor() {
->>>>>>> aosp/android17-release
     }
 
     /** Sets the object that will receive the color changes. */

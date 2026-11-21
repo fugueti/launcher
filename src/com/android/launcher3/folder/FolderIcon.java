@@ -190,7 +190,10 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
         mPreviewLayoutRule = new ClippedFolderIconLayoutRule();
         mPreviewItemManager = new PreviewItemManager(this);
         mDotParams = new DotRenderer.DrawParams();
-        mDotParams.setDotColor(Themes.getAttrColor(context, R.attr.notificationDotColor));
+        // Lawnchair: folder dots follow the notification dot color preference
+        mDotParams.setDotColor(app.lawnchair.preferences2.PreferenceCacheExtensionsKt.firstCached(
+                app.lawnchair.preferences2.PreferenceManager2.INSTANCE.get(context).getNotificationDotColor())
+                .getColorPreferenceEntry().getLightColor().invoke(context));
         mDotParams.shapeInfo = ThemeManager.INSTANCE.get(context).getIconState().getIconShapeInfo();
     }
 
@@ -232,17 +235,13 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
         icon.mFolderName.applyLabel(folderInfo.title);
         icon.mFolderName.setCompoundDrawablePadding(0);
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) icon.mFolderName.getLayoutParams();
-<<<<<<< HEAD
         if (folderInfo.container == ItemInfo.NO_ID) {
             lp.topMargin = grid.getAllAppsProfile().getIconSizePx() + grid.getAllAppsProfile().getIconDrawablePaddingPx();
             icon.mBackground = new PreviewBackground(activity.getDragLayer().getContext());
         } else {
-            lp.topMargin = grid.iconSizePx + grid.iconDrawablePaddingPx;
+            lp.topMargin = grid.getWorkspaceProfile().getIconSizePx()
+                    + grid.getWorkspaceProfile().getIconDrawablePaddingPx();
         }
-=======
-        lp.topMargin = grid.getWorkspaceProfile().getIconSizePx()
-                + grid.getWorkspaceProfile().getIconDrawablePaddingPx();
->>>>>>> aosp/android17-release
 
         icon.setTag(folderInfo);
         icon.setOnClickListener(activity.getItemOnClickListener());
@@ -422,11 +421,10 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
 
                 float finalScale = scale * scaleRelativeToDragLayer;
 
-<<<<<<< HEAD
                 // Account for potentially different icon sizes with non-default grid settings
                 if (d.dragSource instanceof ActivityAllAppsContainerView) {
                     DeviceProfile grid = mActivity.getDeviceProfile();
-                    float containerScale = (1f * grid.iconSizePx
+                    float containerScale = (1f * grid.getWorkspaceProfile().getIconSizePx()
                             / grid.getAllAppsProfile().getIconSizePx());
                     finalScale *= containerScale;
                 }
@@ -444,14 +442,6 @@ public class FolderIcon extends FrameLayout implements FloatingIconViewCompanion
                 mFolder.hideItem(item);
 
                 if (!itemAdded) mPreviewItemManager.hidePreviewItem(index, true);
-=======
-            // Account for potentially different icon sizes with non-default grid settings
-            if (d.dragSource instanceof ActivityAllAppsContainerView) {
-                DeviceProfile grid = mActivity.getDeviceProfile();
-                float containerScale = (1f * grid.getWorkspaceProfile().getIconSizePx()
-                        / grid.getAllAppsProfile().getIconSizePx());
-                finalScale *= containerScale;
->>>>>>> aosp/android17-release
             }
             d.folderNameSuggestionLoader.getSuggestedFolderName(mInfo.getAppContents(),
                     folderNameInfos -> postDelayed(() -> {

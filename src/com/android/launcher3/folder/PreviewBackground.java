@@ -53,10 +53,7 @@ import com.android.launcher3.graphics.PathWrapper;
 import com.android.launcher3.graphics.ShapeDelegate;
 import com.android.launcher3.graphics.ThemeManager;
 import com.android.launcher3.views.ActivityContext;
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 
-import app.lawnchair.preferences2.PreferenceManager2;
-import app.lawnchair.theme.color.ColorOption;
 import app.lawnchair.theme.color.tokens.ColorTokens;
 import app.lawnchair.util.LawnchairUtilsKt;
 
@@ -185,12 +182,8 @@ public class PreviewBackground extends DelegatedCellDrawing {
             int availableSpaceX, int topPadding) {
         mInvalidateDelegate = invalidateDelegate;
 
-        PreferenceManager2 preferenceManager2 = PreferenceManager2.INSTANCE.get(context);
 
         TypedArray ta = context.getTheme().obtainStyledAttributes(R.styleable.FolderIconPreview);
-<<<<<<< HEAD
-        ColorOption dotColorOption = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getNotificationDotColor());
-        mDotColor = dotColorOption.getColorPreferenceEntry().getLightColor().invoke(context);
         mStrokeColor = ColorTokens.FolderIconBorderColor.resolveColor(context);
         mBgColor = LawnchairUtilsKt.resolveFolderPreviewColor(context);
         ta.recycle();
@@ -203,22 +196,11 @@ public class PreviewBackground extends DelegatedCellDrawing {
             basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
             basePreviewOffsetY = topPadding + (allAppsIconSize - previewSize) / 2;
         } else {
-            previewSize = grid.folderIconSizePx;
+            previewSize = grid.getFolderProfile().getFolderIconSizePx();
 
             basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
-            basePreviewOffsetY = topPadding + grid.folderIconOffsetYPx;
+            basePreviewOffsetY = topPadding + grid.getFolderProfile().getFolderIconOffsetYPx();
         }
-=======
-        mStrokeColor = ta.getColor(R.styleable.FolderIconPreview_folderIconBorderColor, 0);
-        mBgColor = ta.getColor(R.styleable.FolderIconPreview_folderPreviewColor, 0);
-        ta.recycle();
-
-        DeviceProfile grid = activity.getDeviceProfile();
-        previewSize = grid.getFolderProfile().getFolderIconSizePx();
-
-        basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
-        basePreviewOffsetY = topPadding + grid.getFolderProfile().getFolderIconOffsetYPx();
->>>>>>> aosp/android17-release
 
         // Stroke width is 1dp
         mStrokeWidth = context.getResources().getDisplayMetrics().density;

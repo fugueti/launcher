@@ -148,17 +148,8 @@ public abstract class ShortcutConfigActivityInfo implements CachedObject {
         }
 
         @Override
-<<<<<<< HEAD
-        public Drawable getFullResIcon(BaseIconCache cache) {
-            if (Utilities.ATLEAST_S) {
-                return cache.getFullResIcon(mInfo.getActivityInfo());
-            } else {
-                return cache.getFullResIcon(mInfo.getComponentName().getPackageName());
-            }
-=======
         public Drawable getFullResIcon(@NonNull IconLoadRequest<CachedObject> request) {
             return request.getIcon(mInfo.getActivityInfo());
->>>>>>> aosp/android17-release
         }
 
         @Override

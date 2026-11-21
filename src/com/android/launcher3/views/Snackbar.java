@@ -170,13 +170,9 @@ public class Snackbar extends AbstractFloatingView {
         TextView labelView = snackbar.findViewById(R.id.label);
         labelView.setText(labelString);
 
-<<<<<<< HEAD
-        TextView actionView = snackbar.findViewById(R.id.action);
+        Button actionView = snackbar.findViewById(R.id.action);
         labelView.setTextColor(ColorTokens.TextColorPrimary.resolveColor(((Context) activity).getApplicationContext()));
         actionView.setTextColor(ColorTokens.ColorAccent.resolveColor(((Context) activity).getApplicationContext()));
-=======
-        Button actionView = snackbar.findViewById(R.id.action);
->>>>>>> aosp/android17-release
         float actionWidth;
 
         // When the user hovers over the snackbar, we want to pause the dismiss timeout so that it

@@ -16,11 +16,8 @@
 
 package com.android.launcher3.widget;
 
-<<<<<<< HEAD
 import static com.android.launcher3.Utilities.ATLEAST_Q;
-=======
 import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
->>>>>>> aosp/android17-release
 
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.Context;
