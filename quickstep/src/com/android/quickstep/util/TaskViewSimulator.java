@@ -236,20 +236,6 @@ public class TaskViewSimulator implements TransformParams.BuilderProxy {
     }
 
     /**
-<<<<<<< HEAD
-     * Sets the targets which the simulator will control
-     */
-    public void setPreview(RemoteAnimationTarget runningTarget) {
-        setPreviewBounds(
-                runningTarget.startBounds == null
-                        ? (Utilities.ATLEAST_R ? runningTarget.screenSpaceBounds : runningTarget.sourceContainerBounds)
-                        : runningTarget.startBounds,
-                runningTarget.contentInsets);
-    }
-
-    /**
-=======
->>>>>>> aosp/android17-release
      * Sets the targets which the simulator will control specifically for targets to animate when
      * in split screen
      *
@@ -260,7 +246,9 @@ public class TaskViewSimulator implements TransformParams.BuilderProxy {
         if (mSplitBounds == null) {
             setPreviewBounds(
                     runningTarget.startBounds != null
-                            ? runningTarget.startBounds : runningTarget.screenSpaceBounds,
+                            ? runningTarget.startBounds
+                            : (Utilities.ATLEAST_R ? runningTarget.screenSpaceBounds
+                                    : runningTarget.sourceContainerBounds),
                     runningTarget.contentInsets);
             mSplitPosition = SPLIT_POSITION_UNDEFINED;
         } else {
@@ -604,9 +592,6 @@ public class TaskViewSimulator implements TransformParams.BuilderProxy {
         // Ideally we should use square-root. This is an optimization as one of the dimension is 0.
         return Math.max(Math.abs(mTempPoint[0]), Math.abs(mTempPoint[1]));
     }
-<<<<<<< HEAD
-}
-=======
 
     /**
      * Returns the corner radius that is actually visible on screen, once the transforms are applied
@@ -616,4 +601,3 @@ public class TaskViewSimulator implements TransformParams.BuilderProxy {
         return mMatrix.mapRadius(getCurrentCornerRadius());
     }
 }
->>>>>>> aosp/android17-release

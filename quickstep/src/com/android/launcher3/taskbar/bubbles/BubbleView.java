@@ -86,14 +86,8 @@ public class BubbleView extends ConstraintLayout {
     @Nullable
     private Controller mController;
 
-<<<<<<< HEAD
-    @Nullable
-    private BubbleBarBubbleIconsFactory mIconFactory = null;
-
     PreferenceManager2 preferenceManager2;
 
-=======
->>>>>>> aosp/android17-release
     public BubbleView(Context context) {
         this(context, null);
     }
@@ -283,17 +277,9 @@ public class BubbleView extends ConstraintLayout {
             mAppIcon.setVisibility(GONE);
         }
         mDotColor = bubble.getDotColor();
-<<<<<<< HEAD
+        // Lawnchair: dot color follows the notification dot color preference
         ColorOption dotColorOption = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getNotificationDotColor());
-        int dotColor = dotColorOption.getColorPreferenceEntry().getLightColor().invoke(getContext());
-        ColorOption counterColorOption = PreferenceCacheExtensionsKt
-                .firstCached(preferenceManager2.getNotificationDotTextColor(), preferenceManager2);
-        int countColor = counterColorOption.getColorPreferenceEntry().getLightColor().invoke(getContext());
-        mDotRenderer = new DotRenderer(mBubbleSize, bubble.getDotPath(), DEFAULT_PATH_SIZE, false, null, dotColor,
-                countColor);
-=======
-        mDrawParams.setDotColor(mDotColor);
->>>>>>> aosp/android17-release
+        mDrawParams.setDotColor(dotColorOption.getColorPreferenceEntry().getLightColor().invoke(getContext()));
         String contentDesc = bubble.getInfo().getTitle();
         if (TextUtils.isEmpty(contentDesc)) {
             contentDesc = getResources().getString(R.string.bubble_bar_bubble_fallback_description);

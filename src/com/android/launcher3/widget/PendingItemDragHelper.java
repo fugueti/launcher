@@ -144,13 +144,8 @@ public class PendingItemDragHelper extends DragPreviewProvider {
                         previewSizeBeforeScale[0] = drawable.getIntrinsicWidth();
                     }
                 } else {
-<<<<<<< HEAD
                     mAppWidgetHostViewPreview = new LawnchairAppWidgetHostView(launcher);
-                    mAppWidgetHostViewPreview.setAppWidget(/* appWidgetId= */ -1,
-=======
-                    mAppWidgetHostViewPreview = new LauncherAppWidgetHostView(launcher);
                     mAppWidgetHostViewPreview.setAppWidget(/* appWidgetId= */ INVALID_APPWIDGET_ID,
->>>>>>> aosp/android17-release
                             mWidgetPreviewInfo.providerInfo);
                     mAppWidgetHostViewPreview.setClipChildren(false);
                     mAppWidgetHostViewPreview.setClipToPadding(false);
@@ -163,13 +158,8 @@ public class PendingItemDragHelper extends DragPreviewProvider {
                     measureAndUpdateAppWidgetHostViewScale(widgetSizes);
                 }
             } else if (mRemoteViewsPreview != null) {
-<<<<<<< HEAD
                 mAppWidgetHostViewPreview = new LawnchairAppWidgetHostView(launcher);
-                mAppWidgetHostViewPreview.setAppWidget(/* appWidgetId= */ -1,
-=======
-                mAppWidgetHostViewPreview = new LauncherAppWidgetHostView(launcher);
                 mAppWidgetHostViewPreview.setAppWidget(/* appWidgetId= */ INVALID_APPWIDGET_ID,
->>>>>>> aosp/android17-release
                         ((PendingAddWidgetInfo) mAddInfo).info);
                 DeviceProfile deviceProfile = launcher.getDeviceProfile();
                 mAppWidgetHostViewPreview.updateAppWidget(/* remoteViews= */ mRemoteViewsPreview);

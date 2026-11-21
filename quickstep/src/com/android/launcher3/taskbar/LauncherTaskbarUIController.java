@@ -15,11 +15,7 @@
  */
 package com.android.launcher3.taskbar;
 
-<<<<<<< HEAD
-import static com.android.launcher3.Flags.syncAppLaunchWithTaskbarStash;
-=======
 import static com.android.launcher3.Flags.enableTaskbarUiThread;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.QuickstepTransitionManager.TASKBAR_TO_APP_DURATION;
 import static com.android.launcher3.QuickstepTransitionManager.TRANSIENT_TASKBAR_TRANSITION_DURATION;
 import static com.android.launcher3.QuickstepTransitionManager.getTaskbarToHomeDuration;
@@ -356,16 +352,6 @@ public class LauncherTaskbarUIController extends TaskbarUIController {
             return null;
         }
 
-<<<<<<< HEAD
-        if (!false
-                && mControllers.taskbarDesktopModeController.isInDesktopModeAndNotInOverview(
-                mControllers.taskbarActivityContext.getDisplayId())) {
-            // TODO: b/333533253 - Remove after flag rollout
-            isVisible = false;
-        }
-
-=======
->>>>>>> aosp/android17-release
         mTaskbarLauncherStateController.updateStateForFlag(FLAG_VISIBLE, isVisible);
         if (fromInitOrDestroy) {
             duration = 0;

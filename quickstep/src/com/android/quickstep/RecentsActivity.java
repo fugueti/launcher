@@ -15,11 +15,8 @@
  */
 package com.android.quickstep;
 
-<<<<<<< HEAD
-=======
 import static android.app.ActivityTaskManager.INVALID_TASK_ID;
 import static android.os.Trace.TRACE_TAG_APP;
->>>>>>> aosp/android17-release
 import static android.view.RemoteAnimationTarget.MODE_CLOSING;
 import static android.view.RemoteAnimationTarget.MODE_OPENING;
 
@@ -560,13 +557,8 @@ public final class RecentsActivity extends StatefulActivity<RecentsState> implem
                 };
 
         LauncherAnimationRunner runner = new LauncherAnimationRunner(
-<<<<<<< HEAD
-                getMainThreadHandler(), mAnimationToHomeFactory, true);
-        ActivityOptions options = LawnchairQuickstepCompat.getActivityOptionsCompat().makeRemoteAnimation(
-=======
                 getMainThreadHandler(), animationToHomeFactory, true);
-        ActivityOptions options = ActivityOptions.makeRemoteAnimation(
->>>>>>> aosp/android17-release
+        ActivityOptions options = LawnchairQuickstepCompat.getActivityOptionsCompat().makeRemoteAnimation(
                 new RemoteAnimationAdapter(runner, HOME_APPEAR_DURATION, 0),
                 LawnchairQuickstepCompat.getRemoteTransitionCompat().getRemoteTransition(runner.toRemoteTransition(),
                         this.getIApplicationThread(),

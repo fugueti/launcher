@@ -152,11 +152,7 @@ public class RecentsAnimationController {
             // trigger the callback to be called immediately
             return;
         }
-<<<<<<< HEAD
-        if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logFinishRecentsAnimation(toRecents);
-=======
-        ActiveGestureProtoLogProxy.logFinishRecentsAnimation(toHome, reason);
->>>>>>> aosp/android17-release
+        if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logFinishRecentsAnimation(toHome, reason);
         // Finish not yet requested
         mFinishRequested = true;
         mFinishTargetIsLauncher = toHome;
@@ -165,15 +161,8 @@ public class RecentsAnimationController {
             mController.finish(toHome, sendUserLeaveHint, new IResultReceiver.Stub() {
                 @Override
                 public void send(int i, Bundle bundle) throws RemoteException {
-<<<<<<< HEAD
                     if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logFinishRecentsAnimationCallback();
-                    MAIN_EXECUTOR.execute(() -> {
-                        mPendingFinishCallbacks.executeAllAndDestroy();
-                    });
-=======
-                    ActiveGestureProtoLogProxy.logFinishRecentsAnimationCallback();
                     MAIN_EXECUTOR.execute(mPendingFinishCallbacks::executeAllAndDestroy);
->>>>>>> aosp/android17-release
                 }
             });
             InteractionJankMonitorWrapper.end(Cuj.CUJ_LAUNCHER_QUICK_SWITCH);

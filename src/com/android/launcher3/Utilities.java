@@ -200,7 +200,6 @@ public final class Utilities {
         return nightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 
-<<<<<<< HEAD
     public static Drawable loadFullDrawableWithoutTheme(Context context, ItemInfo info,
                                                         int width, int height, Object[] outObj) {
         ActivityContext activity = ActivityContext.lookupContext(context);
@@ -253,10 +252,9 @@ public final class Utilities {
         }
     }
 
-    private static boolean sIsRunningInTestHarness = ActivityManager.isRunningInTestHarness();
-=======
-    private static boolean sIsRunningInTestHarness = ActivityManager.isRunningInUserTestHarness();
->>>>>>> aosp/android17-release
+    private static boolean sIsRunningInTestHarness = Utilities.ATLEAST_Q
+            ? ActivityManager.isRunningInUserTestHarness()
+            : ActivityManager.isRunningInTestHarness();
 
     public static boolean isRunningInTestHarness() {
         return sIsRunningInTestHarness;
@@ -762,121 +760,6 @@ public final class Utilities {
                 .equals(Locale.ENGLISH.getLanguage());
     }
 
-<<<<<<< HEAD
-    /**
-     * Returns the full drawable for info as multiple layers of AdaptiveIconDrawable. The second
-     * drawable in the Pair is the badge used with the icon.
-     *
-     * @param useTheme If true, will theme icons when applicable
-     */
-    @SuppressLint("UseCompatLoadingForDrawables")
-    @Nullable
-    @WorkerThread
-    public static <T extends Context & ActivityContext> Pair<AdaptiveIconDrawable, Drawable>
-            getFullDrawable(T context, ItemInfo info, int width, int height, boolean useTheme) {
-        LauncherAppState appState = LauncherAppState.getInstance(context);
-        Drawable mainIcon = null;
-
-        Drawable badge = null;
-        if ((info instanceof ItemInfoWithIcon iiwi) && !iiwi.getMatchingLookupFlag().useLowRes()) {
-            badge = iiwi.bitmap.getBadgeDrawable(context, useTheme, getIconShapeOrNull(context));
-        }
-
-        if (info instanceof PendingAddShortcutInfo) {
-            ShortcutConfigActivityInfo activityInfo =
-                    ((PendingAddShortcutInfo) info).getActivityInfo(context);
-            mainIcon = activityInfo.getFullResIcon(appState.getIconCache());
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
-            LauncherActivityInfo activityInfo = context.getSystemService(LauncherApps.class)
-                    .resolveActivity(info.getIntent(), info.user);
-            if (activityInfo == null) {
-                return null;
-            }
-            if (Utilities.ATLEAST_S) {
-                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getActivityInfo());
-            } else {
-                mainIcon = appState.getIconCache().getFullResIcon(activityInfo.getComponentName().getPackageName());
-            }
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
-            List<ShortcutInfo> siList = ShortcutKey.fromItemInfo(info)
-                    .buildRequest(context)
-                    .query(ShortcutRequest.ALL);
-            if (siList.isEmpty()) {
-                return null;
-            } else {
-                ShortcutInfo si = siList.get(0);
-                mainIcon = CacheableShortcutInfo.getIcon(context, si,
-                        appState.getInvariantDeviceProfile().fillResIconDpi);
-                // Only fetch badge if the icon is on workspace
-                if (info.id != ItemInfo.NO_ID && badge == null) {
-                    badge = appState.getIconCache().getShortcutInfoBadge(si).newIcon(
-                            context,
-                            ThemeManager.INSTANCE.get(context).isIconThemeEnabled()
-                                    ? FLAG_THEMED : 0,
-                            getIconShapeOrNull(context)
-                    );
-                }
-            }
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER) {
-            FolderAdaptiveIcon icon = FolderAdaptiveIcon.createFolderAdaptiveIcon(
-                    context, info.id, new Point(width, height));
-            if (icon == null) {
-                return null;
-            }
-            mainIcon =  icon;
-            badge = icon.getBadge();
-        }
-
-        if (mainIcon == null) {
-            return null;
-        }
-        AdaptiveIconDrawable result;
-
-        if (ExtendedBitmapDrawable.isFromIconPack(mainIcon) || (!PreferenceManager.INSTANCE.get(context).getWrapAdaptiveIcons().get() && info.itemType != LauncherSettings.Favorites.ITEM_TYPE_FOLDER))
-            return null;
-        if (mainIcon instanceof AdaptiveIconDrawable aid) {
-            result = aid;
-        } else {
-            // Wrap the main icon in AID
-            try (LauncherIcons li = LauncherIcons.obtain(context)) {
-                result = li.wrapToAdaptiveIcon(mainIcon);
-            }
-        }
-        if (result == null) {
-            return null;
-        }
-
-        // Inject theme icon drawable
-        if (ATLEAST_T && useTheme) {
-            IconThemeController themeController =
-                    ThemeManager.INSTANCE.get(context).getThemeController();
-            if (themeController != null) {
-                result = themeController.createThemedAdaptiveIcon(
-                        context,
-                        result,
-                        info instanceof ItemInfoWithIcon iiwi ? iiwi.bitmap : null);
-                if (result == null) {
-                    return null;
-                }
-            }
-        }
-
-        if (badge == null) {
-            badge = BitmapInfo.LOW_RES_INFO.withFlags(
-                    UserCache.INSTANCE.get(context)
-                            .getUserInfo(info.user)
-                            .applyBitmapInfoFlags(FlagOp.NO_OP)
-                    )
-                    .getBadgeDrawable(context, useTheme, getIconShapeOrNull(context));
-            if (badge == null) {
-                badge = new ColorDrawable(Color.TRANSPARENT);
-            }
-        }
-        return Pair.create(result, badge);
-    }
-
-=======
->>>>>>> aosp/android17-release
     public static float squaredHypot(float x, float y) {
         return x * x + y * y;
     }

@@ -279,13 +279,8 @@ public class TaskAnimationManager implements RecentsAnimationCallbacks.RecentsAn
             mRecentsAnimationStartPending = false;
             Log.wtf(TAG, "Recents animation start has been pending for over "
                     + RECENTS_ANIMATION_START_TIMEOUT_MS + "ms");
-<<<<<<< HEAD
             if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logRecentsAnimationStartTimedOut();
-            cleanUpRecentsAnimation(newCallbacks);
-=======
-            ActiveGestureProtoLogProxy.logRecentsAnimationStartTimedOut();
             newCallbacks.onRecentsAnimationStartTimedOut();
->>>>>>> aosp/android17-release
         };
         mCallbacks.addListener(new RecentsAnimationCallbacks.RecentsAnimationListener() {
             @Override
@@ -591,13 +586,9 @@ public class TaskAnimationManager implements RecentsAnimationCallbacks.RecentsAn
             @Nullable RecentsAnimationController controller,
             @NonNull ActiveGestureLog.CompoundString reason) {
         if (controller != null) {
-<<<<<<< HEAD
-            if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logFinishRunningRecentsAnimation(toHome);
-=======
             ActiveGestureLog.CompoundString reasonString = new ActiveGestureLog.CompoundString(
                     "TaskAnimationManager.finishRunningRecentsAnimation: ")
                     .append(reason);
->>>>>>> aosp/android17-release
             if (forceFinish) {
                 controller.finishController(
                         toHome,

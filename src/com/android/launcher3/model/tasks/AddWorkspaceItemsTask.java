@@ -40,6 +40,8 @@ import com.android.launcher3.model.data.WorkspaceItemFactory;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.util.ApplicationInfoWrapper;
 import com.android.launcher3.util.IntSet;
+import app.lawnchair.preferences2.PreferenceManager2;
+import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +80,11 @@ public class AddWorkspaceItemsTask implements ModelUpdateTask {
         }
 
         final ArrayList<ItemInfo> addedItemsFinal = new ArrayList<>();
-        final IntSet excludedScreens = IntSet.wrap(FIRST_SCREEN_ID);
         final Context context = taskController.getContext();
+        // Lawnchair: the first screen is only reserved while the smartspace is shown there
+        final IntSet excludedScreens = PreferenceCacheExtensionsKt.firstCached(
+                PreferenceManager2.INSTANCE.get(context).getEnableSmartspace())
+                ? IntSet.wrap(FIRST_SCREEN_ID) : new IntSet();
 
         synchronized (dataModel) {
             IModelWriter writer = taskController.getModelWriter();

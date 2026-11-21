@@ -256,13 +256,6 @@ public class LauncherRecentsView extends RecentsView<QuickstepLauncher, Launcher
     @Override
     public void onGestureAnimationStart(GroupedTaskInfo groupedTaskInfo) {
         super.onGestureAnimationStart(groupedTaskInfo);
-<<<<<<< HEAD
-        if (!false) {
-            // TODO: b/333533253 - Remove after flag rollout
-            DesktopVisibilityController.INSTANCE.get(mContainer).setRecentsGestureStart();
-        }
-=======
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -279,19 +272,10 @@ public class LauncherRecentsView extends RecentsView<QuickstepLauncher, Launcher
             showDesktopApps = true;
         }
         super.onGestureAnimationEnd();
-<<<<<<< HEAD
-        if (!false) {
-            // TODO: b/333533253 - Remove after flag rollout
-            desktopVisibilityController.setRecentsGestureEnd(endTarget);
-        }
         if (showDesktopApps && Utilities.ATLEAST_R) {
-            SystemUiProxy.INSTANCE.get(mContainer).showDesktopApps(mContainer.getDisplay().getDisplayId());
-=======
-        if (showDesktopApps) {
             SystemUiProxy.INSTANCE.get(mContainer).showDesktopApps(mContainer.getDisplayId(),
                     /* transition */ null, /* taskIdToReorderToFront */ null,
                     DesktopModeTransitionSource.RECENTS);
->>>>>>> aosp/android17-release
         }
     }
 }

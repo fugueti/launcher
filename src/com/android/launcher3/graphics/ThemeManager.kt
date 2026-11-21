@@ -89,17 +89,14 @@ constructor(
     val folderShape
         get() = iconState.folderShape
 
-<<<<<<< HEAD
-    protected val listeners = CopyOnWriteArrayList<ThemeChangeListener>()
-=======
     val fileShape
         get() = iconState.fileShape
 
     var fileShapeData = fileShape.createIconShape(DEFAULT_PATH_SIZE_INT)
         private set
 
-    private val listeners = CopyOnWriteArrayList<ThemeChangeListener>()
->>>>>>> aosp/android17-release
+    // Lawnchair: subclasses notify listeners too
+    protected val listeners = CopyOnWriteArrayList<ThemeChangeListener>()
 
     init {
         lifecycle.addCloseable(overlayChangeHandler.addCallback { verifyIconState() })
@@ -241,12 +238,8 @@ constructor(
 
         @JvmField val DEFAULT_SHAPE_DELEGATE = pickBestShape(shapeStr = "")
 
-<<<<<<< HEAD
-        private const val ACTION_OVERLAY_CHANGED = "android.intent.action.OVERLAY_CHANGED"
+        // Lawnchair: public, read by app.lawnchair.icons.shape.IconShape
         val CONFIG_ICON_MASK_RES_ID: Int =
-=======
-        private val CONFIG_ICON_MASK_RES_ID: Int =
->>>>>>> aosp/android17-release
             Resources.getSystem().getIdentifier("config_icon_mask", "string", "android")
 
         private fun ShapeDelegate.createIconShape(size: Int) =

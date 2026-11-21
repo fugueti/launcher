@@ -132,25 +132,15 @@ public class LauncherAppWidgetProviderInfo extends AppWidgetProviderInfo impleme
                             dp.getWorkspaceProfile().getCellLayoutBorderSpacePx().y,
                             cellSize.y));
 
-<<<<<<< HEAD
             if (Utilities.ATLEAST_S) {
                 if (maxResizeWidth > 0) {
                     maxSpanX = Math.min(maxSpanX, getSpanX(widgetPadding, maxResizeWidth,
-                        dp.cellLayoutBorderSpacePx.x, cellSize.x));
+                            dp.getWorkspaceProfile().getCellLayoutBorderSpacePx().x, cellSize.x));
                 }
                 if (maxResizeHeight > 0) {
                     maxSpanY = Math.min(maxSpanY, getSpanY(widgetPadding, maxResizeHeight,
-                        dp.cellLayoutBorderSpacePx.y, cellSize.y));
+                            dp.getWorkspaceProfile().getCellLayoutBorderSpacePx().y, cellSize.y));
                 }
-=======
-            if (maxResizeWidth > 0) {
-                maxSpanX = Math.min(maxSpanX, getSpanX(widgetPadding, maxResizeWidth,
-                        dp.getWorkspaceProfile().getCellLayoutBorderSpacePx().x, cellSize.x));
-            }
-            if (maxResizeHeight > 0) {
-                maxSpanY = Math.min(maxSpanY, getSpanY(widgetPadding, maxResizeHeight,
-                        dp.getWorkspaceProfile().getCellLayoutBorderSpacePx().y, cellSize.y));
->>>>>>> aosp/android17-release
             }
 
             spanX = Math.max(spanX,
@@ -258,17 +248,8 @@ public class LauncherAppWidgetProviderInfo extends AppWidgetProviderInfo impleme
     }
 
     @Override
-<<<<<<< HEAD
-    public Drawable getFullResIcon(BaseIconCache cache) {
-        if (Utilities.ATLEAST_S) {
-            return cache.getFullResIcon(getActivityInfo());
-        } else {
-            return cache.getFullResIcon(provider.getPackageName());
-        }
-=======
     public Drawable getFullResIcon(@NonNull IconLoadRequest<CachedObject> request) {
         return request.getIcon(getActivityInfo());
->>>>>>> aosp/android17-release
     }
 
     @Nullable

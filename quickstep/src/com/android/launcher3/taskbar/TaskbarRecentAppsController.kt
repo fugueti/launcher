@@ -62,17 +62,9 @@ class TaskbarRecentAppsController(
     private val desktopModeCompatPolicy: DesktopModeCompatPolicy,
 ) : LoggableTaskbarController {
 
-<<<<<<< HEAD
+    // Lawnchair: running apps in the taskbar need the desktop windowing APIs of Android 16 QPR1+
     var canShowRunningApps =
-        DesktopModeStatus.canEnterDesktopMode(context) &&
-            if (Utilities.ATLEAST_BAKLAVA_1) {
-                DesktopModeFlags.ENABLE_DESKTOP_WINDOWING_TASKBAR_RUNNING_APPS.isTrue
-            } else {
-                false
-            }
-=======
-    var canShowRunningApps = DesktopModeStatus.canEnterDesktopMode(context)
->>>>>>> aosp/android17-release
+        Utilities.ATLEAST_BAKLAVA_1 && DesktopModeStatus.canEnterDesktopMode(context)
         @VisibleForTesting
         set(isEnabledFromTest) {
             field = isEnabledFromTest
@@ -86,16 +78,6 @@ class TaskbarRecentAppsController(
             }
         }
 
-<<<<<<< HEAD
-    val enableRecentTasksThrottle =
-        if (Utilities.ATLEAST_BAKLAVA_1) {
-            DesktopExperienceFlags.ENABLE_TASKBAR_RECENT_TASKS_THROTTLE_BUGFIX.isTrue
-        } else {
-            false
-        }
-
-=======
->>>>>>> aosp/android17-release
     // TODO(b/343532825): Add a setting to disable Recents even when the flag is on.
     var canShowRecentApps = enableRecentsInTaskbar()
         @VisibleForTesting

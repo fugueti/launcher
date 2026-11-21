@@ -113,7 +113,8 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
     public static final int TYPE_DIALOG_LISTENER = 1 << 26;
 
     // Custom compose popups
-    public static final int TYPE_COMPOSE_VIEW = 1 << 25;
+    // Lawnchair: was 1 << 25 before Android 17, which AOSP now uses for TYPE_TASKBAR_OVERFLOW
+    public static final int TYPE_COMPOSE_VIEW = 1 << 27;
 
     public static final int TYPE_ALL = TYPE_FOLDER | TYPE_ACTION_POPUP
             | TYPE_WIDGETS_BOTTOM_SHEET | TYPE_WIDGET_RESIZE_FRAME
@@ -123,11 +124,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
             | TYPE_TASKBAR_EDUCATION_DIALOG | TYPE_TASKBAR_ALL_APPS | TYPE_OPTIONS_POPUP_DIALOG
             | TYPE_ADD_TO_HOME_CONFIRMATION | TYPE_TASKBAR_OVERLAY_PROXY
             | TYPE_TASKBAR_PINNING_POPUP | TYPE_PIN_IME_POPUP | TYPE_ONE_GRID_MIGRATION_EDU
-<<<<<<< HEAD
-            | TYPE_NUDGE | TYPE_COMPOSE_VIEW;
-=======
-            | TYPE_NUDGE | TYPE_TASKBAR_OVERFLOW | TYPE_DIALOG_LISTENER;
->>>>>>> aosp/android17-release
+            | TYPE_NUDGE | TYPE_TASKBAR_OVERFLOW | TYPE_DIALOG_LISTENER | TYPE_COMPOSE_VIEW;
 
     // Type of popups which should be kept open during launcher rebind
     public static final int TYPE_REBIND_SAFE = TYPE_WIDGETS_BOTTOM_SHEET
@@ -144,13 +141,8 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
 
     // These view all have particular operation associated with swipe down interaction.
     public static final int TYPE_STATUS_BAR_SWIPE_DOWN_DISALLOW = TYPE_WIDGETS_BOTTOM_SHEET |
-<<<<<<< HEAD
-            TYPE_WIDGETS_FULL_SHEET | TYPE_WIDGET_RESIZE_FRAME | TYPE_ON_BOARD_POPUP |
-            TYPE_DISCOVERY_BOUNCE | TYPE_TASK_MENU | TYPE_DRAG_DROP_POPUP | TYPE_COMPOSE_VIEW;
-=======
             TYPE_WIDGET_RESIZE_FRAME | TYPE_ON_BOARD_POPUP | TYPE_DISCOVERY_BOUNCE
-            | TYPE_TASK_MENU | TYPE_DRAG_DROP_POPUP;
->>>>>>> aosp/android17-release
+            | TYPE_TASK_MENU | TYPE_DRAG_DROP_POPUP | TYPE_COMPOSE_VIEW;
 
     // Floating views that are exclusive to the taskbar overlay window.
     public static final int TYPE_TASKBAR_OVERLAYS =

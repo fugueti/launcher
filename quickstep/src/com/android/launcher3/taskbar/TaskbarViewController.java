@@ -210,11 +210,6 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
 
     private final View.OnLayoutChangeListener mTaskbarViewLayoutChangeListener =
             (v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-<<<<<<< HEAD
-                if (!false) { // LC-Ignored: Intentional, all Android desktop flags are disabled - ENABLE_TASKBAR_RECENTS_LAYOUT_TRANSITION.isTrue()
-                    // update shiftX is handled with the animation at the end of the method
-                    updateTaskbarIconTranslationXForPinning(/* updateShiftXForBubbleBar = */ false);
-=======
                 if (mBubbleControllers != null) {
                     mControllers.navbarButtonsViewController.onLayoutsUpdated();
                     adjustTaskbarXForBubbleBar();
@@ -222,7 +217,6 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
                     if (bbvc.isExpanded()) {
                         bbvc.adjustTaskbarToBubbleBarState(/* isBubbleBarExpanded = */ true);
                     }
->>>>>>> aosp/android17-release
                 }
                 updateTaskbarIconsActualBounds();
             };
@@ -1163,12 +1157,6 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
                     .getHotseatTranslationXForNavBar(mActivity, isBubblesOnLeft);
         }
 
-<<<<<<< HEAD
-        int ignoreCount = mTaskbarView.getIgnoreTaskbarIconCount();
-
-        for (int i = 0; i < mTaskbarView.getChildCount(); i++) {
-            View child = mTaskbarView.getChildAt(i);
-=======
         animateChildViews(mTaskbarView, setter, launcherDp,  taskbarDp, hotseatNavBarTranslationX,
                 interpolator);
         AnimatorPlaybackController controller = setter.createPlaybackController();
@@ -1191,9 +1179,11 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
                 borderSpacing,
                 launcherDp.getHotseatProfile().getNumShownIcons());
 
+        // Lawnchair: icons past the hotseat count fade in/out instead of moving
+        int ignoreCount = parent == mTaskbarView ? mTaskbarView.getIgnoreTaskbarIconCount() : 0;
+
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
->>>>>>> aosp/android17-release
             boolean isAllAppsButton = child == mTaskbarView.getAllAppsButtonContainer();
             boolean isTaskbarDividerView = child == mTaskbarView.getTaskbarDividerViewContainer();
             boolean isTaskbarOverflowView = child == mTaskbarView.getTaskbarRecentsOverflowView();
@@ -1230,7 +1220,7 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
                                     ? Interpolators.clampToProgress(LINEAR, 0f, 0.07f)
                                     : Interpolators.clampToProgress(LINEAR, 0.93f, 1f));
                 }
-            } else if (((!isRtl && mTaskbarView.getChildCount() - i <= ignoreCount)
+            } else if (((!isRtl && parent.getChildCount() - i <= ignoreCount)
                     || (isRtl && i < ignoreCount))
                     && mIsHotseatIconOnTopWhenAligned
                     && !(child instanceof IconButtonView)) {

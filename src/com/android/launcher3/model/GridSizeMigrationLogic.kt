@@ -515,17 +515,12 @@ constructor(
         trgX: Int,
         trgY: Int,
         sortedItemsToPlace: MutableList<DbEntry>,
-<<<<<<< HEAD
-        existedEntries: MutableList<DbEntry>?,
-        preserveOriginal: Boolean = false,
-=======
         existedEntries: List<DbEntry>?,
->>>>>>> aosp/android17-release
+        preserveOriginal: Boolean = false,
     ): WorkspaceItemsToPlace {
         val itemsToPlace = WorkspaceItemsToPlace(sortedItemsToPlace, mutableListOf())
         val occupied = GridOccupancy(trgX, trgY)
         val trg = Point(trgX, trgY)
-<<<<<<< HEAD
 
         val prefs2 = PreferenceManager2.INSTANCE.get(context)
 
@@ -535,9 +530,6 @@ constructor(
             } else {
                 Point(0, 0)
             }
-=======
-        val next = Point(0, 0)
->>>>>>> aosp/android17-release
         if (existedEntries != null) {
             for (entry in existedEntries) {
                 occupied.markCells(entry, true)

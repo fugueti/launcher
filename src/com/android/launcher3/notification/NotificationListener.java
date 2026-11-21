@@ -33,6 +33,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import app.lawnchair.NotificationManager;
 import androidx.annotation.WorkerThread;
 
 import com.android.launcher3.dagger.LauncherComponentProvider;
@@ -47,8 +49,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import app.lawnchair.NotificationManager;
 
 /**
  * A {@link NotificationListenerService} that sends updates to
@@ -82,43 +82,17 @@ public class NotificationListener extends NotificationListenerService {
     private SettingsCache mSettingsCache;
     private @Nullable SafeCloseable mSettingCacheSafeCloseable;
 
+    // Lawnchair: feeds app.lawnchair.NotificationManager (notification panel / counters)
     private NotificationManager mNotificationManager;
+    private static @Nullable NotificationListener sConnectedInstance;
 
     public NotificationListener() {
-<<<<<<< HEAD
-        mWorkerHandler = new Handler(MODEL_EXECUTOR.getLooper(), this::handleWorkerMessage);
-        mUiHandler = new Handler(Looper.getMainLooper(), this::handleUiMessage);
-        sNotificationListenerInstance = this;
-    }
-
-    public static @Nullable NotificationListener getInstanceIfConnected() {
-        return sIsConnected ? sNotificationListenerInstance : null;
-    }
-
-    public static void addNotificationsChangedListener(NotificationsChangedListener listener) {
-        if (listener == null) {
-            return;
-        }
-        sNotificationsChangedListeners.add(listener);
-
-        NotificationListener notificationListener = getInstanceIfConnected();
-        if (notificationListener != null) {
-            notificationListener.onNotificationFullRefresh();
-        } else {
-            // User turned off dots globally, so we unbound this service;
-            // tell the listener that there are no notifications to remove dots.
-            MODEL_EXECUTOR.submit(() -> MAIN_EXECUTOR.submit(() ->
-                            listener.onNotificationFullRefresh(Collections.emptyList())));
-        }
-    }
-
-    public static void removeNotificationsChangedListener(NotificationsChangedListener listener) {
-        if (listener != null) {
-            sNotificationsChangedListeners.remove(listener);
-        }
-=======
         mWorkerHandler = new Handler(UI_HELPER_EXECUTOR.getLooper(), this::handleWorkerMessage);
->>>>>>> aosp/android17-release
+    }
+
+    /** Lawnchair: the connected listener, if any. */
+    public static @Nullable NotificationListener getInstanceIfConnected() {
+        return sConnectedInstance;
     }
 
     @Override
@@ -231,7 +205,7 @@ public class NotificationListener extends NotificationListenerService {
         } catch (SecurityException e) {
             Log.e(TAG, "SecurityException: failed to fetch notifications");
         } catch (RuntimeException e) {
-            // This is an upstream bug in the Android framework
+            // Lawnchair: upstream bug in the Android framework
             // https://github.com/GrapheneOS/os-issue-tracker/issues/2601
             Log.e(TAG, "Workaround for Android framework.");
         }
@@ -243,6 +217,7 @@ public class NotificationListener extends NotificationListenerService {
         super.onListenerConnected();
         Log.i(TAG, "onListenerConnected");
         mIsConnected = true;
+        sConnectedInstance = this;
 
         // Register an observer to rebind the notification listener when dots are re-enabled.
         mSettingsCache = SettingsCache.INSTANCE.get(this);
@@ -263,26 +238,18 @@ public class NotificationListener extends NotificationListenerService {
 
     private void onNotificationFullRefresh() {
         mWorkerHandler.obtainMessage(MSG_NOTIFICATION_FULL_REFRESH).sendToTarget();
-        mNotificationManager.onNotificationFullRefresh();
+        if (mNotificationManager != null) mNotificationManager.onNotificationFullRefresh();
     }
 
     @Override
     public void onListenerDisconnected() {
         super.onListenerDisconnected();
         Log.i(TAG, "onListenerDisconnected");
-<<<<<<< HEAD
-        sIsConnected = false;
-        // The framework also calls onListenerDisconnected() from NotificationListenerService's
-        // onDestroy(), so this can run before onListenerConnected() has initialised mSettingsCache.
-        if (mSettingsCache != null) {
-            mSettingsCache.unregister(NOTIFICATION_BADGING_URI,
-                    mNotificationSettingsChangedListener);
-=======
         mIsConnected = false;
+        if (sConnectedInstance == this) sConnectedInstance = null;
         if (mSettingCacheSafeCloseable != null) {
             mSettingCacheSafeCloseable.close();
             mSettingCacheSafeCloseable = null;
->>>>>>> aosp/android17-release
         }
         onNotificationFullRefresh();
     }

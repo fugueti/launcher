@@ -17,13 +17,8 @@ package com.android.launcher3.model;
 
 import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
 
-import android.content.Context;
-import android.util.LongSparseArray;
-
-import app.lawnchair.preferences2.PreferenceManager2;
-import com.android.launcher3.BuildConfig;
-import com.android.launcher3.BuildConfigs;
 import android.util.SparseArray;
+
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherSettings;
@@ -32,8 +27,6 @@ import com.android.launcher3.model.data.WorkspaceItemCoordinates;
 import com.android.launcher3.util.GridOccupancy;
 import com.android.launcher3.util.IntSet;
 
-import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
-import app.lawnchair.preferences2.PreferenceManager2;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,11 +58,6 @@ public class WorkspaceItemSpaceFinder {
      * @param excludedScreens Screens to exclude from the search.
      * @return {@link WorkspaceItemCoordinates} for the item.
      */
-<<<<<<< HEAD
-    public int[] findSpaceForItem(IntArray workspaceScreens, IntArray addedWorkspaceScreensFinal,
-            ArrayList<ItemInfo> addItemsFinal, int spanX, int spanY, Context context) {
-        LongSparseArray<ArrayList<ItemInfo>> screenItems = new LongSparseArray<>();
-=======
     public WorkspaceItemCoordinates findSpaceForItem(ArrayList<ItemInfo> addItemsFinal, int spanX,
             int spanY, IntSet excludedScreens) {
         return findSpaceForItem(
@@ -77,7 +65,6 @@ public class WorkspaceItemSpaceFinder {
                 /* startingFrom= */ new WorkspaceItemCoordinates(
                         FIRST_SCREEN_ID, /* cellX= */ 0, /* cellY= */ 0));
     }
->>>>>>> aosp/android17-release
 
     /**
      * Find a position on the screen for the given size or adds a new screen.
@@ -112,7 +99,6 @@ public class WorkspaceItemSpaceFinder {
             }
         }
 
-        // Add items that are due to be added to the database from AddWorkspaceItemsTask#execute.
         // Add items that are due to be added to the database.
         for (ItemInfo info : addItemsFinal) {
             if (info.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
@@ -123,24 +109,6 @@ public class WorkspaceItemSpaceFinder {
                 }
                 items.add(info);
             }
-<<<<<<< HEAD
-        }
-
-        // Find appropriate space for the item.
-        int screenId = 0;
-        int[] coordinates = new int[2];
-        boolean found = false;
-
-        int screenCount = workspaceScreens.size();
-        // First check the preferred screen.
-        IntSet screensToExclude = new IntSet();
-        
-        PreferenceManager2 prefs = PreferenceManager2.INSTANCE.get(context);
-        boolean smartspaceEnabled = PreferenceCacheExtensionsKt.firstCached(prefs.getEnableSmartspace());
-        if (smartspaceEnabled) {
-            screensToExclude.add(FIRST_SCREEN_ID);
-=======
->>>>>>> aosp/android17-release
         }
 
         // Find appropriate space for the item.

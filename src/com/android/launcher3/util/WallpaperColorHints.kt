@@ -43,33 +43,21 @@ constructor(@ApplicationContext private val context: Context, tracker: DaggerSin
     private val wallpaperManager
         get() = context.getSystemService(WallpaperManager::class.java)!!
 
-    var colors: WallpaperColors? = wallpaperManager.getWallpaperColors(FLAG_SYSTEM)
+    // Lawnchair: wallpaper color hints need Android 12 (S)
+    var colors: WallpaperColors? =
+        if (Utilities.ATLEAST_S) wallpaperManager.getWallpaperColors(FLAG_SYSTEM) else null
         private set
 
     val hints: Int
-        get() = colors?.colorHints ?: 0
+        get() = if (Utilities.ATLEAST_S) colors?.colorHints ?: 0 else 0
 
     private val onColorHintsChangedListeners = mutableListOf<OnColorHintListener>()
 
     init {
-<<<<<<< HEAD
         if (Utilities.ATLEAST_S) {
-            hints = wallpaperManager.getWallpaperColors(FLAG_SYSTEM)?.colorHints ?: 0
             val onColorsChangedListener = OnColorsChangedListener { colors, which ->
                 onColorsChanged(colors, which)
             }
-=======
-        val onColorsChangedListener = OnColorsChangedListener { colors, which ->
-            onColorsChanged(colors, which)
-        }
-        UI_HELPER_EXECUTOR.execute {
-            wallpaperManager.addOnColorsChangedListener(
-                onColorsChangedListener,
-                MAIN_EXECUTOR.handler,
-            )
-        }
-        tracker.addCloseable {
->>>>>>> aosp/android17-release
             UI_HELPER_EXECUTOR.execute {
                 wallpaperManager.addOnColorsChangedListener(
                     onColorsChangedListener,
@@ -86,22 +74,12 @@ constructor(@ApplicationContext private val context: Context, tracker: DaggerSin
 
     @MainThread
     private fun onColorsChanged(colors: WallpaperColors?, which: Int) {
-<<<<<<< HEAD
-        if (Utilities.ATLEAST_S) {
-            if ((which and FLAG_SYSTEM) != 0) {
-                val newHints = colors?.colorHints ?: 0
-                if (newHints != hints) {
-                    hints = newHints
-                    onColorHintsChangedListeners.forEach { it.onColorHintsChanged(newHints) }
-                }
-=======
         if ((which and FLAG_SYSTEM) != 0) {
             val oldHints = hints
             this.colors = colors
             val newHints = hints
             if (oldHints != newHints) {
                 onColorHintsChangedListeners.forEach { it.onColorHintsChanged(newHints) }
->>>>>>> aosp/android17-release
             }
         }
     }

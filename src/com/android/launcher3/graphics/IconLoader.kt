@@ -16,6 +16,8 @@
 
 package com.android.launcher3.graphics
 
+import app.lawnchair.icons.ExtendedBitmapDrawable
+import app.lawnchair.preferences.PreferenceManager
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.LauncherApps
@@ -89,8 +91,11 @@ constructor(
                     info is ItemInfoWithIcon && info.container == Favorites.CONTAINER_PRIVATESPACE
                 ) {
                     info.bitmap.getBadgeDrawable(context, useTheme)
-                } else {
+                } else if (Utilities.ATLEAST_S) {
                     iconProvider.getIcon(activityInfo.activityInfo, idp.fillResIconDpi)
+                } else {
+                    // Lawnchair: LauncherActivityInfo.getActivityInfo() needs Android 12
+                    iconProvider.getIcon(activityInfo.applicationInfo, idp.fillResIconDpi)
                 }
         } else if (info.itemType == Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
             val siList: List<ShortcutInfo> =
@@ -122,6 +127,14 @@ constructor(
         }
 
         if (mainIcon == null) {
+            return null
+        }
+        // Lawnchair: icon-pack icons, and icons when adaptive wrapping is off, are not wrapped
+        if (
+            ExtendedBitmapDrawable.isFromIconPack(mainIcon) ||
+                (!PreferenceManager.INSTANCE.get(context).wrapAdaptiveIcons.get() &&
+                    info.itemType != Favorites.ITEM_TYPE_FOLDER)
+        ) {
             return null
         }
         var result: AdaptiveIconDrawable =

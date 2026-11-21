@@ -78,14 +78,12 @@ public class AutoInstallsLayout {
     private static final String TAG = "AutoInstalls";
     private static final boolean LOGD = false;
 
-    /**
-     * Marker action used to discover a package which defines launcher customization
-     */
-    static final String ACTION_LAUNCHER_CUSTOMIZATION = "android.autoinstalls.config.action.PLAY_AUTO_INSTALL";
+    /** Marker action used to discover a package which defines launcher customization */
+    static final String ACTION_LAUNCHER_CUSTOMIZATION =
+            "android.autoinstalls.config.action.PLAY_AUTO_INSTALL";
 
     /**
-     * Layout resource which also includes grid size and hotseat count, e.g.,
-     * default_layout_6x6_h5
+     * Layout resource which also includes grid size and hotseat count, e.g., default_layout_6x6_h5
      */
     private static final String FORMATTED_LAYOUT_RES_WITH_HOSTEAT = "default_layout_%dx%d_h%s";
     private static final String FORMATTED_LAYOUT_RES = "default_layout_%dx%d";
@@ -97,7 +95,7 @@ public class AutoInstallsLayout {
         if (!BuildConfig.ENABLE_AUTO_INSTALLS_LAYOUT) {
             return null;
         }
-        
+
         Partner partner = Partner.get(context.getPackageManager(), ACTION_LAUNCHER_CUSTOMIZATION);
         if (partner == null) {
             return null;
@@ -154,8 +152,7 @@ public class AutoInstallsLayout {
     public static final String ATTR_SCREEN = "screen";
     public static final String ATTR_SHORTCUT_ID = "shortcutId";
 
-    // x and y can be specified as negative integers, in which case -1 represents
-    // the
+    // x and y can be specified as negative integers, in which case -1 represents the
     // last row / column, -2 represents the second last, and so on.
     public static final String ATTR_X = "x";
     public static final String ATTR_Y = "y";
@@ -174,7 +171,8 @@ public class AutoInstallsLayout {
     private static final String ATTR_KEY = "key";
     private static final String ATTR_VALUE = "value";
 
-    private static final String HOTSEAT_CONTAINER_NAME = Favorites.containerToString(Favorites.CONTAINER_HOTSEAT);
+    private static final String HOTSEAT_CONTAINER_NAME =
+            Favorites.containerToString(Favorites.CONTAINER_HOTSEAT);
 
     protected final Context mContext;
     protected final LauncherWidgetHolder mAppWidgetHolder;
@@ -234,8 +232,7 @@ public class AutoInstallsLayout {
     }
 
     /**
-     * Loads the layout in the db and returns the number of entries added on the
-     * desktop.
+     * Loads the layout in the db and returns the number of entries added on the desktop.
      */
     public int loadLayout(SQLiteDatabase db) {
         mDb = db;
@@ -269,9 +266,7 @@ public class AutoInstallsLayout {
     }
 
     /**
-     * Parses container and screenId attribute from the current tag, and puts it in
-     * the out.
-     * 
+     * Parses container and screenId attribute from the current tag, and puts it in the out.
      * @param out array of size 2.
      */
     protected void parseContainerAndScreen(XmlElement element, int[] out)
@@ -316,12 +311,7 @@ public class AutoInstallsLayout {
 
         TagParser tagParser = tagParserMap.get(element.getName());
         if (tagParser == null) {
-<<<<<<< HEAD
-            if (LOGD)
-                Log.d(TAG, "Ignoring unknown element tag: " + parser.getName());
-=======
             if (LOGD) Log.d(TAG, "Ignoring unknown element tag: " + element.getName());
->>>>>>> aosp/android17-release
             return 0;
         }
         return tagParser.parseAndAdd(element) >= 0 ? 1 : 0;
@@ -386,7 +376,6 @@ public class AutoInstallsLayout {
     protected interface TagParser {
         /**
          * Parses the tag and adds to the db
-         * 
          * @return the id of the row added or -1;
          */
         int parseAndAdd(XmlElement element) throws XmlPullParserException, IOException;
@@ -411,7 +400,7 @@ public class AutoInstallsLayout {
                         info = mPackageManager.getActivityInfo(cn, 0);
                     } catch (PackageManager.NameNotFoundException nnfe) {
                         String[] packages = mPackageManager.currentToCanonicalPackageNames(
-                                new String[] { packageName });
+                                new String[]{packageName});
                         cn = new ComponentName(packages[0], className);
                         info = mPackageManager.getActivityInfo(cn, 0);
                     }
@@ -452,8 +441,7 @@ public class AutoInstallsLayout {
             final String className = element.get(ATTR_CLASS_NAME);
             addProfileId(element);
             if (TextUtils.isEmpty(packageName) || TextUtils.isEmpty(className)) {
-                if (LOGD)
-                    Log.d(TAG, "Skipping invalid <favorite> with no component");
+                if (LOGD) Log.d(TAG, "Skipping invalid <favorite> with no component");
                 return -1;
             }
 
@@ -490,16 +478,12 @@ public class AutoInstallsLayout {
     }
 
     /**
-     * AppWidget parser: Required attributes packageName, className, spanX and
-     * spanY.
+     * AppWidget parser: Required attributes packageName, className, spanX and spanY.
      * Options child nodes: <extra key=... value=... />
-     * It adds a pending widget which allows the widget to come later. If there are
-     * extras, those
+     * It adds a pending widget which allows the widget to come later. If there are extras, those
      * are passed to widget options during bind.
-     * The config activity for the widget (if present) is not shown, so any optional
-     * configurations
-     * should be passed as extras and the widget should support reading these widget
-     * options.
+     * The config activity for the widget (if present) is not shown, so any optional configurations
+     * should be passed as extras and the widget should support reading these widget options.
      */
     protected class PendingWidgetParser implements TagParser {
 
@@ -519,8 +503,7 @@ public class AutoInstallsLayout {
                 throws XmlPullParserException, IOException {
             ComponentName cn = getComponentName(element);
             if (cn == null) {
-                if (LOGD)
-                    Log.d(TAG, "Skipping invalid <appwidget> with no component");
+                if (LOGD) Log.d(TAG, "Skipping invalid <appwidget> with no component");
                 return -1;
             }
 
@@ -620,8 +603,7 @@ public class AutoInstallsLayout {
             mValues.put(Favorites._ID, mCallback.generateNewItemId());
             int folderId = mCallback.insertAndCheck(mDb, mValues);
             if (folderId < 0) {
-                if (LOGD)
-                    Log.e(TAG, "Unable to add folder");
+                if (LOGD) Log.e(TAG, "Unable to add folder");
                 return -1;
             }
 
@@ -679,21 +661,9 @@ public class AutoInstallsLayout {
         }
     }
 
-<<<<<<< HEAD
-    public static void beginDocument(XmlPullParser parser, String firstElementName)
-            throws XmlPullParserException, IOException {
-        int type;
-        while ((type = parser.next()) != XmlPullParser.START_TAG
-                && type != XmlPullParser.END_DOCUMENT)
-            ;
-
-        if (type != XmlPullParser.START_TAG) {
-            throw new XmlPullParserException("No start tag found");
-=======
     protected class AppPairParser extends FolderParser {
         public AppPairParser() {
             super(getAppPairElementsMap(), Favorites.ITEM_TYPE_APP_GROUP);
->>>>>>> aosp/android17-release
         }
 
         @Override
@@ -759,4 +729,6 @@ public class AutoInstallsLayout {
             };
         }
     }
+
+
 }

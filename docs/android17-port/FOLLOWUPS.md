@@ -22,3 +22,15 @@ Check these when the tree compiles.
 - `WidgetSizes` static helpers moved to `WidgetSizeHandler`; update Lawnchair callers.
 - `AsyncClockEventDelegate` keeps Lawnchair's composition (no `ClockEventDelegate` superclass,
   API 35 only) with AOSP's `getListenableRef` settings observer.
+- Hotseat QSB height: `HotseatProfileInitialValues` now uses the `qsbHeight` passed by
+  `DeviceProfile`; when resolving `DeviceProfile`, pass 0 when `HotseatMode` has no search bar
+  (Lawnchair used `hotseatMode.layoutResourceId != R.layout.empty_view`).
+- `Utilities.getFullDrawable` moved to `graphics/IconLoader.kt`; Lawnchair's icon-pack /
+  wrap-adaptive check and the pre-S fallback were ported there. `loadFullDrawableWithoutTheme`
+  (Lawnchair, used by `LawnchairShortcut`) stays in `Utilities` and uses the old
+  `ShortcutConfigActivityInfo.getFullResIcon(IconCache)` signature.
+- `FeatureFlags.ENABLE_TASKBAR_NAVBAR_UNIFICATION` is gone; Lawnchair guarded it against a crash
+  on Android 15 QPR1 and older. Check where AOSP 17 reads the navbar unification flag.
+- `AbstractFloatingView.TYPE_COMPOSE_VIEW` moved from bit 25 to bit 27 (AOSP took bit 25).
+- `WorkspaceItemSpaceFinder.findSpaceForItem` has a new signature (returns `WorkspaceItemCoordinates`, takes excluded screens); update `app.lawnchair.deck.AddFoldersWithItemsTask`. The smartspace first-screen rule now lives in `AddWorkspaceItemsTask`.
+- `NotificationListener` lost its static listener API upstream; Lawnchair hooks were reapplied and `getInstanceIfConnected()` kept (static connected instance). Check Lawnchair callers of the removed `addNotificationsChangedListener`.

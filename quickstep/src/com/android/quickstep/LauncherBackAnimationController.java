@@ -25,12 +25,6 @@ import static com.android.launcher3.AbstractFloatingView.TYPE_REBIND_SAFE;
 import static com.android.launcher3.BaseActivity.INVISIBLE_ALL;
 import static com.android.launcher3.BaseActivity.INVISIBLE_BY_PENDING_FLAGS;
 import static com.android.launcher3.BaseActivity.PENDING_INVISIBLE_BY_WALLPAPER_ANIMATION;
-<<<<<<< HEAD
-import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
-import static com.android.window.flags2.Flags.predictiveBackThreeButtonNav;
-import static com.android.window.flags2.Flags.removeDepartTargetFromMotion;
-=======
->>>>>>> aosp/android17-release
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -347,20 +341,10 @@ public class LauncherBackAnimationController {
                 .setAnimationTransaction();
         mStartRect.set(mBackTarget.windowConfiguration.getMaxBounds());
 
-        boolean predictiveBackThreeButtonNav;
-        try {
-            predictiveBackThreeButtonNav = predictiveBackThreeButtonNav();
-        } catch (Throwable t) {
-            predictiveBackThreeButtonNav = false;
-        }
         // inset bottom in case of taskbar being present
-<<<<<<< HEAD
-        if (!predictiveBackThreeButtonNav || mLauncher.getDeviceProfile().isTaskbarPresent
-=======
         if (mLauncher.getDeviceProfile().getDeviceProperties()
                 .getTaskbarConfiguration()
                 .isTaskbarPresent()
->>>>>>> aosp/android17-release
                 || DisplayController.getNavigationMode(mLauncher) == NavigationMode.NO_BUTTON) {
             mStartRect.inset(0, 0, 0, mBackTarget.contentInsets.bottom);
         }

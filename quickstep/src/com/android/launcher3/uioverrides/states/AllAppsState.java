@@ -133,27 +133,9 @@ public class AllAppsState extends LauncherState {
     }
 
     @Override
-<<<<<<< HEAD
-    protected <DEVICE_PROFILE_CONTEXT extends Context & ActivityContext>
-            float getDepthUnchecked(DEVICE_PROFILE_CONTEXT context) {
-        if (context.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            return context.getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth();
-        } else {
-            // The scrim fades in at approximately 50% of the swipe gesture.
-            if (enableScalingRevealHomeAnimation()) {
-                // This means that the depth should be twice of what we want, in order to fully zoom
-                // out during the visible portion of the animation.
-                return BaseDepthControllerImpl.DEPTH_60_PERCENT;
-            } else {
-                // This means that the depth should be greater than 1, in order to fully zoom out.
-                return 2f;
-            }
-        }
-=======
     public boolean shouldBlurWorkspace(Launcher launcher, LauncherState targetState) {
         return !shouldReduceWorkspaceBlurUsage(launcher) && (targetState == ALL_APPS
                 || targetState == NORMAL);
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -187,24 +169,11 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
-<<<<<<< HEAD
-        int backgroundColor;
-        if (!launcher.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            // Always use an opaque scrim if there's no sheet.
-            backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
-        } else if (!Flags.allAppsBlur()) {
-            // If there's a sheet but no blur, use the old scrim color.
-            backgroundColor = LawnchairUtilsKt.getAllAppsBackgroundColor(launcher, 
-                ColorTokens.WidgetsPickerScrim.resolveColor(launcher));
-        } else {
-            backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
-=======
         if (Flags.allAppsSurface()) {
             // No scrim.
             return super.getWorkspaceScrimColor(launcher);
->>>>>>> aosp/android17-release
         }
-        int backgroundColor = Themes.getAttrColor(launcher, R.attr.allAppsScrimColor);
+        int backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
         return new ScrimColors(backgroundColor, /* foregroundColor */ Color.TRANSPARENT);
     }
 }

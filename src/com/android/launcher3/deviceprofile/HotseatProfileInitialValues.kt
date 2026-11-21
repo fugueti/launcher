@@ -167,7 +167,8 @@ data class HotseatProfileInitialValues(
                     )
                 else res.getDimensionPixelSize(R.dimen.spring_loaded_hotseat_top_margin)
 
-            val hotseatQsbHeight = res.getDimensionPixelSize(R.dimen.qsb_widget_height)
+            // Lawnchair: qsbHeight is 0 when the dock has no search bar (HotseatMode)
+            val hotseatQsbHeight = qsbHeight
             val hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height)
 
             var hotseatQsbSpace: Int = responsiveHotseatSpec.hotseatQsbSpace
@@ -198,7 +199,8 @@ data class HotseatProfileInitialValues(
             // qsbVisualHeight is the total height of the QSB view, we leave some space at the top
             // and bottom for shadows, similar to the icon shadows.
             // This (2 * hotseatQsbShadowHeight) is to account for the top space and the bottom.
-            val qsbVisualHeight = hotseatQsbHeight - (2 * hotseatQsbShadowHeight)
+            val qsbVisualHeight =
+                if (hotseatQsbHeight > 0) hotseatQsbHeight - (2 * hotseatQsbShadowHeight) else 0
             return HotseatProfileInitialValues(
                 areNavButtonsInline = areNavButtonsInline,
                 navButtonsLayoutWidthPx = navButtonsLayoutWidthPx,
@@ -286,7 +288,8 @@ data class HotseatProfileInitialValues(
                 }
             val hotseatBarWorkspaceSpacePx =
                 res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_side_padding)
-            val hotseatQsbHeight = res.getDimensionPixelSize(R.dimen.qsb_widget_height)
+            // Lawnchair: qsbHeight is 0 when the dock has no search bar (HotseatMode)
+            val hotseatQsbHeight = qsbHeight
             val hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height)
 
             var hotseatQsbSpace = pxFromDp(inv.hotseatQsbSpace[typeIndex], metrics)
@@ -322,7 +325,8 @@ data class HotseatProfileInitialValues(
 
             val barEdgePaddingPx = hotseatBarEdgePaddingPx
             val barWorkspaceSpacePx = hotseatBarWorkspaceSpacePx
-            val qsbVisualHeight = hotseatQsbHeight - 2 * hotseatQsbShadowHeight
+            val qsbVisualHeight =
+                if (hotseatQsbHeight > 0) hotseatQsbHeight - 2 * hotseatQsbShadowHeight else 0
             return HotseatProfileInitialValues(
                 areNavButtonsInline = areNavButtonsInline,
                 navButtonsLayoutWidthPx = navButtonsLayoutWidthPx,

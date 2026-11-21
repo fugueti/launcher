@@ -17,12 +17,6 @@ package com.android.launcher3.touch;
 
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_BIND_PENDING_APPWIDGET;
 import static com.android.launcher3.LauncherConstants.ActivityCodes.REQUEST_RECONFIGURE_APPWIDGET;
-<<<<<<< HEAD
-import static com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT;
-import static com.android.launcher3.Utilities.ATLEAST_BAKLAVA;
-import static com.android.launcher3.allapps.AlphabeticalAppsList.PRIVATE_SPACE_PACKAGE;
-=======
->>>>>>> aosp/android17-release
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_FOLDER_OPEN;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP;
 import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_DISABLED_BY_PUBLISHER;
@@ -407,31 +401,6 @@ public class ItemClickHandler {
                         LAUNCHER_PRIVATE_SPACE_INSTALL_APP_BUTTON_TAP);
             }
         }
-<<<<<<< HEAD
-
-        boolean enableMovingContentIntoPrivateSpace = false;
-        if (ATLEAST_BAKLAVA) {
-            try {
-                /* LC-Note: Some devices (Android 16 QPR) doesn't have or expose this flag to user.
-                 * Let's assume no, because (the flags) enableMovingContentIntoPrivateSpace seems
-                 * to be False for R8 by default.
-                 * */
-                enableMovingContentIntoPrivateSpace = enableMovingContentIntoPrivateSpace();
-            } catch (NoClassDefFoundError | NoSuchMethodError e) {
-                enableMovingContentIntoPrivateSpace = false;
-            }
-        }
-        if (enableMovingContentIntoPrivateSpace &&
-                Objects.equals(item.getTargetPackage(), PRIVATE_SPACE_PACKAGE)
-                && item.itemType != ITEM_TYPE_DEEP_SHORTCUT) {
-            // Only show the popup menu when clicking on the icon itself.
-            if (v instanceof BubbleTextView btv) {
-                btv.startLongPressAction();
-                return;
-            }
-        }
-=======
->>>>>>> aosp/android17-release
         if (intent == null) {
             throw new IllegalArgumentException("Input must have a valid intent");
         }

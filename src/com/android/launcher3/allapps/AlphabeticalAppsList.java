@@ -19,11 +19,8 @@ package com.android.launcher3.allapps;
 
 import static android.multiuser.Flags.enableMovingContentIntoPrivateSpace;
 
-<<<<<<< HEAD
 import static com.android.launcher3.Utilities.ATLEAST_BAKLAVA;
-=======
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_PRIVATESPACE;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.allapps.BaseAllAppsAdapter.VIEW_TYPE_BOTTOM_VIEW_TO_SCROLL_TO;
 import static com.android.launcher3.allapps.BaseAllAppsAdapter.VIEW_TYPE_MASK_PRIVATE_SPACE_HEADER;
 import static com.android.launcher3.allapps.SectionDecorationInfo.ROUND_BOTTOM_LEFT;
@@ -522,7 +519,6 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
         return position;
     }
 
-<<<<<<< HEAD
 
     /**
      * Checks if the provided list of apps are from the work/private profile.
@@ -537,12 +533,10 @@ public class AlphabeticalAppsList implements AllAppsStore.OnUpdateListener {
                         && mPrivateProviderManager.getItemInfoMatcher().test(info)));
     }
     
-=======
     private boolean isPrivateSpaceApp(AppInfo appInfo) {
         return appInfo != null && Objects.equals(appInfo.getTargetPackage(), PRIVATE_SPACE_PACKAGE);
     }
 
->>>>>>> aosp/android17-release
     /**
      * Determines the corner regions that should be rounded for a specific app icon based on its
      * position in a grid. Apps that should only be cared about rounding are the apps in the last

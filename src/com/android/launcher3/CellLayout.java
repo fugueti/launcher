@@ -794,19 +794,11 @@ public class CellLayout extends ViewGroup {
                                        CellLayoutLayoutParams params, boolean markCells) {
         final CellLayoutLayoutParams lp = params;
 
-<<<<<<< HEAD
-        // Hotseat icons - modified by lawnchair
+        // Hotseat icons - Lawnchair: labels in the dock follow the "show labels in dock" preference
         if (child instanceof BubbleTextView bubbleChild) {
-            boolean enableLabel = mContainerType == HOTSEAT
-                    ? PreferenceCacheExtensionsKt.firstCached(pref.getEnableLabelInDock())
-                    : true;
-            bubbleChild.setTextVisibility(enableLabel);
-=======
-        // Hotseat icons - remove text
-        if (child instanceof BubbleTextView) {
-            BubbleTextView bubbleChild = (BubbleTextView) child;
-            bubbleChild.setContainerTextVisibility(mContainerType != HOTSEAT);
->>>>>>> aosp/android17-release
+            boolean enableLabel = mContainerType != HOTSEAT
+                    || PreferenceCacheExtensionsKt.firstCached(pref.getEnableLabelInDock());
+            bubbleChild.setContainerTextVisibility(enableLabel);
         }
 
         child.setScaleX(DEFAULT_SCALE);
@@ -1602,10 +1594,6 @@ public class CellLayout extends ViewGroup {
         }
     }
 
-<<<<<<< HEAD
-    boolean createAreaForResize(int cellX, int cellY, int spanX, int spanY,
-                                View dragView, int[] direction, boolean commit) {
-=======
     /** Returns true if there exists an arrangement to support the given resizing needs. */
     public boolean hasAreaForResize(int cellX, int cellY, int spanX, int spanY,
             View dragView, int[] direction) {
@@ -1617,7 +1605,6 @@ public class CellLayout extends ViewGroup {
     @Nullable
     private ItemConfiguration checkAreaForResize(int cellX, int cellY, int spanX, int spanY,
             View dragView, int[] direction) {
->>>>>>> aosp/android17-release
         int[] pixelXY = new int[2];
         regionToCenterPoint(cellX, cellY, spanX, spanY, pixelXY);
 

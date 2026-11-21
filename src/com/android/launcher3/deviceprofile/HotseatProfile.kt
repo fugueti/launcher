@@ -16,15 +16,8 @@
 
 package com.android.launcher3.deviceprofile
 
-import android.content.res.Resources
-import android.graphics.Rect
-import app.lawnchair.hotseat.HotseatMode
-import app.lawnchair.preferences2.PreferenceManager2
-import com.android.launcher3.InvariantDeviceProfile
-import com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT
-import com.android.launcher3.R
-import com.android.launcher3.responsive.CalculatedHotseatSpec
 import com.android.launcher3.DeviceProfile
+import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.Utilities.getIconVisibleSizePx
 import com.android.launcher3.deviceprofile.HotseatProfileInitialValues.Factory.calculateHotseatBarSizePx
 import com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR
@@ -67,62 +60,11 @@ data class HotseatProfile(
     val isQsbInline: Boolean,
 ) {
 
-<<<<<<< HEAD
-    companion object Factory {
-        fun createHotseatProfile(
-            deviceProperties: DeviceProperties,
-            res: Resources,
-            inv: InvariantDeviceProfile,
-            isTaskbarPresent: Boolean,
-            shouldApplyWidePortraitDimens: Boolean,
-            isVerticalBarLayout: Boolean,
-            responsiveHotseatSpec: CalculatedHotseatSpec?,
-            workspacePageIndicatorHeight: Int,
-            hotseatMode: HotseatMode,
-        ): HotseatProfile {
-            val areNavButtonsInline = isTaskbarPresent && !deviceProperties.isGestureMode
-            var inlineNavButtonsEndSpacingPx = 0
-            var navButtonsLayoutWidthPx = 0
-            var barEndOffset = 0
-            // 3 nav buttons + Spacing between nav buttons
-            if (areNavButtonsInline && !deviceProperties.isPhone) {
-                inlineNavButtonsEndSpacingPx =
-                    res.getDimensionPixelSize(inv.inlineNavButtonsEndSpacing)
-                /* 3 nav buttons + Spacing between nav buttons */
-                navButtonsLayoutWidthPx =
-                    3 * res.getDimensionPixelSize(R.dimen.taskbar_nav_buttons_size) +
-                        2 * res.getDimensionPixelSize(R.dimen.taskbar_button_space_inbetween)
-                barEndOffset = navButtonsLayoutWidthPx + inlineNavButtonsEndSpacingPx
-            }
-            val springLoadedHotseatBarTopMarginPx =
-                if (shouldApplyWidePortraitDimens)
-                    res.getDimensionPixelSize(
-                        R.dimen.spring_loaded_hotseat_top_margin_wide_portrait,
-                    )
-                else res.getDimensionPixelSize(R.dimen.spring_loaded_hotseat_top_margin)
-            val hotseatBarEdgePaddingPx =
-                when {
-                    !isVerticalBarLayout -> 0
-                    responsiveHotseatSpec != null -> responsiveHotseatSpec.edgePadding
-                    else -> workspacePageIndicatorHeight
-                }
-            val isQsbEnable = hotseatMode.layoutResourceId != R.layout.empty_view
-
-            val hotseatBarWorkspaceSpacePx =
-                if (responsiveHotseatSpec != null) 0
-                else res.getDimensionPixelSize(R.dimen.dynamic_grid_hotseat_side_padding)
-            val hotseatQsbHeight =
-                if (isQsbEnable) res.getDimensionPixelSize(R.dimen.qsb_widget_height) else 0
-            val hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height)
-            val hotseatQsbVisualHeight =
-                if (isQsbEnable) hotseatQsbHeight - 2 * hotseatQsbShadowHeight else 0
-=======
     fun recalculateHotseatWidthAndBorderSpace(
         inv: InvariantDeviceProfile,
         deviceProfile: DeviceProfile,
         numShownHotseatIconsParam: Int,
     ): HotseatProfile {
->>>>>>> aosp/android17-release
 
         val hotseatProfileInitialValues =
             HotseatProfileInitialValues(
@@ -130,20 +72,6 @@ data class HotseatProfile(
                 navButtonsLayoutWidthPx = navButtonsLayoutWidthPx,
                 inlineNavButtonsEndSpacingPx = inlineNavButtonsEndSpacingPx,
                 barEndOffset = barEndOffset,
-<<<<<<< HEAD
-                springLoadedBarTopMarginPx = springLoadedHotseatBarTopMarginPx,
-                barEdgePaddingPx = hotseatBarEdgePaddingPx,
-                barWorkspaceSpacePx = hotseatBarWorkspaceSpacePx,
-                qsbHeight = hotseatQsbHeight,
-                qsbShadowHeight = hotseatQsbShadowHeight,
-                qsbVisualHeight = hotseatQsbVisualHeight,
-                minIconSpacePx = res.getDimensionPixelSize(R.dimen.min_hotseat_icon_space),
-                minQsbWidthPx = res.getDimensionPixelSize(R.dimen.min_hotseat_qsb_width),
-                maxIconSpacePx =
-                    if (areNavButtonsInline)
-                        res.getDimensionPixelSize(R.dimen.max_hotseat_icon_space)
-                    else Int.MAX_VALUE,
-=======
                 springLoadedBarTopMarginPx = springLoadedBarTopMarginPx,
                 barEdgePaddingPx = barEdgePaddingPx,
                 barWorkspaceSpacePx = barWorkspaceSpacePx,
@@ -496,7 +424,6 @@ data class HotseatProfile(
                 qsbWidth = hotseatWithBorderAndSpace.qsbWidth,
                 borderSpace = hotseatWithBorderAndSpace.borderSpace,
                 isQsbInline = hotseatProfileInitialValues.isQsbInline,
->>>>>>> aosp/android17-release
             )
         }
     }

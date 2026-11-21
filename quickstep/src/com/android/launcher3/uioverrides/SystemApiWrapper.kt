@@ -74,7 +74,6 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
         } catch (t: Throwable) {
             super.activityOverrides
         }
-<<<<<<< HEAD
     }
 
     override fun createFadeOutAnimOptions(): ActivityOptions {
@@ -98,50 +97,9 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    override fun queryAllUsers(): Map<UserHandle, UserIconInfo> {
-        if (!enablePrivateSpace() || !LawnchairApp.isRecentsEnabled) {
-            return super.queryAllUsers()
-        }
-        return try {
-            val users = ArrayMap<UserHandle, UserIconInfo>()
-            mContext.getSystemService(UserManager::class.java)!!.userProfiles?.forEach { user ->
-                mContext.getSystemService(LauncherApps::class.java)!!.getLauncherUserInfo(user)?.apply {
-                    users[user] =
-                        UserIconInfo(
-                            user,
-                            when (userType) {
-                                UserManager.USER_TYPE_PROFILE_MANAGED -> UserIconInfo.TYPE_WORK
-                                UserManager.USER_TYPE_PROFILE_CLONE -> UserIconInfo.TYPE_CLONED
-                                UserManager.USER_TYPE_PROFILE_PRIVATE -> UserIconInfo.TYPE_PRIVATE
-                                else -> UserIconInfo.TYPE_MAIN
-                            },
-                            userSerialNumber.toLong()
-                        )
-                }
-            }
-            return users
-        } catch (t : Throwable) {
-            return super.queryAllUsers()
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    override fun getPreInstalledSystemPackages(user: UserHandle): List<String> {
-       return try {
-           if (enablePrivateSpace() && privateSpaceSysAppsSeparation())
-               mContext
-                   .getSystemService(LauncherApps::class.java)!!
-                   .getPreInstalledSystemPackages(user)
-           else ArrayList()
-       } catch (t: Throwable) {
-           super.getPreInstalledSystemPackages(user)
-       }
-    }
-
     override fun getAppMarketActivityIntent(packageName: String, user: UserHandle): Intent {
         return try {
-            if (allowPrivateProfile() && enablePrivateSpace())
+            if (enablePrivateSpace())
                 ProxyActivityStarter.getLaunchIntent(
                     mContext,
                     StartActivityParams(null as PendingIntent?, 0).apply {
@@ -167,7 +125,7 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
     /** Returns an intent which can be used to open Private Space Settings. */
     override fun getPrivateSpaceSettingsIntent(): Intent? {
         return try {
-            if (allowPrivateProfile() && enablePrivateSpace())
+            if (enablePrivateSpace())
                 ProxyActivityStarter.getLaunchIntent(
                     mContext,
                     StartActivityParams(null as PendingIntent?, 0).apply {
@@ -189,49 +147,6 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
             super.privateSpaceSettingsIntent
         }
     }
-=======
-
-    override fun getAppMarketActivityIntent(packageName: String, user: UserHandle): Intent =
-        if (enablePrivateSpace())
-            ProxyActivityStarter.getLaunchIntent(
-                mContext,
-                StartActivityParams(null as PendingIntent?, 0).apply {
-                    intentSender =
-                        mContext
-                            .getSystemService(LauncherApps::class.java)!!
-                            .getAppMarketActivityIntent(packageName, user)
-                    options =
-                        ActivityOptions.makeBasic()
-                            .setPendingIntentBackgroundActivityStartMode(
-                                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                            )
-                            .toBundle()
-                    requireActivityResult = false
-                },
-            )
-        else super.getAppMarketActivityIntent(packageName, user)
-
-    /** Returns an intent which can be used to open Private Space Settings. */
-    override fun getPrivateSpaceSettingsIntent(): Intent? =
-        if (enablePrivateSpace())
-            ProxyActivityStarter.getLaunchIntent(
-                mContext,
-                StartActivityParams(null as PendingIntent?, 0).apply {
-                    intentSender =
-                        mContext
-                            .getSystemService(LauncherApps::class.java)
-                            ?.privateSpaceSettingsIntent ?: return null
-                    options =
-                        ActivityOptions.makeBasic()
-                            .setPendingIntentBackgroundActivityStartMode(
-                                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED
-                            )
-                            .toBundle()
-                    requireActivityResult = false
-                },
-            )
-        else null
->>>>>>> aosp/android17-release
 
     override fun isNonResizeableActivity(lai: LauncherActivityInfo): Boolean {
         return try {
@@ -306,12 +221,6 @@ open class SystemApiWrapper @Inject constructor(@ApplicationContext context: Con
         return StatusBarTouchController(launcher, isEnabledCheck)
     }
 
-<<<<<<< HEAD
-    override fun isFileDrawable(shortcutInfo: ShortcutInfo) =
-        shortcutInfo.hasIconFile() || (Utilities.ATLEAST_U && shortcutInfo.hasIconUri())
-
-=======
->>>>>>> aosp/android17-release
     override fun captureSnapshot(host: SurfaceControlViewHost, width: Int, height: Int): Bitmap =
         ScreenCaptureInternal.captureLayers(
                 ScreenCaptureInternal.LayerCaptureArgs.Builder(host.surfacePackage!!.surfaceControl)

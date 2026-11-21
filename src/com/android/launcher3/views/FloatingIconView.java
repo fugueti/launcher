@@ -367,11 +367,7 @@ public class FloatingIconView extends FrameLayout implements
      */
     @UiThread
     private void setIcon(@Nullable Drawable drawable, @Nullable Drawable badge,
-<<<<<<< HEAD
-                         @Nullable Supplier<Drawable> btvIcon, int iconOffset) {
-=======
             @Nullable Supplier<Drawable> btvIcon, int iconOffset, boolean usingCustomShape) {
->>>>>>> aosp/android17-release
         final DeviceProfile dp = mLauncher.getDeviceProfile();
         final InsettableFrameLayout.LayoutParams lp =
                 (InsettableFrameLayout.LayoutParams) getLayoutParams();
@@ -633,13 +629,8 @@ public class FloatingIconView extends FrameLayout implements
      * @param isOpening True if this view replaces the icon for app open animation.
      */
     public static FloatingIconView getFloatingIconView(Launcher launcher, View originalView,
-<<<<<<< HEAD
-                                                       @Nullable View visibilitySyncView, @Nullable View fadeOutView, boolean hideOriginal,
-                                                       RectF positionOut, boolean isOpening) {
-=======
             @Nullable AsyncView<View> visibilitySyncView, @Nullable AsyncView<View> fadeOutView,
             boolean hideOriginal, RectF positionOut, boolean isOpening) {
->>>>>>> aosp/android17-release
         final DragLayer dragLayer = launcher.getDragLayer();
         ViewGroup parent = (ViewGroup) dragLayer.getParent();
         FloatingIconView view = launcher.getViewCache().getView(R.layout.floating_icon_view,

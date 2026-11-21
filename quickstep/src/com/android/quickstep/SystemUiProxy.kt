@@ -278,7 +278,6 @@ constructor(
         }
     }
 
-<<<<<<< HEAD
     private fun startInitialAndroid16RecentsTransition(
         recentTasks: IRecentTasks,
         pendingIntent: PendingIntent,
@@ -309,10 +308,7 @@ constructor(
         }
     }
 
-    fun onBackEvent(backEvent: KeyEvent?) =
-=======
     fun onBackEvent(backEvent: KeyEvent?, displayId: Int) =
->>>>>>> aosp/android17-release
         executeWithErrorLog({ "Failed call onBackPressed" }) {
             systemUiProxy?.onBackEvent(backEvent, displayId)
         }
@@ -1172,16 +1168,7 @@ constructor(
     }
 
     private fun shouldEnableRunningTasksForDesktopMode(): Boolean =
-<<<<<<< HEAD
-        DesktopModeStatus.canEnterDesktopMode(context) &&
-            if (Utilities.ATLEAST_BAKLAVA) {
-                ENABLE_DESKTOP_WINDOWING_TASKBAR_RUNNING_APPS.isTrue
-            } else {
-                false
-            }
-=======
-        DesktopModeStatus.canEnterDesktopMode(context)
->>>>>>> aosp/android17-release
+        Utilities.ATLEAST_BAKLAVA && DesktopModeStatus.canEnterDesktopMode(context)
 
     private fun handleMessageAsync(msg: Message): Boolean {
         return when (msg.what) {

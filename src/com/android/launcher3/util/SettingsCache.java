@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 
-import android.util.Log;
 import androidx.annotation.UiThread;
 import androidx.annotation.AnyThread;
 import androidx.annotation.WorkerThread;
@@ -131,22 +130,9 @@ public class SettingsCache extends ContentObserver {
     public void onChange(boolean selfChange, Uri uri) {
         // We use default of 1, but if we're getting an onChange call, can assume a non-default
         // value will exist
-<<<<<<< HEAD
-        boolean newVal;
-        try {
-            newVal = updateValue(uri, 1 /* Effectively Unused */);
-        } catch (SecurityException e) {
-            // Hidden settings keys (e.g. hide_privatespace_entry_point) are not readable by
-            // non-system apps on S+, skip the cache update instead of crashing.
-            Log.d("LC_SettingsCache", "Key not readable, skip update for " + uri);
-            return;
-        }
-        List<OnChangeListener> listeners = mListenerMap.get(uri);
-=======
         boolean newVal = computeNewValue(uri);
         mKeyCache.put(uri, newVal);
         MutableListenableStream<Boolean> listeners = mListenerMap.get(uri);
->>>>>>> aosp/android17-release
         if (listeners == null) {
             return;
         }
@@ -159,28 +145,7 @@ public class SettingsCache extends ContentObserver {
      */
     @AnyThread
     public boolean getValue(Uri keySetting) {
-<<<<<<< HEAD
-        return getValue(keySetting, 1);
-    }
-
-    /**
-     * Returns the value for this classes key from the cache. If not in cache, will call
-     * {@link #updateValue(Uri, int)} to fetch.
-     */
-    public boolean getValue(Uri keySetting, int defaultValue) {
-        if (mKeyCache.containsKey(keySetting)) {
-            return mKeyCache.get(keySetting);
-        } else {
-            try {
-                return updateValue(keySetting, defaultValue);
-            } catch (SecurityException e) {
-                Log.d("LC_SettingsCache", "Key not readable, assume false for " + keySetting.toString());
-                return false;
-            }
-        }
-=======
         return mKeyCache.computeIfAbsent(keySetting, this::computeNewValue);
->>>>>>> aosp/android17-release
     }
 
     private void registerUriAsync(Uri uri) {
@@ -203,12 +168,19 @@ public class SettingsCache extends ContentObserver {
         String key = keyUri.getLastPathSegment();
         boolean newVal;
         int defaultValue = mUrisEnabledByDefault.contains(keyUri) ? 1 : 0;
-        if (keyUri.toString().startsWith(SYSTEM_URI_PREFIX)) {
-            newVal = Settings.System.getInt(mResolver, key, defaultValue) == 1;
-        } else if (keyUri.toString().startsWith(GLOBAL_URI_PREFIX)) {
-            newVal = Settings.Global.getInt(mResolver, key, defaultValue) == 1;
-        } else { // SETTING_SECURE
-            newVal = Settings.Secure.getInt(mResolver, key, defaultValue) == 1;
+        try {
+            if (keyUri.toString().startsWith(SYSTEM_URI_PREFIX)) {
+                newVal = Settings.System.getInt(mResolver, key, defaultValue) == 1;
+            } else if (keyUri.toString().startsWith(GLOBAL_URI_PREFIX)) {
+                newVal = Settings.Global.getInt(mResolver, key, defaultValue) == 1;
+            } else { // SETTING_SECURE
+                newVal = Settings.Secure.getInt(mResolver, key, defaultValue) == 1;
+            }
+        } catch (SecurityException e) {
+            // Lawnchair: hidden settings keys (e.g. hide_privatespace_entry_point) are not
+            // readable by non-system apps on S+; assume false instead of crashing.
+            Log.d("LC_SettingsCache", "Key not readable, assume false for " + keyUri);
+            newVal = false;
         }
 
         return newVal;

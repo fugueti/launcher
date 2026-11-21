@@ -68,8 +68,9 @@ class ItemInflater<T>(
             // LC-Note: Legacy ACTION_CREATE_SHORTCUT items use the standard shortcut view.
             Favorites.ITEM_TYPE_SHORTCUT,
             Favorites.ITEM_TYPE_DEEP_SHORTCUT,
-<<<<<<< HEAD
-            Favorites.ITEM_TYPE_SEARCH_ACTION -> {
+            Favorites.ITEM_TYPE_SEARCH_ACTION,
+            Favorites.ITEM_TYPE_FILE_SYSTEM_FILE,
+            Favorites.ITEM_TYPE_FILE_SYSTEM_FOLDER -> {
                 var info =
                     when (item) {
                         is WorkspaceItemFactory -> item.makeWorkspaceItem(context)
@@ -77,27 +78,12 @@ class ItemInflater<T>(
                         else -> return null
                     }
                 if (container == Favorites.CONTAINER_ALL_APPS_PREDICTION) {
-                    // Came from all apps prediction row -- make a copy
+                    // Lawnchair: came from all apps prediction row -- make a copy
                     info = WorkspaceItemInfo(info)
                 }
-                return createShortcut(info, parent, container)
+                createShortcut(info = info, parent = parent, container = container)
             }
-=======
-            Favorites.ITEM_TYPE_SEARCH_ACTION,
-            Favorites.ITEM_TYPE_FILE_SYSTEM_FILE,
-            Favorites.ITEM_TYPE_FILE_SYSTEM_FOLDER ->
-                createShortcut(
-                    info =
-                        when (item) {
-                            is WorkspaceItemFactory -> item.makeWorkspaceItem(context)
-                            is WorkspaceItemInfo -> item
-                            else -> return null
-                        },
-                    parent = parent,
-                    container = container,
-                )
 
->>>>>>> aosp/android17-release
             Favorites.ITEM_TYPE_FOLDER ->
                 FolderIcon.inflateFolderAndIcon(
                         R.layout.folder_icon,
@@ -144,16 +130,12 @@ class ItemInflater<T>(
         favorite.customActionsListener = WorkspaceItemCustomActionsListener
         favorite.onFocusChangeListener = focusListener
 
-<<<<<<< HEAD
-        if (container == Favorites.CONTAINER_HOTSEAT_PREDICTION) favorite.verifyHighRes()
-=======
         // If the icon is directly being added on homescreen, verify the high resolution icon
         when (container) {
             Favorites.CONTAINER_HOTSEAT_PREDICTION -> favorite.verifyHighRes()
             Favorites.CONTAINER_DESKTOP -> favorite.verifyHighRes()
             Favorites.CONTAINER_HOTSEAT -> favorite.verifyHighRes()
         }
->>>>>>> aosp/android17-release
         return favorite
     }
 
