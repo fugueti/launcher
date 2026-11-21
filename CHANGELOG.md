@@ -1,5 +1,10 @@
 # Fugueti Launcher changelog
 
+## 16.0.2 (unreleased)
+
+* Development builds: every change merged into `main` publishes a signed **nightly** build
+  (`app.fugueti.launcher.nightly`, installs next to the release app) as the `nightly` release.
+
 ## 16.0.1 (2026-11-21)
 
 First release of **Fugueti**, built on Lawnchair 16 (`16-dev`, Launcher3 from Android 16,

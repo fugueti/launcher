@@ -52,6 +52,14 @@ Google feed without third party bridges, and more reliable backups.
 
 `SHA256SUMS.txt` in each release lets you check the download.
 
+### Development builds (nightly)
+
+Every change merged into `main` publishes a signed nightly build as the
+[`nightly` release](https://github.com/victorwalter/fugueti-launcher/releases/tag/nightly). It is
+a separate app (`app.fugueti.launcher.nightly`, dark icon) that installs next to the release one
+and can update itself from *Settings → About*. Nightlies have the newest changes and the newest
+bugs: make a backup first.
+
 ## Google feed (Discover)
 
 <img alt="Google feed in Fugueti" src="docs/assets/screenshot-feed.webp" width="270px">
