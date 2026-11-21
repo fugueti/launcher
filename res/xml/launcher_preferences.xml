@@ -37,6 +37,7 @@
         launcher:logIdOn="613"
         launcher:logIdOff="614" />
 
+<<<<<<< HEAD
     <!--
       LAUNCHER_HOME_SCREEN_ROTATION_ENABLED(615)
       LAUNCHER_HOME_SCREEN_ROTATION_DISABLED(616)
@@ -59,4 +60,6 @@
             android:key="pref_developer_options"/>
     </PreferenceScreen>
 
+=======
+>>>>>>> aosp/android17-release
 </androidx.preference.PreferenceScreen>

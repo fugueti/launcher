@@ -15,6 +15,7 @@
  */
 package com.android.launcher3.views;
 
+<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.WIDGETS_ENABLED;
 import static com.android.launcher3.LauncherState.ALL_APPS;
 import static com.android.launcher3.LauncherState.EDIT_MODE;
@@ -31,6 +32,12 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
+=======
+import android.content.Context;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+>>>>>>> aosp/android17-release
 import android.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -38,25 +45,21 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.android.launcher3.Launcher;
-import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
-import com.android.launcher3.Utilities;
 import com.android.launcher3.logging.StatsLogManager.EventEnum;
-import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.popup.ArrowPopup;
 import com.android.launcher3.shortcuts.DeepShortcutView;
-import com.android.launcher3.testing.TestLogging;
-import com.android.launcher3.testing.shared.TestProtocol;
 
+<<<<<<< HEAD
 import com.android.launcher3.util.MSDLPlayerWrapper;
 import com.google.android.msdl.data.model.MSDLToken;
 import java.util.ArrayList;
+=======
+>>>>>>> aosp/android17-release
 import java.util.List;
 
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
@@ -71,6 +74,7 @@ import app.lawnchair.ui.popup.LauncherOptionsPopup;
 public class OptionsPopupView<T extends Context & ActivityContext> extends ArrowPopup<T>
         implements OnClickListener, OnLongClickListener {
 
+<<<<<<< HEAD
     // An intent extra to indicate the horizontal scroll of the wallpaper.
     private static final String EXTRA_WALLPAPER_OFFSET = "com.android.launcher3.WALLPAPER_OFFSET";
     private static final String EXTRA_WALLPAPER_FLAVOR = "com.android.launcher3.WALLPAPER_FLAVOR";
@@ -79,6 +83,9 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
             "com.android.wallpaper.LAUNCH_SOURCE";
 
     public final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
+=======
+    private final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
+>>>>>>> aosp/android17-release
     private RectF mTargetRect;
     private boolean mShouldAddArrow;
 
@@ -153,6 +160,11 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
     @Override
     public void assignMarginsAndBackgrounds(ViewGroup viewGroup) {
         assignMarginsAndBackgrounds(viewGroup, mColors[0]);
+    }
+
+    @Override
+    protected void assignMarginsAndBackgrounds(ViewGroup viewGroup, int backgroundColor) {
+        super.assignMarginsAndBackgrounds(viewGroup, backgroundColor);
         // last shortcut doesn't need bottom margin
         final int count = viewGroup.getChildCount() - 1;
         for (int i = 0; i < count; i++) {
@@ -160,6 +172,14 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
             MarginLayoutParams mlp = (MarginLayoutParams) viewGroup.getChildAt(i).getLayoutParams();
             mlp.bottomMargin = mChildContainerMargin;
         }
+    }
+
+    public static void showNoReturn(
+            ActivityContext activityContext,
+            RectF targetRect,
+            List<OptionItem> items,
+            boolean shouldAddArrow) {
+        show(activityContext, targetRect, items, shouldAddArrow);
     }
 
     public static <T extends Context & ActivityContext> OptionsPopupView<T> show(
@@ -201,6 +221,7 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         return popup;
     }
 
+<<<<<<< HEAD
     /**
      * Returns the list of supported actions
      */
@@ -300,6 +321,8 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         return placeholderInfo;
     }
 
+=======
+>>>>>>> aosp/android17-release
     public static class OptionItem {
 
         // Used to create AccessibilityNodeInfo in AccessibilityActionsView.java.

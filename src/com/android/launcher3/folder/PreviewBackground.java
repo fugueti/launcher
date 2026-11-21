@@ -52,7 +52,6 @@ import com.android.launcher3.celllayout.DelegatedCellDrawing;
 import com.android.launcher3.graphics.PathWrapper;
 import com.android.launcher3.graphics.ShapeDelegate;
 import com.android.launcher3.graphics.ThemeManager;
-import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 
@@ -92,7 +91,6 @@ public class PreviewBackground extends DelegatedCellDrawing {
     float mScale = 1f;
     private int mBgColor;
     private int mStrokeColor;
-    private int mDotColor;
     private float mStrokeWidth;
     private int mStrokeAlpha = MAX_BG_OPACITY;
     private int mShadowAlpha = 255;
@@ -190,6 +188,7 @@ public class PreviewBackground extends DelegatedCellDrawing {
         PreferenceManager2 preferenceManager2 = PreferenceManager2.INSTANCE.get(context);
 
         TypedArray ta = context.getTheme().obtainStyledAttributes(R.styleable.FolderIconPreview);
+<<<<<<< HEAD
         ColorOption dotColorOption = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getNotificationDotColor());
         mDotColor = dotColorOption.getColorPreferenceEntry().getLightColor().invoke(context);
         mStrokeColor = ColorTokens.FolderIconBorderColor.resolveColor(context);
@@ -209,6 +208,17 @@ public class PreviewBackground extends DelegatedCellDrawing {
             basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
             basePreviewOffsetY = topPadding + grid.folderIconOffsetYPx;
         }
+=======
+        mStrokeColor = ta.getColor(R.styleable.FolderIconPreview_folderIconBorderColor, 0);
+        mBgColor = ta.getColor(R.styleable.FolderIconPreview_folderPreviewColor, 0);
+        ta.recycle();
+
+        DeviceProfile grid = activity.getDeviceProfile();
+        previewSize = grid.getFolderProfile().getFolderIconSizePx();
+
+        basePreviewOffsetX = (availableSpaceX - previewSize) / 2;
+        basePreviewOffsetY = topPadding + grid.getFolderProfile().getFolderIconOffsetYPx();
+>>>>>>> aosp/android17-release
 
         // Stroke width is 1dp
         mStrokeWidth = context.getResources().getDisplayMetrics().density;
@@ -277,10 +287,6 @@ public class PreviewBackground extends DelegatedCellDrawing {
 
     public int getBgColor() {
         return mBgColor;
-    }
-
-    public int getDotColor() {
-        return mDotColor;
     }
 
     public void drawBackground(Canvas canvas) {

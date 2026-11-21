@@ -17,41 +17,62 @@ package com.android.quickstep.util;
 
 import static android.os.Trace.TRACE_TAG_APP;
 
+<<<<<<< HEAD
 import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 import static com.android.launcher3.Flags.enableScalingRevealHomeAnimation;
 
 import android.app.WallpaperManager;
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
+=======
+import android.app.WallpaperManager;
+import android.content.Context;
+>>>>>>> aosp/android17-release
 import android.gui.EarlyWakeupInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.Trace;
 import android.util.FloatProperty;
 import android.util.Log;
+<<<<<<< HEAD
 import android.view.AttachedSurfaceControl;
 import android.view.CrossWindowBlurListeners;
+=======
+>>>>>>> aosp/android17-release
 import android.view.SurfaceControl;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+<<<<<<< HEAD
 import androidx.annotation.VisibleForTesting;
 
 import com.android.app.animation.Interpolators;
 import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
+=======
+
+import com.android.app.animation.Interpolators;
+import com.android.launcher3.Flags;
+>>>>>>> aosp/android17-release
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.anim.AnimatedFloat;
 import com.android.launcher3.statehandlers.BaseDepthController;
+<<<<<<< HEAD
 import com.android.launcher3.statemanager.StateManager;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
+=======
+import com.android.launcher3.statemanager.BaseState;
+import com.android.launcher3.statemanager.StatefulContainer;
+import com.android.launcher3.util.ListenableRef;
+>>>>>>> aosp/android17-release
 import com.android.launcher3.util.MultiPropertyFactory;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.systemui.shared.system.BlurUtils;
 
 /**
+<<<<<<< HEAD
  * Utility class for applying depth effect
  */
 public class BaseDepthControllerImpl implements BaseDepthController {
@@ -62,6 +83,19 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     // Includes both Wallpaper Zoom and Blur
     private static final FloatProperty<BaseDepthControllerImpl> DEPTH =
             new FloatProperty<BaseDepthControllerImpl>("depth") {
+=======
+ * Utility class for applying depth effect.
+ * @param <STATE> state associated with the container.
+ * @param <CONTAINER> the StatefulContainer.
+ */
+public class BaseDepthControllerImpl<
+        STATE extends BaseState<STATE>,
+        CONTAINER extends Context & StatefulContainer<STATE>> implements BaseDepthController {
+
+    // Includes both Wallpaper Zoom and Blur
+    private static final FloatProperty<BaseDepthControllerImpl<?, ?>> DEPTH =
+            new FloatProperty<>("depth") {
+>>>>>>> aosp/android17-release
                 @Override
                 public void setValue(BaseDepthControllerImpl depthController, float depth) {
                     depthController.setDepth(depth);
@@ -81,9 +115,16 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     private static final int ZOOM_INDEX_COUNT = 1;
 
     // b/291401432
+<<<<<<< HEAD
     private static final String TAG = "BaseDepthController";
 
     protected final QuickstepLauncher mLauncher;
+=======
+    protected static final String TAG = "BaseDepthController";
+    private static final boolean DEBUG = false;
+
+    protected final CONTAINER mContainer;
+>>>>>>> aosp/android17-release
     /** Property to set the depth for state transition. */
     public final MultiProperty stateDepth;
     /** Property to set the depth for widget picker. */
@@ -108,6 +149,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     private final AnimatedFloat mWallpaperZoomOnly = new AnimatedFloat(this::applyDepthAndBlur);
 
     protected SurfaceControl mBaseSurface;
+<<<<<<< HEAD
 
     protected SurfaceControl mBaseSurfaceOverride;
 
@@ -116,6 +158,19 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     private boolean mHasContentBehindLauncher;
 
     /** Pause blur but allow transparent, can be used when launch something behind the Launcher. */
+=======
+    protected SurfaceControl mBaseSurfaceOverride;
+    // May be temporarily null while the container is being created, in which case all blur
+    // requests will be applied immediately rather than synced to the RenderThread. This shouldn't
+    // really happen in practice since we won't apply blur until the container is interactive.
+    @Nullable protected SurfaceTransactionApplier mSurfaceTransactionApplier;
+
+    // Hints that there is potentially content behind container and that we shouldn't optimize by
+    // marking the container surface as opaque.  Only used in certain container states.
+    private boolean mHasContentBehindContainer;
+
+    /** Pause blur but allow transparent, can be used when launch something behind the container. */
+>>>>>>> aosp/android17-release
     protected boolean mPauseBlurs;
 
     /**
@@ -133,6 +188,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     /**
      * Info for early wakeup requests to SurfaceFlinger.
      */
+<<<<<<< HEAD
 //    private EarlyWakeupInfo mEarlyWakeupInfo = new EarlyWakeupInfo();
 
     public BaseDepthControllerImpl(QuickstepLauncher activity) {
@@ -152,6 +208,18 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         mWallpaperManager = activity.getSystemService(WallpaperManager.class);
 
         MultiPropertyFactory<BaseDepthControllerImpl> depthProperty =
+=======
+    private final EarlyWakeupInfo mEarlyWakeupInfo = new EarlyWakeupInfo();
+
+    public BaseDepthControllerImpl(CONTAINER container, ListenableRef<Boolean> blurState) {
+        mContainer = container;
+        mCrossWindowBlursEnabled = blurState.getValue();
+        mMaxBlurRadius = container.getResources().getDimensionPixelSize(
+                R.dimen.max_depth_blur_radius_enhanced);
+        mWallpaperManager = container.getSystemService(WallpaperManager.class);
+
+        MultiPropertyFactory<BaseDepthControllerImpl<?, ?>> depthProperty =
+>>>>>>> aosp/android17-release
                 new MultiPropertyFactory<>(this, DEPTH, DEPTH_INDEX_COUNT, Float::max);
         stateDepth = depthProperty.get(DEPTH_INDEX_STATE_TRANSITION);
         widgetDepth = depthProperty.get(DEPTH_INDEX_WIDGET);
@@ -165,8 +233,23 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             folderZoom = null;
         }
 
+<<<<<<< HEAD
 //        mEarlyWakeupInfo.token = new Binder();
 //        mEarlyWakeupInfo.trace = BaseDepthControllerImpl.class.getName();
+=======
+        mEarlyWakeupInfo.token = new Binder();
+        mEarlyWakeupInfo.trace = BaseDepthControllerImpl.class.getName();
+
+        mContainer.closeOnDestroy(blurState.forEach(mContainer.getUiExecutor(), blurEnabled -> {
+            if (mCrossWindowBlursEnabled == blurEnabled) {
+                return null;
+            }
+            Log.d(TAG, "onBlurStateChanged - blurEnabled: " + blurEnabled);
+            mCrossWindowBlursEnabled = blurEnabled;
+            applyDepthAndBlur();
+            return null;
+        }));
+>>>>>>> aosp/android17-release
     }
 
     @Override
@@ -185,6 +268,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     }
 
     /**
+<<<<<<< HEAD
      * Returns if cross window blurs are enabled. In other words, whether launcher should use blurs
      * style UI or fallback style UI.
      */
@@ -203,6 +287,20 @@ public class BaseDepthControllerImpl implements BaseDepthController {
 
     public void setHasContentBehindLauncher(boolean hasContentBehindLauncher) {
         mHasContentBehindLauncher = hasContentBehindLauncher;
+=======
+     * Sets the applier to use for syncing surface transactions to the RenderThread.
+     *
+     * @param surfaceTransactionApplier created in container to be in sync with the other Surface
+     *                                  transactions e.g. in RecentsView.
+     */
+    public void setSurfaceTransactionApplier(
+            @Nullable SurfaceTransactionApplier surfaceTransactionApplier) {
+        mSurfaceTransactionApplier = surfaceTransactionApplier;
+    }
+
+    public void setHasContentBehindContainer(boolean hasContentBehindContainer) {
+        mHasContentBehindContainer = hasContentBehindContainer;
+>>>>>>> aosp/android17-release
     }
 
     public void pauseBlursOnWindows(boolean pause) {
@@ -213,6 +311,14 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         applyDepthAndBlur();
     }
 
+<<<<<<< HEAD
+=======
+    protected boolean shouldBlur() {
+        boolean hasOpaqueBg = mContainer.getScrimView().isFullyOpaque();
+        return mCrossWindowBlursEnabled && !hasOpaqueBg && !mPauseBlurs;
+    }
+
+>>>>>>> aosp/android17-release
     protected void onInvalidSurface() { }
 
     protected void applyDepthAndBlur() {
@@ -220,6 +326,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     }
 
     /**
+<<<<<<< HEAD
      * Applies depth and blur to the launcher.
      *
      * @param transaction      optional Surface to apply to the blur to.
@@ -276,6 +383,25 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         if (!skipUpdate) {
             mCurrentBlur = newBlur;
             blurWorkspaceDepthTargets();
+=======
+     * Applies depth and blur to the container.
+     *
+     * @param surfaceTransaction optional SurfaceTransaction to apply the blur to.
+     * @param applyImmediately whether to apply the blur immediately or defer to the next frame.
+     * @param skipSimilarBlur whether to skip applying blur if the change is minimal.
+     */
+    private void applyDepthAndBlur(@Nullable SurfaceTransaction surfaceTransaction,
+            boolean applyImmediately, boolean skipSimilarBlur) {
+
+        IBinder windowToken = mContainer.getRootView().getWindowToken();
+        float wallpaperZoom = mDepth;
+        if (Flags.enableExpressiveFolderExpansion()) {
+            wallpaperZoom = Math.max(wallpaperZoom, mWallpaperZoomOnly.value);
+        }
+
+        if (windowToken != null) {
+            mWallpaperManager.setWallpaperZoomOut(windowToken, wallpaperZoom);
+>>>>>>> aosp/android17-release
         }
 
         if (!BlurUtils.supportsBlursOnWindows()) {
@@ -292,6 +418,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             return;
         }
         mWaitingOnSurfaceValidity = false;
+<<<<<<< HEAD
         SurfaceControl blurSurface =
                 enableOverviewBackgroundWallpaperBlur() && mBlurSurface != null ? mBlurSurface
                         : mBaseSurface;
@@ -335,6 +462,58 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         }
     }
 
+=======
+        boolean hasOpaqueBg = mContainer.getScrimView().isFullyOpaque();
+        boolean isSurfaceOpaque = !mHasContentBehindContainer && hasOpaqueBg && !mPauseBlurs;
+        // Only use depth for blur, not wallpaper zoom amount in case only zoom is applied.
+        float blurAmount = mapDepthToBlur(mDepth);
+        SurfaceControl blurSurface = mBlurSurface != null ? mBlurSurface : mBaseSurface;
+
+        int previousBlur = mCurrentBlur;
+        int newBlur = shouldBlur() ? (int) (blurAmount * mMaxBlurRadius) : 0;
+        int delta = Math.abs(newBlur - previousBlur);
+        if (skipSimilarBlur && delta < Utilities.dpToPx(1) && newBlur != 0 && previousBlur != 0
+                && blurAmount != 1f) {
+            if (DEBUG) {
+                Log.v(TAG, "Skipping small blur delta. newBlur: " + newBlur + " previousBlur: "
+                        + previousBlur + " delta: " + delta + " surface: " + blurSurface);
+            }
+            return;
+        }
+        mCurrentBlur = newBlur;
+        Log.v(TAG, "Applying blur: " + mCurrentBlur + " to " + blurSurface + " applyImmediately: "
+                + applyImmediately);
+
+        if (surfaceTransaction == null) {
+            surfaceTransaction = new SurfaceTransaction();
+        }
+
+        surfaceTransaction.forSurface(blurSurface)
+                .setBackgroundBlurRadius(mCurrentBlur)
+                .setOpaque(isSurfaceOpaque);
+        // Set early wake-up flags when we know we're executing an expensive operation, this way
+        // SurfaceFlinger will adjust its internal offsets to avoid jank.
+        boolean wantsEarlyWakeUp = blurAmount > 0 && blurAmount < 1;
+        if (wantsEarlyWakeUp && !mInEarlyWakeUp) {
+            setEarlyWakeup(surfaceTransaction.getTransaction(), true);
+        } else if (!wantsEarlyWakeUp && mInEarlyWakeUp) {
+            setEarlyWakeup(surfaceTransaction.getTransaction(), false);
+        }
+
+        if (applyImmediately || mSurfaceTransactionApplier == null) {
+            Log.d(TAG, "Applying blur immediately, mSurfaceTransactionApplier is null? "
+                    + (mSurfaceTransactionApplier == null));
+            surfaceTransaction.getTransaction().apply();
+        } else {
+            mSurfaceTransactionApplier.scheduleApply(surfaceTransaction);
+        }
+
+        onDepthAndBlurApplied();
+    }
+
+    protected void onDepthAndBlurApplied() {}
+
+>>>>>>> aosp/android17-release
     /**
      * Sets the early wakeup state.
      *
@@ -344,7 +523,11 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         if (mInEarlyWakeUp == inEarlyWakeUp) {
             return;
         }
+<<<<<<< HEAD
         try (SurfaceControl.Transaction transaction = createTransaction()) {
+=======
+        try (SurfaceControl.Transaction transaction = new SurfaceControl.Transaction()) {
+>>>>>>> aosp/android17-release
             setEarlyWakeup(transaction, inEarlyWakeUp);
             transaction.apply();
         }
@@ -362,15 +545,25 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         }
         Log.d(TAG, "setEarlyWakeup: " + start);
         if (start) {
+<<<<<<< HEAD
 //            Trace.instantForTrack(TRACE_TAG_APP, TAG, "notifyRendererForGpuLoadUp");
 //            mLauncher.getRootView().getViewRootImpl().notifyRendererForGpuLoadUp("applyBlur");
 //            transaction.setEarlyWakeupStart();
         } else {
 //            transaction.setEarlyWakeupEnd();
+=======
+            Trace.instantForTrack(TRACE_TAG_APP, TAG, "notifyRendererForGpuLoadUp");
+            mContainer.getRootView().getViewRootImpl().notifyRendererForGpuLoadUp("applyBlur");
+            mContainer.getRootView().getViewRootImpl().notifyRendererOfExpensiveFrame("applyBlur");
+            transaction.setEarlyWakeupStart(mEarlyWakeupInfo);
+        } else {
+            transaction.setEarlyWakeupEnd(mEarlyWakeupInfo);
+>>>>>>> aosp/android17-release
         }
         mInEarlyWakeUp = start;
     }
 
+<<<<<<< HEAD
     /** @return {@code true} if the workspace should be blurred. */
     @VisibleForTesting
     public boolean blurWorkspaceDepthTargets() {
@@ -424,6 +617,12 @@ public class BaseDepthControllerImpl implements BaseDepthController {
         depth = Utilities.boundToRange(depth, 0, 1);
         // Depth of the Launcher state we are in or transitioning to.
         float targetStateDepth = mLauncher.getStateManager().getState().getDepth(mLauncher);
+=======
+    private void setDepth(float depth) {
+        depth = Utilities.boundToRange(depth, 0, 1);
+        // Depth of the container state we are in or transitioning to.
+        float targetStateDepth = mContainer.getStateManager().getState().getDepth(mContainer);
+>>>>>>> aosp/android17-release
 
         float depthF;
         if (depth == targetStateDepth) {
@@ -435,11 +634,14 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             depthF = depthI / 256f;
         }
         if (Float.compare(mDepth, depthF) == 0) {
+<<<<<<< HEAD
             // Depth is unchanged, but a previous apply may have returned early (invalid surface)
             // leaving blur stuck. Force a re-apply when clearing.
             if (depthF == 0f && mCurrentBlur != 0) {
                 applyDepthAndBlur();
             }
+=======
+>>>>>>> aosp/android17-release
             return;
         }
         mDepth = depthF;
@@ -460,16 +662,29 @@ public class BaseDepthControllerImpl implements BaseDepthController {
                     && !applyOnDraw;
             mBaseSurfaceOverride = baseSurfaceOverride;
             Log.d(TAG, "setBaseSurfaceOverride: applying blur behind leash " + baseSurfaceOverride);
+<<<<<<< HEAD
             SurfaceControl.Transaction transaction = setupBlurSurface();
+=======
+            SurfaceTransaction transaction = setupBlurSurface();
+>>>>>>> aosp/android17-release
             applyDepthAndBlur(transaction, applyImmediately, /* skipSimilarBlur */ false);
         }
     }
 
+<<<<<<< HEAD
     private @Nullable SurfaceControl.Transaction setupBlurSurface() {
         SurfaceControl.Transaction transaction = null;
         if (mBaseSurface != null && mBaseSurfaceOverride != null) {
             transaction = createTransaction().setBackgroundBlurRadius(mBaseSurface, 0)
                     .setOpaque(mBaseSurface, false);
+=======
+    private @Nullable SurfaceTransaction setupBlurSurface() {
+        SurfaceTransaction surfaceTransaction = null;
+
+        if (mBaseSurface != null && mBaseSurfaceOverride != null) {
+            surfaceTransaction = new SurfaceTransaction();
+            surfaceTransaction.forSurface(mBaseSurface).setBackgroundBlurRadius(0).setOpaque(false);
+>>>>>>> aosp/android17-release
             if (mBlurSurface == null) {
                 mBlurSurface = new SurfaceControl.Builder()
                         .setName("Overview Blur")
@@ -477,6 +692,7 @@ public class BaseDepthControllerImpl implements BaseDepthController {
                         .build();
                 Log.d(TAG,
                         "setupBlurSurface: creating Overview Blur surface " + mBlurSurface);
+<<<<<<< HEAD
                 transaction.reparent(mBlurSurface, mBaseSurface);
                 Log.d(TAG,
                         "setupBlurSurface: reparenting " + mBlurSurface + " to " + mBaseSurface);
@@ -489,6 +705,20 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             mBlurSurface = null;
         }
         return transaction;
+=======
+                surfaceTransaction.forSurface(mBlurSurface).reparent(mBaseSurface);
+                Log.d(TAG, "setupBlurSurface: reparenting " + mBlurSurface + " to " + mBaseSurface);
+            }
+            surfaceTransaction.forSurface(mBlurSurface).setRelativeLayer(mBaseSurfaceOverride, -1);
+            Log.d(TAG, "setupBlurSurface: relayering to leash " + mBaseSurfaceOverride);
+        } else if (mBlurSurface != null) {
+            Log.d(TAG, "setupBlurSurface: removing blur surface " + mBlurSurface);
+            surfaceTransaction = new SurfaceTransaction();
+            surfaceTransaction.forSurface(mBlurSurface).setRemove();
+            mBlurSurface = null;
+        }
+        return surfaceTransaction;
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -499,10 +729,14 @@ public class BaseDepthControllerImpl implements BaseDepthController {
             mBaseSurface = baseSurface;
             Log.d(TAG, "setSurface:\n\tmWaitingOnSurfaceValidity: " + mWaitingOnSurfaceValidity
                     + "\n\tmBaseSurface: " + mBaseSurface);
+<<<<<<< HEAD
             SurfaceControl.Transaction transaction = null;
             if (enableOverviewBackgroundWallpaperBlur()) {
                 transaction = setupBlurSurface();
             }
+=======
+            SurfaceTransaction transaction = setupBlurSurface();
+>>>>>>> aosp/android17-release
             applyDepthAndBlur(transaction, /* applyImmediately */ false,
                     /* skipSimilarBlur */ false);
         }
@@ -515,7 +749,11 @@ public class BaseDepthControllerImpl implements BaseDepthController {
     private static float mapDepthToBlur(float depth) {
         return Interpolators.clampToProgress(depth, 0, 0.3f);
     }
+<<<<<<< HEAD
     private SurfaceControl.Transaction createTransaction() {
         return new SurfaceControl.Transaction();
     }
 }
+=======
+}
+>>>>>>> aosp/android17-release

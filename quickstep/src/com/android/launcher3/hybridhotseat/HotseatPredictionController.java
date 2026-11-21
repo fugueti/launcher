@@ -15,44 +15,44 @@
  */
 package com.android.launcher3.hybridhotseat;
 
+<<<<<<< HEAD
 import static com.android.launcher3.LauncherAnimUtils.SCALE_PROPERTY;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.anim.AnimatorListeners.forSuccessCallback;
 import static com.android.launcher3.hybridhotseat.HotseatEduController.getLawnchairSettingsIntent;
 import static com.android.launcher3.hybridhotseat.HotseatEduController.getSettingsIntent;
+=======
+import static com.android.launcher3.LauncherAnimUtils.getScaleProperty;
+>>>>>>> aosp/android17-release
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_HOTSEAT_PREDICTION_PINNED;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_HOTSEAT_RANKED;
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
-import static com.android.launcher3.util.FlagDebugUtils.appendFlag;
 import static com.android.launcher3.util.OnboardingPrefs.HOTSEAT_LONGPRESS_TIP_SEEN;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
+<<<<<<< HEAD
 import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
+=======
+>>>>>>> aosp/android17-release
 import com.android.launcher3.Flags;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.Hotseat;
+import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
-import com.android.launcher3.anim.AnimationSuccessListener;
-import com.android.launcher3.celllayout.CellLayoutLayoutParams;
-import com.android.launcher3.dragndrop.DragController;
 import com.android.launcher3.dragndrop.DragOptions;
-import com.android.launcher3.graphics.DragPreviewProvider;
 import com.android.launcher3.logger.LauncherAtom.ContainerInfo;
 import com.android.launcher3.logger.LauncherAtom.PredictedHotseatContainer;
 import com.android.launcher3.logging.InstanceId;
@@ -64,35 +64,25 @@ import com.android.launcher3.popup.SystemShortcut;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.touch.ItemLongClickListener;
-import com.android.launcher3.uioverrides.PredictedAppIcon;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
+import com.android.launcher3.util.HybridHotseatOrganizer;
+import com.android.launcher3.views.PredictedAppIcon;
 import com.android.launcher3.views.Snackbar;
 
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Provides prediction ability for the hotseat. Fills gaps in hotseat with predicted items, allows
  * pinning of predicted apps and manages replacement of predicted apps with user drag.
  */
-public class HotseatPredictionController implements DragController.DragListener,
-        SystemShortcut.Factory<QuickstepLauncher>, DeviceProfile.OnDeviceProfileChangeListener,
-        DragSource, ViewGroup.OnHierarchyChangeListener {
+public class HotseatPredictionController implements
+        SystemShortcut.Factory<QuickstepLauncher> {
 
-    private static final int FLAG_DRAG_IN_PROGRESS = 1 << 0;
-    private static final int FLAG_FILL_IN_PROGRESS = 1 << 1;
-    private static final int FLAG_REMOVING_PREDICTED_ICON = 1 << 2;
-
-    private int mHotSeatItemsCount;
-
-    private QuickstepLauncher mLauncher;
+    private final Launcher mLauncher;
+    private final HybridHotseatOrganizer mHotseatOrganizer;
     private final Hotseat mHotseat;
+<<<<<<< HEAD
     private final Runnable mUpdateFillIfNotLoading = this::updateFillIfNotLoading;
 
     private List<ItemInfo> mPredictedItems = Collections.emptyList();
@@ -101,10 +91,28 @@ public class HotseatPredictionController implements DragController.DragListener,
     private int mPauseFlags = 0;
 
     private final List<OutlineOnPage> mOutlineDrawings = new ArrayList<>();
+=======
+>>>>>>> aosp/android17-release
 
     private boolean mEnableHotseatLongPressTipForTesting = true;
 
-    private final View.OnLongClickListener mPredictionLongClickListener = v -> {
+    private static final String SETTINGS_ACTION =
+            "android.settings.ACTION_CONTENT_SUGGESTIONS_SETTINGS";
+
+    public HotseatPredictionController(QuickstepLauncher launcher) {
+        mLauncher = launcher;
+        mHotseatOrganizer = new HybridHotseatOrganizer(
+                launcher,
+                launcher.getWorkspace(),
+                launcher.getItemInflater(),
+                this::onPredictedItemLongClicked,
+                mLauncher::isWorkspaceLoading);
+        mHotseat = launcher.getHotseat();
+        mLauncher.getDragController().addDragListener(mHotseatOrganizer);
+        mLauncher.modelCallbacks.setHybridHotseatOrganizer(mHotseatOrganizer);
+    }
+
+    private boolean onPredictedItemLongClicked(View v) {
         if (!ItemLongClickListener.canStartDrag(mLauncher)) return false;
         if (mLauncher.getWorkspace().isSwitchingState()) return false;
 
@@ -120,12 +128,10 @@ public class HotseatPredictionController implements DragController.DragListener,
         }
 
         // Start the drag
-        // Use a new itemInfo so that the original predicted item is stable
-        WorkspaceItemInfo dragItem = new WorkspaceItemInfo((WorkspaceItemInfo) v.getTag());
         v.setVisibility(View.INVISIBLE);
-        mLauncher.getWorkspace().beginDragShared(
-                v, null, this, dragItem, new DragPreviewProvider(v), new DragOptions());
+        mLauncher.getWorkspace().beginDragShared(v, mHotseatOrganizer, new DragOptions());
         return true;
+<<<<<<< HEAD
     };
 
     public HotseatPredictionController(QuickstepLauncher launcher) {
@@ -170,17 +176,10 @@ public class HotseatPredictionController implements DragController.DragListener,
     private int getVisiblePageStartRank() {
         int page = mHotseat.getPagedView().getNextPage();
         return Math.max(0, page) * mHotSeatItemsCount;
+=======
+>>>>>>> aosp/android17-release
     }
 
-    @Override
-    public void onChildViewAdded(View parent, View child) {
-        onHotseatHierarchyChanged();
-    }
-
-    @Override
-    public void onChildViewRemoved(View parent, View child) {
-        onHotseatHierarchyChanged();
-    }
 
     /** Enables/disabled the hotseat prediction icon long press edu for testing. */
     @VisibleForTesting
@@ -188,6 +187,7 @@ public class HotseatPredictionController implements DragController.DragListener,
         mEnableHotseatLongPressTipForTesting = enable;
     }
 
+<<<<<<< HEAD
     private void onHotseatHierarchyChanged() {
         if (mPauseFlags == 0 && !mLauncher.isWorkspaceLoading()) {
             // Post update after a single frame to avoid layout within layout
@@ -324,15 +324,13 @@ public class HotseatPredictionController implements DragController.DragListener,
         mLauncher.removeOnDeviceProfileChangeListener(this);
     }
 
+=======
+>>>>>>> aosp/android17-release
     /**
      * Sets or updates the predicted items
      */
     public void setPredictedItems(PredictedContainerInfo items) {
-        mPredictedItems = items.getContents();
-        if (mPredictedItems.isEmpty()) {
-            HotseatRestoreHelper.restoreBackup(mLauncher);
-        }
-        fillGapsWithPrediction();
+        mHotseatOrganizer.setPredictedItems(items.getContents());
     }
 
     /**
@@ -347,13 +345,14 @@ public class HotseatPredictionController implements DragController.DragListener,
         mLauncher.getModelWriter().addItemToDatabase(workspaceItemInfo,
                 LauncherSettings.Favorites.CONTAINER_HOTSEAT, workspaceItemInfo.screenId,
                 workspaceItemInfo.cellX, workspaceItemInfo.cellY);
-        ObjectAnimator.ofFloat(icon, SCALE_PROPERTY, 1, 0.8f, 1).start();
+        ObjectAnimator.ofFloat(icon, getScaleProperty(), 1, 0.8f, 1).start();
         icon.pin(workspaceItemInfo);
         mLauncher.getStatsLogManager().logger()
                 .withItemInfo(workspaceItemInfo)
                 .log(LAUNCHER_HOTSEAT_PREDICTION_PINNED);
     }
 
+<<<<<<< HEAD
     private List<PredictedIconOnPage> getPredictedIcons() {
         List<PredictedIconOnPage> icons = new ArrayList<>();
         for (CellLayout page : mHotseat.getPageLayouts()) {
@@ -403,11 +402,14 @@ public class HotseatPredictionController implements DragController.DragListener,
         mIconRemoveAnimators.start();
     }
 
+=======
+>>>>>>> aosp/android17-release
     /**
-     * Removes icon while suppressing any extra tasks performed on view-hierarchy changes.
-     * This avoids recursive/redundant updates as the control updates the UI anyway after
-     * it's animation.
+     * Called when an item is pinned using the context menu.
+     * This action directly refreshes all predicted apps without animations to ensure the
+     * predictions are updated with the newly pinned item.
      */
+<<<<<<< HEAD
     private void removeIconWithoutNotify(PredictedAppIcon icon) {
         mPauseFlags |= FLAG_REMOVING_PREDICTED_ICON;
         ViewGroup parent = (ViewGroup) icon.getParent();
@@ -438,6 +440,13 @@ public class HotseatPredictionController implements DragController.DragListener,
     public void onDragEnd() {
         mPauseFlags &= ~FLAG_DRAG_IN_PROGRESS;
         fillGapsWithPrediction(true);
+=======
+    public void onItemPinnedFromContextMenu() {
+        for (PredictedAppIcon icon : mHotseatOrganizer.getPredictedIcons()) {
+            mHotseatOrganizer.removeIconWithoutNotify(icon);
+        }
+        mHotseatOrganizer.fillGapsWithPrediction();
+>>>>>>> aosp/android17-release
     }
 
     @Nullable
@@ -458,6 +467,7 @@ public class HotseatPredictionController implements DragController.DragListener,
         return new PinPrediction(activity, itemInfo, originalView);
     }
 
+<<<<<<< HEAD
     private void preparePredictionInfo(WorkspaceItemInfo itemInfo, int rank) {
         itemInfo.container = LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION;
         itemInfo.rank = rank;
@@ -477,6 +487,8 @@ public class HotseatPredictionController implements DragController.DragListener,
         //Does nothing
     }
 
+=======
+>>>>>>> aosp/android17-release
     /**
      * Logs rank info based on current list of predicted items
      */
@@ -485,21 +497,19 @@ public class HotseatPredictionController implements DragController.DragListener,
         if (targetCN == null) {
             return;
         }
-        int rank = -1;
-        for (int i = mPredictedItems.size() - 1; i >= 0; i--) {
-            ItemInfo info = mPredictedItems.get(i);
-            if (targetCN.equals(info.getTargetComponent()) && itemInfo.user.equals(info.user)) {
-                rank = i;
-                break;
-            }
-        }
+        int rank = mHotseatOrganizer.getPredictedRank(targetCN, itemInfo.user);
         if (rank < 0) {
             return;
         }
 
         int cardinality = 0;
+<<<<<<< HEAD
         for (PredictedIconOnPage entry : getPredictedIcons()) {
             ItemInfo info = (ItemInfo) entry.icon.getTag();
+=======
+        for (PredictedAppIcon icon : mHotseatOrganizer.getPredictedIcons()) {
+            ItemInfo info = (ItemInfo) icon.getTag();
+>>>>>>> aosp/android17-release
             cardinality |= 1 << info.screenId;
         }
 
@@ -518,21 +528,10 @@ public class HotseatPredictionController implements DragController.DragListener,
     }
 
     /**
-     * Called when app/shortcut icon is removed by system. This is used to prune visible stale
-     * predictions while while waiting for AppAPrediction service to send new batch of predictions.
-     *
-     * @param matcher filter matching items that have been removed
-     */
-    public void onModelItemsRemoved(Predicate<ItemInfo> matcher) {
-        if (mPredictedItems.removeIf(matcher)) {
-            fillGapsWithPrediction(true);
-        }
-    }
-
-    /**
      * Called when user completes adding item requiring a config activity to the hotseat
      */
     public void onDeferredDrop(int cellX, int cellY) {
+<<<<<<< HEAD
         CellLayout page = mHotseat.getCurrentPageLayout();
         if (page == null) {
             return;
@@ -540,6 +539,11 @@ public class HotseatPredictionController implements DragController.DragListener,
         View child = page.getChildAt(cellX, cellY);
         if (child instanceof PredictedAppIcon) {
             removeIconWithoutNotify((PredictedAppIcon) child);
+=======
+        View child = mHotseat.getChildAt(cellX, cellY);
+        if (child instanceof PredictedAppIcon predictedAppIcon) {
+            mHotseatOrganizer.removeIconWithoutNotify(predictedAppIcon);
+>>>>>>> aosp/android17-release
         }
     }
 
@@ -551,11 +555,7 @@ public class HotseatPredictionController implements DragController.DragListener,
         }
 
         public static int getDrawableId() {
-            if (Flags.enableLauncherVisualRefresh()) {
-                return R.drawable.keep_24px;
-            } else {
-                return R.drawable.ic_pin;
-            }
+            return R.drawable.keep_24px;
         }
 
         @Override
@@ -565,29 +565,12 @@ public class HotseatPredictionController implements DragController.DragListener,
         }
     }
 
-    private static boolean isPredictedIcon(View view) {
-        return view instanceof PredictedAppIcon && view.getTag() instanceof WorkspaceItemInfo
-                && ((WorkspaceItemInfo) view.getTag()).container
-                == LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION;
-    }
-
-    private static String getStateString(int flags) {
-        StringJoiner str = new StringJoiner("|");
-        appendFlag(str, flags, FLAG_DRAG_IN_PROGRESS, "FLAG_DRAG_IN_PROGRESS");
-        appendFlag(str, flags, FLAG_FILL_IN_PROGRESS, "FLAG_FILL_IN_PROGRESS");
-        appendFlag(str, flags, FLAG_REMOVING_PREDICTED_ICON,
-                "FLAG_REMOVING_PREDICTED_ICON");
-        return str.toString();
-    }
-
     public void dump(String prefix, PrintWriter writer) {
-        writer.println(prefix + "HotseatPredictionController");
-        writer.println(prefix + "\tFlags: " + getStateString(mPauseFlags));
-        writer.println(prefix + "\tmHotSeatItemsCount: " + mHotSeatItemsCount);
-        writer.println(prefix + "\tmPredictedItems: " + mPredictedItems.size());
-        for (ItemInfo info : mPredictedItems) {
-            writer.println(prefix + "\t\t" + info);
-        }
+        mHotseatOrganizer.dump(prefix, writer);
+    }
+
+    static Intent getSettingsIntent() {
+        return new Intent(SETTINGS_ACTION).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 
     private static final class PredictedIconOnPage {

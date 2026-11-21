@@ -20,66 +20,99 @@ import android.content.Context
 import android.hardware.display.DisplayManager
 import android.util.Log
 import android.util.SparseArray
-import android.view.Display
 import android.window.DesktopExperienceFlags
 import androidx.core.util.valueIterator
 import com.android.app.displaylib.DisplayDecorationListener
 import com.android.app.displaylib.DisplaysWithDecorationsRepositoryCompat
+import com.android.launcher3.dagger.ApplicationContext
+import com.android.launcher3.util.SafeCloseable
 import com.android.quickstep.DisplayModel.DisplayResource
+<<<<<<< HEAD
+=======
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+>>>>>>> aosp/android17-release
 import java.io.PrintWriter
+import java.util.function.Consumer
+import java.util.function.IntFunction
 import kotlinx.coroutines.CoroutineDispatcher
 
 /** data model for managing resources with lifecycles that match that of the connected display */
-abstract class DisplayModel<RESOURCE_TYPE : DisplayResource>(
-    val context: Context,
+class DisplayModel<RESOURCE_TYPE : DisplayResource>
+@AssistedInject
+constructor(
+    @ApplicationContext private val context: Context,
     private val systemDecorationChangeObserver: SystemDecorationChangeObserver,
     private val displaysWithDecorationsRepositoryCompat: DisplaysWithDecorationsRepositoryCompat,
-    private val dispatcher: CoroutineDispatcher,
-) : DisplayDecorationListener {
-
-    companion object {
-        private const val TAG = "DisplayModel"
-        private const val DEBUG = false
-    }
+    @Assisted private val dispatcher: CoroutineDispatcher,
+    @Assisted private val resourceFactory: IntFunction<RESOURCE_TYPE?>,
+) : DisplayDecorationListener, SafeCloseable {
 
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     private val displayResourceArray = SparseArray<RESOURCE_TYPE>()
     private val useDisplayDecorationListener: Boolean =
         DesktopExperienceFlags.ENABLE_SYS_DECORS_CALLBACKS_VIA_WM.isTrue() &&
             DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()
+<<<<<<< HEAD
+=======
+
+    private var closed = false
+>>>>>>> aosp/android17-release
 
     override fun onDisplayAddSystemDecorations(displayId: Int) {
+        if (closed) return
         if (DEBUG) Log.d(TAG, "onDisplayAdded: displayId=$displayId")
         storeDisplayResource(displayId)
     }
 
     override fun onDisplayRemoved(displayId: Int) {
+        if (closed) return
         if (DEBUG) Log.d(TAG, "onDisplayRemoved: displayId=$displayId")
         deleteDisplayResource(displayId)
     }
 
     override fun onDisplayRemoveSystemDecorations(displayId: Int) {
+        if (closed) return
         if (DEBUG) Log.d(TAG, "onDisplayRemoveSystemDecorations: displayId=$displayId")
         deleteDisplayResource(displayId)
     }
 
+<<<<<<< HEAD
     protected abstract fun createDisplayResource(display: Display): RESOURCE_TYPE
 
     protected fun initializeDisplays() {
         if (useDisplayDecorationListener) {
+=======
+    fun initializeDisplays() {
+        if (useDisplayDecorationListener) {
+            // NOTE: `registerDisplayDecorationListener` will invoke the listener immediately for
+            // eligible displays (which will end up storing resources for those displays).
+>>>>>>> aosp/android17-release
             displaysWithDecorationsRepositoryCompat.registerDisplayDecorationListener(
                 this,
                 dispatcher,
             )
         } else {
-            systemDecorationChangeObserver.registerDisplayDecorationListener(this)
+            systemDecorationChangeObserver.registerDisplayDecorationListener(this, dispatcher)
+
+            displayManager.displays
+                .filter { getDisplayResource(it.displayId) == null }
+                .forEach { storeDisplayResource(it.displayId) }
         }
-        displayManager.displays
-            .filter { getDisplayResource(it.displayId) == null }
-            .forEach { storeDisplayResource(it.displayId) }
     }
 
+<<<<<<< HEAD
     fun destroy() {
+=======
+    fun forEach(callback: Consumer<RESOURCE_TYPE>) {
+        displayResourceArray.valueIterator().forEach { callback.accept(it) }
+    }
+
+    override fun close() {
+        closed = true
+
+>>>>>>> aosp/android17-release
         if (useDisplayDecorationListener) {
             displaysWithDecorationsRepositoryCompat.unregisterDisplayDecorationListener(this)
         } else {
@@ -119,7 +152,7 @@ abstract class DisplayModel<RESOURCE_TYPE : DisplayResource>(
                 )
             return
         }
-        displayResourceArray[displayId] = createDisplayResource(display)
+        resourceFactory.apply(displayId)?.let { displayResourceArray[displayId] = it }
     }
 
     fun dump(prefix: String, writer: PrintWriter) {
@@ -131,9 +164,24 @@ abstract class DisplayModel<RESOURCE_TYPE : DisplayResource>(
         writer.println("${prefix}]")
     }
 
-    abstract class DisplayResource {
-        abstract fun cleanup()
+    interface DisplayResource {
+        fun cleanup()
 
-        abstract fun dump(prefix: String, writer: PrintWriter)
+        fun dump(prefix: String, writer: PrintWriter)
+    }
+
+    @AssistedFactory
+    interface Factory<RESOURCE_TYPE : DisplayResource> {
+
+        fun newModel(
+            @Assisted dispatcher: CoroutineDispatcher,
+            @Assisted resourceFactory: IntFunction<RESOURCE_TYPE?>,
+        ): DisplayModel<RESOURCE_TYPE>
+    }
+
+    companion object {
+        private const val TAG = "DisplayModel"
+
+        private const val DEBUG = false
     }
 }

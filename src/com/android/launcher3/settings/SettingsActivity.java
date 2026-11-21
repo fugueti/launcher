@@ -20,12 +20,16 @@ import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
 
 import static androidx.preference.PreferenceFragmentCompat.ARG_PREFERENCE_ROOT;
 
+<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.IS_DEBUG_DEVICE;
 import static com.android.launcher3.BuildConfigs.IS_STUDIO_BUILD;
 import static com.android.launcher3.BuildConfigs.NOTIFICATION_DOTS_ENABLED;
+=======
+import static com.android.launcher3.BuildConfig.IS_STUDIO_BUILD;
+>>>>>>> aosp/android17-release
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_MULTI_DISPLAY;
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
-import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -54,16 +58,16 @@ import androidx.preference.PreferenceScreen;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.launcher3.BuildConfig;
-import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.R;
-import com.android.launcher3.states.RotationHelper;
-import com.android.launcher3.util.DisplayController;
+import com.android.launcher3.display.DisplayController;
+import com.android.launcher3.display.LauncherDisplayInfo;
+import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.util.SettingsCache;
 
 /**
- * Settings activity for Launcher. Currently implements the following setting: Allow rotation
+ * Settings activity for Launcher.
  */
 public class SettingsActivity extends FragmentActivity
         implements OnPreferenceStartFragmentCallback, OnPreferenceStartScreenCallback {
@@ -166,8 +170,9 @@ public class SettingsActivity extends FragmentActivity
     /**
      * This fragment shows the launcher preferences.
      */
-    public static class LauncherSettingsFragment extends PreferenceFragmentCompat implements
-            SettingsCache.OnChangeListener {
+    public static class LauncherSettingsFragment extends PreferenceFragmentCompat {
+
+        private @Nullable SafeCloseable mSettingCacheSafeCloseable;
 
         protected boolean mDeveloperOptionsEnabled = true;
 
@@ -179,11 +184,23 @@ public class SettingsActivity extends FragmentActivity
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
+<<<<<<< HEAD
             if (false) {
+=======
+            if (BuildConfig.IS_DEBUG_DEVICE) {
+                // Query DEVELOPMENT_SETTINGS_ENABLED and recreate activity if such setting
+                // has changed.
+>>>>>>> aosp/android17-release
                 Uri devUri = Settings.Global.getUriFor(DEVELOPMENT_SETTINGS_ENABLED);
                 SettingsCache settingsCache = SettingsCache.INSTANCE.get(getContext());
                 mDeveloperOptionsEnabled = settingsCache.getValue(devUri);
-                settingsCache.register(devUri, this);
+                mSettingCacheSafeCloseable = settingsCache.getListenableRef(devUri).forEach(
+                        MAIN_EXECUTOR, (v) -> {
+                            if (v != mDeveloperOptionsEnabled) {
+                                tryRecreateActivity();
+                            }
+                            return null;
+                        });
             }
             super.onCreate(savedInstanceState);
         }
@@ -292,9 +309,10 @@ public class SettingsActivity extends FragmentActivity
          * will remove that preference from the list.
          */
         protected boolean initPreference(Preference preference) {
-            DisplayController.Info info = DisplayController.INSTANCE.get(getContext()).getInfo();
+            LauncherDisplayInfo info = DisplayController.INSTANCE.get(getContext()).getInfo();
             switch (preference.getKey()) {
                 case NOTIFICATION_DOTS_PREFERENCE_KEY:
+<<<<<<< HEAD
                     return NOTIFICATION_DOTS_ENABLED;
                 case ALLOW_ROTATION_PREFERENCE_KEY:
                     if (Flags.oneGridSpecs()) {
@@ -307,18 +325,19 @@ public class SettingsActivity extends FragmentActivity
                     // Initialize the UI once
                     preference.setDefaultValue(RotationHelper.getAllowRotationDefaultValue(info));
                     return true;
+=======
+                    return BuildConfig.NOTIFICATION_DOTS_ENABLED;
+>>>>>>> aosp/android17-release
                 case DEVELOPER_OPTIONS_KEY:
                     if (IS_STUDIO_BUILD) {
                         preference.setOrder(0);
                     }
                     return mDeveloperOptionsEnabled;
                 case FIXED_LANDSCAPE_MODE:
-                    if (!Flags.oneGridSpecs()
-                            // adding this condition until fixing b/378972567
-                            || InvariantDeviceProfile.INSTANCE.get(getContext()).deviceType
-                            == TYPE_MULTI_DISPLAY
-                            || InvariantDeviceProfile.INSTANCE.get(getContext()).deviceType
-                            == TYPE_TABLET) {
+                    if ((InvariantDeviceProfile.INSTANCE.get(getContext()).deviceType
+                                    == TYPE_MULTI_DISPLAY)
+                            || (InvariantDeviceProfile.INSTANCE.get(getContext()).deviceType
+                                    == TYPE_TABLET)) {
                         return false;
                     }
                     // When the setting changes rotate the screen accordingly to showcase the result
@@ -333,7 +352,7 @@ public class SettingsActivity extends FragmentActivity
                                 return true;
                             }
                     );
-                    return !info.isTablet(info.realBounds);
+                    return !info.isLargeScreen(info.realBounds);
             }
             return true;
         }
@@ -356,17 +375,11 @@ public class SettingsActivity extends FragmentActivity
         }
 
         @Override
-        public void onSettingsChanged(boolean isEnabled) {
-            // Developer options changed, try recreate
-            tryRecreateActivity();
-        }
-
-        @Override
         public void onDestroy() {
             super.onDestroy();
-            if (IS_DEBUG_DEVICE) {
-                SettingsCache.INSTANCE.get(getContext())
-                        .unregister(Settings.Global.getUriFor(DEVELOPMENT_SETTINGS_ENABLED), this);
+            if (mSettingCacheSafeCloseable != null) {
+                mSettingCacheSafeCloseable.close();
+                mSettingCacheSafeCloseable = null;
             }
         }
 

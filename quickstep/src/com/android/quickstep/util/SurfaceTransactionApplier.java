@@ -25,8 +25,14 @@ import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.ViewRootImpl;
 
+<<<<<<< HEAD
 import com.android.launcher3.Utilities;
 import com.android.quickstep.RemoteAnimationTargets.ReleaseCheck;
+=======
+import androidx.annotation.NonNull;
+
+import com.android.quickstep.SurfaceReleaseCheck;
+>>>>>>> aosp/android17-release
 
 import app.lawnchair.compat.LawnchairQuickstepCompat;
 
@@ -35,8 +41,12 @@ import app.lawnchair.compat.LawnchairQuickstepCompat;
  *   android.view.SyncRtSurfaceTransactionApplier
  * with some Launcher specific utility methods
  */
+<<<<<<< HEAD
 @TargetApi(Build.VERSION_CODES.R)
 public class SurfaceTransactionApplier extends ReleaseCheck {
+=======
+public class SurfaceTransactionApplier extends SurfaceReleaseCheck {
+>>>>>>> aosp/android17-release
 
     private static final int MSG_UPDATE_SEQUENCE_NUMBER = 0;
 
@@ -116,6 +126,8 @@ public class SurfaceTransactionApplier extends ReleaseCheck {
         mTargetViewRootImpl.registerRtFrameCallback(frame -> {
             if (mBarrierSurfaceControl == null && !Utilities.ATLEAST_Q) return;
             if (mBarrierSurfaceControl == null || !mBarrierSurfaceControl.isValid()) {
+                // Won't sync with anything, but we still need to apply the transaction
+                t.apply();
                 Message.obtain(mApplyHandler, MSG_UPDATE_SEQUENCE_NUMBER, toApplySeqNo, 0)
                         .sendToTarget();
                 return;

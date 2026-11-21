@@ -6,7 +6,6 @@ import android.app.backup.BackupRestoreEventLogger.BackupRestoreDataType
 import android.app.backup.BackupRestoreEventLogger.BackupRestoreError
 import android.content.Context
 import androidx.annotation.VisibleForTesting
-import com.android.launcher3.Flags.enableLauncherBrMetricsFixed
 import com.android.launcher3.LauncherSettings.Favorites
 import com.android.launcher3.Utilities
 import com.android.launcher3.backuprestore.LauncherRestoreEventLogger
@@ -58,9 +57,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
         count: Int,
         @BackupRestoreError error: String?,
     ) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestoreFailed(dataType, count, error)
         }
+=======
+        restoreEventLogger.logItemsRestoreFailed(dataType, count, error)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -70,9 +73,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
      * @param count the number of data items restored.
      */
     override fun logLauncherItemsRestored(@BackupRestoreDataType dataType: String, count: Int) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestored(dataType, count)
         }
+=======
+        restoreEventLogger.logItemsRestored(dataType, count)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -81,9 +88,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
      * @param favoritesId The id of the item type from [Favorites] that was restored.
      */
     override fun logSingleFavoritesItemRestored(favoritesId: Int) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestored(favoritesIdToDataType(favoritesId), 1)
         }
+=======
+        restoreEventLogger.logItemsRestored(favoritesIdToDataType(favoritesId), 1)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -93,9 +104,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
      * @param count number of items that restored.
      */
     override fun logFavoritesItemsRestored(favoritesId: Int, count: Int) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestored(favoritesIdToDataType(favoritesId), count)
         }
+=======
+        restoreEventLogger.logItemsRestored(favoritesIdToDataType(favoritesId), count)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -108,9 +123,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
         favoritesId: Int,
         @BackupRestoreError error: String?,
     ) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestoreFailed(favoritesIdToDataType(favoritesId), 1, error)
         }
+=======
+        restoreEventLogger.logItemsRestoreFailed(favoritesIdToDataType(favoritesId), 1, error)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -125,6 +144,7 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
         count: Int,
         @BackupRestoreError error: String?,
     ) {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed()) {
             restoreEventLogger?.logItemsRestoreFailed(
                 favoritesIdToDataType(favoritesId),
@@ -132,6 +152,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
                 error,
             )
         }
+=======
+        restoreEventLogger.logItemsRestoreFailed(
+            favoritesIdToDataType(favoritesId),
+            count,
+            error,
+        )
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -139,9 +166,13 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
      * done restoring items for Launcher.
      */
     override fun reportLauncherRestoreResults() {
+<<<<<<< HEAD
         if (enableLauncherBrMetricsFixed() && restoreEventLogger != null) {
             BackupManager(context).reportDelayedRestoreResult(restoreEventLogger)
         }
+=======
+        BackupManager(context).reportDelayedRestoreResult(restoreEventLogger)
+>>>>>>> aosp/android17-release
     }
 
     /**
@@ -156,7 +187,7 @@ constructor(@ApplicationContext private val context: Context) : LauncherRestoreE
             Favorites.ITEM_TYPE_APPWIDGET -> DATA_TYPE_APPWIDGET
             Favorites.ITEM_TYPE_CUSTOM_APPWIDGET -> DATA_TYPE_CUSTOM_APPWIDGET
             Favorites.ITEM_TYPE_DEEP_SHORTCUT -> DATA_TYPE_DEEP_SHORTCUT
-            Favorites.ITEM_TYPE_APP_PAIR -> DATA_TYPE_APP_PAIR
+            Favorites.ITEM_TYPE_APP_GROUP -> DATA_TYPE_APP_PAIR
             else -> DATA_TYPE_LAUNCHER_ITEM
         }
 }

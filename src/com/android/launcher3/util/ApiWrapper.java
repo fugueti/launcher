@@ -33,8 +33,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Process;
 import android.os.UserHandle;
-import android.os.UserManager;
-import android.util.ArrayMap;
+import android.view.DragAndDropPermissions;
+import android.view.DragEvent;
 import android.view.SurfaceControlViewHost;
 
 import androidx.annotation.NonNull;
@@ -49,10 +49,8 @@ import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppComponent;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.icons.BitmapRenderer;
-import com.android.launcher3.util.TouchController;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -96,6 +94,7 @@ public class ApiWrapper {
     }
 
     /**
+<<<<<<< HEAD
      * Returns a map of all users on the device to their corresponding UI properties
      */
     public Map<UserHandle, UserIconInfo> queryAllUsers() {
@@ -151,6 +150,8 @@ public class ApiWrapper {
     }
 
     /**
+=======
+>>>>>>> aosp/android17-release
      * Returns an intent which can be used to start the App Market activity (Installer
      * Activity).
      */
@@ -242,16 +243,14 @@ public class ApiWrapper {
         return null;
     }
 
-    /**
-     * Checks if the shortcut is using an icon with file or URI source
-     */
-    public boolean isFileDrawable(@NonNull ShortcutInfo shortcutInfo) {
-        return false;
-    }
-
     /** Captures a snapshot of the host content as a bitmap */
     public Bitmap captureSnapshot(SurfaceControlViewHost host, int width, int height) {
         return BitmapRenderer.createHardwareBitmap(width, height, host.getView()::draw);
+    }
+
+    /** Returns permissions obtained from the specified drag event. */
+    public @Nullable DragAndDropPermissions requestDragAndDropPermissions(DragEvent event) {
+        return null;
     }
 
     private static class NoopDrawable extends ColorDrawable {

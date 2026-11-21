@@ -17,11 +17,15 @@ package com.android.launcher3.uioverrides.states;
 
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_BACKGROUND;
 
+<<<<<<< HEAD
 import android.graphics.Color;
 
 import app.lawnchair.theme.color.tokens.ColorTokens;
+=======
+>>>>>>> aosp/android17-release
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Launcher;
+import com.android.launcher3.LauncherUiState;
 
 /**
  * State to indicate we are about to launch a recent task. Note that this state is only used when
@@ -49,22 +53,18 @@ public class QuickSwitchState extends BackgroundAppState {
     }
 
     @Override
-    public int getVisibleElements(Launcher launcher) {
+    public int getVisibleElements(LauncherUiState launcherUiState) {
         return NONE;
     }
 
     @Override
-    public boolean isTaskbarStashed(Launcher launcher) {
-        return !launcher.getDeviceProfile().isTaskbarPresentInApps;
-    }
-
-    @Override
-    public boolean isTaskbarAlignedWithHotseat(Launcher launcher) {
-        return false;
+    public boolean isTaskbarStashed(DeviceProfile deviceProfile) {
+        return !deviceProfile.getTaskbarProfile().isTaskbarPresentInApps();
     }
 
     @Override
     public boolean detachDesktopCarousel() {
         return true;
     }
+
 }

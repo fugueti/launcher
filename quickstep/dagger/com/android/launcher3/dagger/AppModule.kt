@@ -16,8 +16,17 @@
 
 package com.android.launcher3.dagger
 
+<<<<<<< HEAD
 import app.lawnchair.predictions.LawnchairModelDelegate
 import com.android.launcher3.model.ModelDelegate
+=======
+import com.android.launcher3.MainProcessInitializer
+import com.android.launcher3.model.ModelDelegate
+import com.android.launcher3.model.QuickstepModelDelegate
+import com.android.launcher3.util.BaseDefaultsValueProvider
+import com.android.launcher3.util.DefaultsValueProvider
+import com.android.quickstep.QuickstepProcessInitializer
+>>>>>>> aosp/android17-release
 import dagger.Binds
 import dagger.Module
 
@@ -28,5 +37,21 @@ import dagger.Module
 @Module
 abstract class AppModule {
 
+<<<<<<< HEAD
     @Binds abstract fun bindModelDelegate(impl: LawnchairModelDelegate): ModelDelegate
+=======
+    @Binds abstract fun bindModelDelegate(impl: QuickstepModelDelegate): ModelDelegate
+
+    @Binds
+    abstract fun bindBaseDefaultsValueProvider(
+        impl: BaseDefaultsValueProvider
+    ): DefaultsValueProvider
+
+    @Binds
+    abstract fun bindMainProcessInitializer(
+        impl: QuickstepProcessInitializer
+    ): MainProcessInitializer
+>>>>>>> aosp/android17-release
 }
+
+@Module abstract class ProductionAppModule

@@ -493,9 +493,15 @@ public class FloatingHeaderView extends LinearLayout implements
 
     @Override
     public void setInsets(Rect insets) {
+<<<<<<< HEAD
         var dp =  ActivityContext.lookupContext(getContext()).getDeviceProfile();
         int leftRightPadding = dp.allAppsPadding.left + dp.allAppsPadding.right;
         setPadding(leftRightPadding, getPaddingTop(), leftRightPadding, getPaddingBottom());
+=======
+        Rect allAppsPadding = ActivityContext.lookupContext(getContext())
+                .getDeviceProfile().getAllAppsProfile().getPadding();
+        setPadding(allAppsPadding.left, getPaddingTop(), allAppsPadding.right, getPaddingBottom());
+>>>>>>> aosp/android17-release
     }
 
     public <T extends FloatingHeaderRow> T findFixedRowByType(Class<T> type) {

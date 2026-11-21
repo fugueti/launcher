@@ -15,53 +15,37 @@
  */
 package com.android.launcher3.widget.util;
 
-import android.appwidget.AppWidgetHostView;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
-import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
+<<<<<<< HEAD
 import android.os.Bundle;
 import android.util.Log;
+=======
+>>>>>>> aosp/android17-release
 import android.util.Size;
-import android.util.SizeF;
 
 import com.android.launcher3.DeviceProfile;
-import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.R;
+<<<<<<< HEAD
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.Utilities;
+=======
+>>>>>>> aosp/android17-release
 import com.android.launcher3.model.WidgetItem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** A utility class for widget sizes related calculations. */
 public final class WidgetSizes {
 
-    /**
-     * Returns the list of all possible sizes, in dp, for a widget of given spans on this device.
-     */
-    public static ArrayList<SizeF> getWidgetSizesDp(Context context, int spanX, int spanY) {
-        ArrayList<SizeF> sizes = new ArrayList<>(2);
-        final float density = context.getResources().getDisplayMetrics().density;
-
-        for (DeviceProfile profile : LauncherAppState.getIDP(context).supportedProfiles) {
-            Size widgetSizePx = getWidgetSizePx(profile, spanX, spanY);
-            sizes.add(new SizeF(widgetSizePx.getWidth() / density,
-                    widgetSizePx.getHeight() / density));
-        }
-        return sizes;
-    }
-
     /** Returns the size, in pixels, a widget of given spans & {@code profile}. */
     public static Size getWidgetSizePx(DeviceProfile profile, int spanX, int spanY) {
-        final int hBorderSpacing = (spanX - 1) * profile.cellLayoutBorderSpacePx.x;
-        final int vBorderSpacing = (spanY - 1) * profile.cellLayoutBorderSpacePx.y;
+        final int hBorderSpacing = (spanX - 1)
+                * profile.getWorkspaceProfile().getCellLayoutBorderSpacePx().x;
+        final int vBorderSpacing = (spanY - 1)
+                * profile.getWorkspaceProfile().getCellLayoutBorderSpacePx().y;
 
-        Point cellSize = profile.getCellSize();
-        Rect padding = profile.widgetPadding;
+        Point cellSize = profile.getWorkspaceProfile().getCellSize();
+        Rect padding = profile.getWorkspaceProfile().getWidgetPadding();
 
         return new Size(
                 (spanX * cellSize.x) + hBorderSpacing - padding.left - padding.right,
@@ -74,7 +58,7 @@ public final class WidgetSizes {
      * <p>This size is used by the widget picker. It should NEVER be shared with app widgets.
      *
      * <p>For sizes shared with app widgets, please refer to
-     * {@link #getWidgetSizesDp(Context, int, int)} &
+     * {@link WidgetSizeHandler#getWidgetSizeOptions} &
      */
     public static Size getWidgetItemSizePx(Context context, DeviceProfile profile,
             WidgetItem widgetItem) {
@@ -86,6 +70,7 @@ public final class WidgetSizes {
         return getWidgetSizePx(profile, widgetItem.spanX, widgetItem.spanY);
     }
 
+<<<<<<< HEAD
     /**
      * Updates a given {@code widgetView} with size, {@code spanX}, {@code spanY}.
      *
@@ -158,4 +143,6 @@ public final class WidgetSizes {
             return result;
         }
     }
+=======
+>>>>>>> aosp/android17-release
 }

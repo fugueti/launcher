@@ -19,16 +19,20 @@ package com.android.quickstep.util
 import android.app.TaskInfo
 import android.content.ComponentName
 import android.content.res.Resources
+<<<<<<< HEAD
 import android.window.DesktopExperienceFlags
 import com.android.launcher3.Utilities
 import com.android.systemui.shared.recents.model.Task
+=======
+>>>>>>> aosp/android17-release
 
 class DesksUtils {
     companion object {
-        val sysUiPackage =
+        private val sysUiPackage =
             Resources.getSystem().getString(com.android.internal.R.string.config_systemUi)
 
         @JvmStatic
+<<<<<<< HEAD
         fun areMultiDesksFlagsEnabled() =
             if (false) {
                 // LC-Ignored: Intentional, all Android desktop flags are disabled
@@ -44,6 +48,8 @@ class DesksUtils {
             task.key.component?.let(::isDesktopWallpaperComponent) == true
 
         @JvmStatic
+=======
+>>>>>>> aosp/android17-release
         fun isDesktopWallpaperTask(taskInfo: TaskInfo): Boolean {
             // TODO: b/403118101 - In some launcher tests, there is a task with baseIntent set to
             // null. Remove this check after finding out how that task is created.

@@ -1,0 +1,23 @@
+diff --git a/quickstep/src/com/android/quickstep/util/AppPairsController.java b/quickstep/src/com/android/quickstep/util/AppPairsController.java
+index e6cc27d056..3015ad8315 100644
+--- a/quickstep/src/com/android/quickstep/util/AppPairsController.java
++++ b/quickstep/src/com/android/quickstep/util/AppPairsController.java
+@@ -32,6 +32,9 @@ import static com.android.wm.shell.shared.split.SplitScreenConstants.SNAP_TO_NON
+ import static com.android.wm.shell.shared.split.SplitScreenConstants.getIndex;
+ import static com.android.wm.shell.shared.split.SplitScreenConstants.isPersistentSnapPosition;
+ 
++import static java.util.stream.Collectors.toList;
++
++import android.content.Context;
+ import android.content.Intent;
+ import android.content.pm.LauncherApps;
+ import android.util.Log;
+@@ -231,7 +234,7 @@ public class AppPairsController {
+                 if (delegate == null) {
+                     return;
+                 }
+-                if (RecentsWindowFlags.enableLauncherOverviewInWindow.isTrue()) {
++                if (RecentsWindowFlags.enableLauncherOverviewInWindow) {
+                     PerDisplayRepository<RecentsWindowManager> recentsWindowManagerRepository =
+                             RecentsWindowManager.REPOSITORY_INSTANCE.get(mContext.asContext());
+                     recentsWindowManagerRepository.get(gtv.getDisplayId())

@@ -1,0 +1,12 @@
+diff --git a/src/com/android/launcher3/model/UserLockStateChangedTask.java b/src/com/android/launcher3/model/UserLockStateChangedTask.java
+index 1d41b8c403..e338b4a6da 100644
+--- a/src/com/android/launcher3/model/UserLockStateChangedTask.java
++++ b/src/com/android/launcher3/model/UserLockStateChangedTask.java
+@@ -20,6 +20,7 @@ import static com.android.launcher3.model.data.ItemInfoWithIcon.FLAG_DISABLED_LO
+ import android.content.Context;
+ import android.content.pm.ShortcutInfo;
+ import android.os.UserHandle;
++import android.util.Log;
+ 
+ import androidx.annotation.NonNull;
+ 

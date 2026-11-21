@@ -35,8 +35,13 @@ import android.util.Log;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.graphics.BitmapCreationCheck;
 import com.android.launcher3.logging.FileLog;
+<<<<<<< HEAD
 import com.android.launcher3.util.LockedUserState;
 import com.android.launcher3.util.ResourceBasedOverride;
+=======
+
+import javax.inject.Inject;
+>>>>>>> aosp/android17-release
 
 import org.chickenhook.restrictionbypass.Unseal;
 
@@ -45,12 +50,17 @@ import app.lawnchair.preferences.PreferenceManager;
 /**
  * Utility class to handle one time initializations of the main process
  */
-public class MainProcessInitializer implements ResourceBasedOverride {
+public class MainProcessInitializer {
+
+    @Inject
+    public MainProcessInitializer() {
+    }
 
     private static final String TAG = "MainProcessInitializer";
 
     private static final boolean DEBUG_STRICT_MODE = false;
 
+<<<<<<< HEAD
     public static void initialize(Context context) {
         try {
             Unseal.unseal();
@@ -76,6 +86,8 @@ public class MainProcessInitializer implements ResourceBasedOverride {
                 .init(context);
     }
 
+=======
+>>>>>>> aosp/android17-release
     protected void init(Context context) {
         FileLog.setDir(context.getApplicationContext().getFilesDir());
 

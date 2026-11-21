@@ -16,108 +16,33 @@
 
 package com.android.launcher3;
 
-import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
-import static com.android.launcher3.util.Executors.MODEL_EXECUTOR;
+import android.content.Context;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.ContentProvider;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.Process;
-import android.text.TextUtils;
-import android.util.Log;
-import android.util.Pair;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.dagger.LauncherComponentProvider;
-import com.android.launcher3.model.ModelDbController;
-import com.android.launcher3.util.LayoutImportExportHelper;
-import com.android.launcher3.widget.LauncherWidgetHolder;
+import com.android.launcher3.util.ContentProviderProxy;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.ToIntFunction;
 
 /**
- * This provider facilitates the import and export of home screen metadata within the
- * Launcher's database. This includes managing shortcut placement, launch intents, and labels.
- * Each row in the Launcher3 database corresponds to a single item on the workspace (often
- * referred to as "favorites").
+ * Launcher data provider API.
  *
- * <p>Only applications installed on the system partition or those possessing the platform's
- * signature can access this provider.
- *
- * <p>After data insertion into the Launcher's database, a row may be deleted during Launcher
- * startup if any of these conditions are true. This list is not exhaustive:
- * <ul>
- * <li>Missing or invalid launch intent: This includes a null intent, one without a target
- * package, or one referencing a non-existent activity.</li>
- * <li>When an app previously installed doesn't exist or fails to restore properly.</li>
- * <li>If ShortcutManager/WidgetManager haven't finished restoring by the time Launcher loads</li>
- * <li>If the App Store hasn't finished restoring when Launcher starts loading.</li>
- * <li>The item is linked to a profile that no longer exists (e.g., a deleted work profile).</li>
- * <li>A widget's metadata specifies an invalid height or width.</li>
- * <li>Incorrect item container: For instance, widgets can only be on the desktop or hotseat<li>
- * <li>If the launcher is restoring, but the item isn't flagged as restoring/installing.</li>
- * <li>If a widget fails to inflate within AppWidgetManagerService for any reason.</li>
- * <li>When items in the database occupy the same or overlapping positions.</li>
- * </ul>
- *
- * <p>Although query, bulkInsert, and insert methods are available, their direct use is not
- * recommended. Instead, prefer the XML-based insertion methods accessible via the
- * {@code call()} method. This preference is due to several reasons, including:
- * <ul>
- * <li>The insert methods can can lead to unpredictable behavior if invoked while Launcher
- * is in the process of loading.</li>
- * <li>The XML approach allows for custom tags which can be ingested for proprietary variants
- * of workspace items.</li>
- * <li>The XML method clears old data and inserts new data as a single, atomic action. Direct
- * Delete/Insert usage requires at least 2 binder calls that are not atomic.</li>
- * </ul>
- *
- * <p>It's important to note that the XML format has non-obvious and strict requirements. For
- * instance:
- * <ul>
- * <li>The Launcher uses the "screen" value to determine hot seat placement order.</li>
- * <li>Conversely, for items within a folder, the rank db column dictates their placement
- * order.</li>
- * <li>When an item is on the top-level workspace (i.e., not in the hot seat), the "screen"
- * value signifies its workspace page.</li>
- * </ul>
- *
- * <p>During a launcher restore, a grid migration might occur, either due to user preference or
- * design updates. This migration can cause items to be repositioned or moved to different pages,
- * depending on the old and new grid sizes. Therefore, precise placement cannot be guaranteed
- * in all situations.
+ * @see com.android.launcher3.model.ModelProxyProvider
  */
-public class LauncherProvider extends ContentProvider {
-    private static final String TAG = "LauncherProvider";
+public class LauncherProvider extends ContentProviderProxy {
 
-    // Method API For Provider#call method.
-    private static final String METHOD_EXPORT_LAYOUT_XML = "EXPORT_LAYOUT_XML";
-    private static final String METHOD_IMPORT_LAYOUT_XML = "IMPORT_LAYOUT_XML";
-    private static final String KEY_RESULT = "KEY_RESULT";
-    private static final String KEY_LAYOUT = "KEY_LAYOUT";
-    private static final String SUCCESS = "success";
-    private static final String FAILURE = "failure";
-
-    /**
-     * $ adb shell dumpsys activity provider com.android.launcher3
-     */
+    /** $ adb shell dumpsys activity provider com.android.launcher3 */
     @Override
     public void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
         LauncherComponentProvider.get(getContext()).getDumpManager().dump("", writer, args);
     }
 
+    @Nullable
     @Override
+<<<<<<< HEAD
     public boolean onCreate() {
         return true;
     }
@@ -283,5 +208,9 @@ public class LauncherProvider extends ContentProvider {
             }
             default -> throw new IllegalArgumentException("Invalid URI: " + url);
         }
+=======
+    public ProxyProvider getProxy(@NonNull Context ctx) {
+        return LauncherComponentProvider.get(ctx).getModelProxyProvider();
+>>>>>>> aosp/android17-release
     }
 }

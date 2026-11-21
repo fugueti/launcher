@@ -25,9 +25,12 @@ import static com.android.launcher3.AbstractFloatingView.TYPE_REBIND_SAFE;
 import static com.android.launcher3.BaseActivity.INVISIBLE_ALL;
 import static com.android.launcher3.BaseActivity.INVISIBLE_BY_PENDING_FLAGS;
 import static com.android.launcher3.BaseActivity.PENDING_INVISIBLE_BY_WALLPAPER_ANIMATION;
+<<<<<<< HEAD
 import static com.android.launcher3.Flags.enableOverviewBackgroundWallpaperBlur;
 import static com.android.window.flags2.Flags.predictiveBackThreeButtonNav;
 import static com.android.window.flags2.Flags.removeDepartTargetFromMotion;
+=======
+>>>>>>> aosp/android17-release
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -40,6 +43,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Choreographer;
 import android.view.IRemoteAnimationFinishedCallback;
@@ -66,9 +70,10 @@ import com.android.launcher3.LauncherState;
 import com.android.launcher3.QuickstepTransitionManager;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
-import com.android.launcher3.taskbar.LauncherTaskbarUIController;
+import com.android.launcher3.display.DisplayController;
+import com.android.launcher3.remoteanimations.RemoteAnimationCoordinateTransfer;
+import com.android.launcher3.taskbar.TaskbarInteractor;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
-import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.NavigationMode;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import com.android.quickstep.util.BackAnimState;
@@ -95,8 +100,7 @@ import java.lang.ref.WeakReference;
  */
 public class LauncherBackAnimationController {
     private static final int SCRIM_FADE_DURATION = 233;
-    private static final float MIN_WINDOW_SCALE =
-            Flags.predictiveBackToHomePolish() ? 0.75f : 0.85f;
+    private static final float MIN_WINDOW_SCALE = 0.75f;
     private static final float MAX_SCRIM_ALPHA_DARK = 0.8f;
     private static final float MAX_SCRIM_ALPHA_LIGHT = 0.2f;
     private static final int MIN_BLUR_RADIUS_PRE_COMMIT = 10;
@@ -167,8 +171,7 @@ public class LauncherBackAnimationController {
         mBackCallback = new OnBackInvokedCallbackStub(handler, mProgressAnimator,
                 mProgressInterpolator, this);
         SystemUiProxy.INSTANCE.get(mLauncher).setBackToLauncherCallback(mBackCallback,
-                new RemoteAnimationRunnerStub(this,
-                        removeDepartTargetFromMotion() ? handler : null));
+                new RemoteAnimationRunnerStub(this, handler));
     }
 
     private static class OnBackInvokedCallbackStub extends IOnBackInvokedCallback.Stub {
@@ -205,13 +208,9 @@ public class LauncherBackAnimationController {
             mHandler.post(() -> {
                 LauncherBackAnimationController controller = mControllerRef.get();
                 if (controller != null) {
-                    if (!removeDepartTargetFromMotion()) {
+                    controller.mWaitStartTransition = true;
+                    if (controller.mBackTarget != null && controller.mBackInProgress) {
                         controller.startTransition();
-                    } else {
-                        controller.mWaitStartTransition = true;
-                        if (controller.mBackTarget != null && controller.mBackInProgress) {
-                            controller.startTransition();
-                        }
                     }
                 }
                 mProgressAnimator.reset();
@@ -292,9 +291,6 @@ public class LauncherBackAnimationController {
                     }
                 }
                 controller.mAnimationFinishedCallback = finishedCallback;
-                if (!removeDepartTargetFromMotion()) {
-                    return;
-                }
                 controller.tryStartBackAnimation();
                 if (controller.mWaitStartTransition) {
                     controller.startTransition();
@@ -313,7 +309,7 @@ public class LauncherBackAnimationController {
 
     private void onCancelFinished() {
         customizeStatusBarAppearance(false);
-        if (Flags.predictiveBackToHomePolish() && !mLauncher.getWorkspace().isOverlayShown()
+        if (!mLauncher.getWorkspace().isOverlayShown()
                 && !mLauncher.isInState(LauncherState.ALL_APPS)) {
             setLauncherScale(ScalingWorkspaceRevealAnim.MAX_SIZE);
         }
@@ -337,19 +333,12 @@ public class LauncherBackAnimationController {
         // gesture was committed (not cancelled). BackAnimationController prevents that. Therefore
         // we don't have to handle that case.
         mProgressAnimator.removeOnBackCancelledFinishCallback();
-
-        if (!removeDepartTargetFromMotion()) {
-            RemoteAnimationTarget appTarget = backEvent.getDepartingAnimationTarget();
-            if (appTarget == null || appTarget.leash == null || !appTarget.leash.isValid()) {
-                return;
-            }
-            mBackTarget = appTarget;
-        }
         mBackInProgress = true;
         mInitialTouchPos.set(backEvent.getTouchX(), backEvent.getTouchY());
     }
+
     private void tryStartBackAnimation() {
-        if (mBackTarget == null || (removeDepartTargetFromMotion() && !mBackInProgress)) {
+        if (mBackTarget == null || !mBackInProgress) {
             return;
         }
 
@@ -365,7 +354,13 @@ public class LauncherBackAnimationController {
             predictiveBackThreeButtonNav = false;
         }
         // inset bottom in case of taskbar being present
+<<<<<<< HEAD
         if (!predictiveBackThreeButtonNav || mLauncher.getDeviceProfile().isTaskbarPresent
+=======
+        if (mLauncher.getDeviceProfile().getDeviceProperties()
+                .getTaskbarConfiguration()
+                .isTaskbarPresent()
+>>>>>>> aosp/android17-release
                 || DisplayController.getNavigationMode(mLauncher) == NavigationMode.NO_BUTTON) {
             mStartRect.inset(0, 0, 0, mBackTarget.contentInsets.bottom);
         }
@@ -374,13 +369,11 @@ public class LauncherBackAnimationController {
                 new RemoteAnimationTarget[]{ mBackTarget });
         setLauncherTargetViewVisible(false);
         mCurrentRect.set(mStartRect);
-        if (Flags.predictiveBackToHomePolish() && !mLauncher.getWorkspace().isOverlayShown()
+        if (!mLauncher.getWorkspace().isOverlayShown()
                 && !mLauncher.isInState(LauncherState.ALL_APPS)) {
             Animations.cancelOngoingAnimation(mLauncher.getWorkspace());
             Animations.cancelOngoingAnimation(mLauncher.getHotseat());
-            if (Flags.predictiveBackToHomeBlur()) {
-                mLauncher.getDepthController().pauseBlursOnWindows(true);
-            }
+            mLauncher.getDepthController().pauseBlursOnWindows(true);
             mLauncher.getDepthController().stateDepth.setValue(
                     LauncherState.BACKGROUND_APP.getDepth(mLauncher));
             setLauncherScale(ScalingWorkspaceRevealAnim.MIN_SIZE);
@@ -416,7 +409,7 @@ public class LauncherBackAnimationController {
         mScrimLayer = new SurfaceControl.Builder()
                 .setName("Back to launcher background scrim")
                 .setCallsite("LauncherBackAnimationController")
-                .setColorLayer()
+                .setEffectLayer()
                 .setParent(parent)
                 .setOpaque(false)
                 .setHidden(false)
@@ -486,7 +479,10 @@ public class LauncherBackAnimationController {
     }
 
     private void setBlur(int blurRadius) {
-        if (Flags.predictiveBackToHomeBlur()) {
+        if (Settings.Global.getInt(mLauncher.getContentResolver(),
+                Settings.Global.DISABLE_WINDOW_BLURS, 0) == 1) {
+            mTransaction.setBackgroundBlurRadius(mScrimLayer, 0);
+        } else {
             mTransaction.setBackgroundBlurRadius(mScrimLayer, blurRadius);
         }
     }
@@ -512,27 +508,23 @@ public class LauncherBackAnimationController {
     }
 
     private void startTransition() {
-        if (!removeDepartTargetFromMotion()) {
-            if (mBackTarget == null) {
-                // Trigger transition system instead of custom transition animation.
-                finishAnimation();
-                return;
-            }
-        } else {
-            mWaitStartTransition = false;
-        }
+        mWaitStartTransition = false;
         if (mLauncher.isDestroyed()) {
             return;
         }
         mLauncher.setPredictiveBackToHomeInProgress(true);
-        LauncherTaskbarUIController taskbarUIController = mLauncher.getTaskbarUIController();
-        if (taskbarUIController != null) {
-            taskbarUIController.onLauncherVisibilityChanged(true);
+        TaskbarInteractor taskbarInteractor = mLauncher.getTaskbarInteractor();
+        if (taskbarInteractor != null) {
+            taskbarInteractor.onLauncherVisibilityChanged(true);
         }
         // TODO: Catch the moment when launcher becomes visible after the top app un-occludes
         //  launcher and start animating afterwards. Currently we occasionally get a flicker from
         //  animating when launcher is still invisible.
-        if (mLauncher.hasSomeInvisibleFlag(PENDING_INVISIBLE_BY_WALLPAPER_ANIMATION)) {
+        boolean shouldMoveToRestState =
+                mLauncher.hasSomeInvisibleFlag(PENDING_INVISIBLE_BY_WALLPAPER_ANIMATION)
+                || (Flags.moveToRestStateForBackgroundApp()
+                        && mLauncher.isInState(LauncherState.BACKGROUND_APP));
+        if (shouldMoveToRestState) {
             mLauncher.addForceInvisibleFlag(INVISIBLE_BY_PENDING_FLAGS);
             mLauncher.getStateManager().moveToRestState();
         }
@@ -546,8 +538,8 @@ public class LauncherBackAnimationController {
         float cornerRadius = Utilities.mapRange(
                 mBackProgress, mWindowScaleStartCornerRadius, mWindowScaleEndCornerRadius);
         final RectF resolveRectF = new RectF();
-        mQuickstepTransitionManager.transferRectToTargetCoordinate(
-                mBackTarget, mCurrentRect, true, resolveRectF);
+        new RemoteAnimationCoordinateTransfer(mLauncher)
+                .transferRectToOwnerSurface(mBackTarget, mCurrentRect, resolveRectF);
 
         BackAnimState backAnim =
                 mQuickstepTransitionManager.createWallpaperOpenAnimations(
@@ -558,8 +550,6 @@ public class LauncherBackAnimationController {
                     cornerRadius,
                     mBackInProgress /* fromPredictiveBack */);
         startTransitionAnimations(backAnim);
-        mLauncher.clearForceInvisibleFlag(INVISIBLE_ALL);
-        customizeStatusBarAppearance(true);
     }
 
     private void finishAnimation() {
@@ -598,8 +588,7 @@ public class LauncherBackAnimationController {
         if (mScrimLayer != null) {
             removeScrimLayer();
         }
-        if (Flags.predictiveBackToHomePolish() && Flags.predictiveBackToHomeBlur()
-                && !mLauncher.getWorkspace().isOverlayShown()
+        if (!mLauncher.getWorkspace().isOverlayShown()
                 && !mLauncher.isInState(LauncherState.ALL_APPS)) {
             mLauncher.getDepthController().pauseBlursOnWindows(false);
         }
@@ -628,6 +617,8 @@ public class LauncherBackAnimationController {
             }
         });
         mScrimAlphaAnimator.setDuration(SCRIM_FADE_DURATION).start();
+        mLauncher.clearForceInvisibleFlag(INVISIBLE_ALL);
+        customizeStatusBarAppearance(true);
         backAnim.start(mLauncher.getStateManager());
     }
 
@@ -640,12 +631,8 @@ public class LauncherBackAnimationController {
         mWindowScaleStartCornerRadius = QuickStepContract.getWindowCornerRadius(mLauncher);
         // pE-TODO(QPR1): mStatusBarHeight is 24
         mStatusBarHeight = SystemBarUtils.getStatusBarHeight(mLauncher);
-        if (Flags.allAppsBlur() || enableOverviewBackgroundWallpaperBlur()) {
-            mMaxBlurRadius = mLauncher.getResources().getDimensionPixelSize(
-                    R.dimen.max_depth_blur_radius_enhanced);
-        } else {
-            mMaxBlurRadius = mLauncher.getResources().getInteger(R.integer.max_depth_blur_radius);
-        }
+        mMaxBlurRadius = mLauncher.getResources().getDimensionPixelSize(
+            R.dimen.max_depth_blur_radius_enhanced);
     }
 
     /**

@@ -19,11 +19,16 @@ package com.android.quickstep.util
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Typeface
+<<<<<<< HEAD
 import android.os.Build
 import com.android.launcher3.Utilities
+=======
+import android.util.Log
+>>>>>>> aosp/android17-release
 import com.android.wm.shell.shared.TypefaceUtils
 
 object FontUtils {
+    private const val TAG = "FontUtils"
 
     private val baseTypeface =
         Typeface.create(TypefaceUtils.FontFamily.GSF_LABEL_LARGE.value, Typeface.NORMAL)
@@ -37,6 +42,7 @@ object FontUtils {
         }
 
     fun getFontWeight(resources: Resources): Int {
+<<<<<<< HEAD
         val fontWeightAdjustment: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             resources.configuration.fontWeightAdjustment
         } else {
@@ -47,6 +53,22 @@ object FontUtils {
             Typeface.Builder.NORMAL_WEIGHT + fontWeightAdjustment
         } else {
             Typeface.Builder.NORMAL_WEIGHT
+=======
+        val fontWeightAdjustment: Int = resources.configuration.fontWeightAdjustment
+        val adjusted =
+            if (fontWeightAdjustment != Configuration.FONT_WEIGHT_ADJUSTMENT_UNDEFINED) {
+                Typeface.Builder.NORMAL_WEIGHT + fontWeightAdjustment
+            } else {
+                Typeface.Builder.NORMAL_WEIGHT
+            }
+        if (adjusted !in 0..1000) {
+            Log.w(
+                TAG,
+                "Calculated font weight $adjusted is out of bounds (0-1000) " +
+                    "after adjustment: $fontWeightAdjustment.",
+            )
+>>>>>>> aosp/android17-release
         }
+        return adjusted.coerceIn(0, 1000)
     }
 }

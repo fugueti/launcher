@@ -20,8 +20,10 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
 import static android.view.View.VISIBLE;
 
 import static com.android.launcher3.Hotseat.ALPHA_CHANNEL_PREVIEW_RENDERER;
+import static com.android.launcher3.LauncherModel.useModelRepositoryBinding;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION;
 import static com.android.launcher3.model.ModelUtils.currentScreenContentFilter;
+import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 
 import static java.util.Comparator.comparingDouble;
 
@@ -33,7 +35,6 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.SparseIntArray;
 import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -49,34 +50,39 @@ import androidx.annotation.UiThread;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
+<<<<<<< HEAD
 import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.BuildConfigs;
+=======
+>>>>>>> aosp/android17-release
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Hotseat;
 import com.android.launcher3.InsettableFrameLayout;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherModel;
+import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Workspace;
 import com.android.launcher3.WorkspaceLayoutManager;
-import com.android.launcher3.celllayout.CellLayoutLayoutParams;
 import com.android.launcher3.celllayout.CellPosMapper;
 import com.android.launcher3.dagger.LauncherComponentProvider;
+import com.android.launcher3.display.DisplayController;
 import com.android.launcher3.dragndrop.SimpleDragLayer;
 import com.android.launcher3.graphics.FragmentWithPreview;
 import com.android.launcher3.model.BgDataModel;
 import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.WorkspaceChangeEvent.UpdateEvent;
 import com.android.launcher3.model.data.WorkspaceData;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.util.BaseContext;
-import com.android.launcher3.util.DisplayController;
 import com.android.launcher3.util.IntSet;
 import com.android.launcher3.util.ItemInflater;
 import com.android.launcher3.util.LauncherBindableItemsContainer;
 import com.android.launcher3.util.window.WindowManagerProxy;
 import com.android.launcher3.views.BaseDragLayer;
+import com.android.launcher3.widget.ColorsOverride;
 import com.android.launcher3.widget.LauncherWidgetHolder;
 
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
@@ -110,6 +116,7 @@ public class LauncherPreviewRenderer extends BaseContext
     private final Hotseat mHotseat;
     private final Map<Integer, CellLayout> mWorkspaceScreens = new HashMap<>();
     private final ItemInflater<LauncherPreviewRenderer> mItemInflater;
+    private final LauncherWidgetHolder mWidgetHolder;
 
     // LC-Note: (we don't use QSB preview)
     private int mWorkspaceSearchContainer = R.layout.smartspace_container;
@@ -117,7 +124,7 @@ public class LauncherPreviewRenderer extends BaseContext
 
     public LauncherPreviewRenderer(Context context,
             int workspaceScreenId,
-            @Nullable SparseIntArray wallpaperColorResources,
+            ColorsOverride colorsOverride,
             LauncherModel model,
             int themeRes) {
         this(context, workspaceScreenId, wallpaperColorResources, model, themeRes, null);
@@ -134,11 +141,31 @@ public class LauncherPreviewRenderer extends BaseContext
         mPreferenceManager2 = PreferenceManager2.getInstance(context);
         
         mUiHandler = new Handler(Looper.getMainLooper());
+<<<<<<< HEAD
         mIdp = previewIdp != null ? previewIdp : InvariantDeviceProfile.INSTANCE.get(context);
         mDp = getDeviceProfileForPreview(context).toBuilder(context)
                 .setViewScaleProvider(new PreviewScaleProvider(this)).build();
+=======
+        mIdp = InvariantDeviceProfile.INSTANCE.get(context);
+
+        DeviceProfile.Builder dpBuilder = getDeviceProfileForPreview(context)
+                .toBuilder();
+        if (com.android.systemui.shared.Flags.workspaceItemsLabelHidden()) {
+            dpBuilder.setIsWorkspaceItemsLabelHidden(
+                    LauncherPrefs.WORKSPACE_ITEMS_LABEL_HIDDEN.get(context)
+            );
+        }
+        mDp = dpBuilder
+                .setViewScaleProvider(new PreviewScaleProvider(this))
+                .build();
+>>>>>>> aosp/android17-release
         Rect insets = getInsets(context);
         mDp.updateInsets(insets);
+        mWidgetHolder =
+                LauncherComponentProvider.get(this).getWidgetHolderFactory().newInstance(this);
+        if (colorsOverride != null) {
+            mWidgetHolder.setOnViewCreationCallback(colorsOverride::applyTo);
+        }
 
         mHomeElementInflater = LayoutInflater.from(
                 new ContextThemeWrapper(this, R.style.HomeScreenElementTheme));
@@ -157,20 +184,28 @@ public class LauncherPreviewRenderer extends BaseContext
 
         CellLayout firstScreen = mRootView.findViewById(R.id.workspace);
         firstScreen.setPadding(
-                mDp.workspacePadding.left + mDp.cellLayoutPaddingPx.left,
-                mDp.workspacePadding.top + mDp.cellLayoutPaddingPx.top,
-                mDp.getDeviceProperties().isTwoPanels() ? (mDp.cellLayoutBorderSpacePx.x / 2)
-                        : (mDp.workspacePadding.right + mDp.cellLayoutPaddingPx.right),
-                mDp.workspacePadding.bottom + mDp.cellLayoutPaddingPx.bottom
+                mDp.getWorkspaceProfile().getWorkspacePadding().left
+                        + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().left,
+                mDp.getWorkspaceProfile().getWorkspacePadding().top
+                        + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().top,
+                mDp.getDeviceProperties().isTwoPanels() ? (
+                        mDp.getWorkspaceProfile().getCellLayoutBorderSpacePx().x / 2)
+                        : (mDp.getWorkspaceProfile().getWorkspacePadding().right
+                                + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().right),
+                mDp.getWorkspaceProfile().getWorkspacePadding().bottom
+                        + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().bottom
         );
 
         if (mDp.getDeviceProperties().isTwoPanels()) {
             CellLayout rightPanel = mRootView.findViewById(R.id.workspace_right);
             rightPanel.setPadding(
-                    mDp.cellLayoutBorderSpacePx.x / 2,
-                    mDp.workspacePadding.top + mDp.cellLayoutPaddingPx.top,
-                    mDp.workspacePadding.right + mDp.cellLayoutPaddingPx.right,
-                    mDp.workspacePadding.bottom + mDp.cellLayoutPaddingPx.bottom
+                    mDp.getWorkspaceProfile().getCellLayoutBorderSpacePx().x / 2,
+                    mDp.getWorkspaceProfile().getWorkspacePadding().top
+                            + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().top,
+                    mDp.getWorkspaceProfile().getWorkspacePadding().right
+                            + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().right,
+                    mDp.getWorkspaceProfile().getWorkspacePadding().bottom
+                            + mDp.getWorkspaceProfile().getCellLayoutPaddingPx().bottom
             );
 
             int closestEvenPageId = workspaceScreenId - (workspaceScreenId % 2);
@@ -180,29 +215,53 @@ public class LauncherPreviewRenderer extends BaseContext
             mWorkspaceScreens.put(workspaceScreenId, firstScreen);
         }
 
-        LauncherWidgetHolder widgetHolder = LauncherComponentProvider.get(this)
-                .getWidgetHolderFactory().newInstance(this);
-        if (wallpaperColorResources != null) {
-            widgetHolder.setOnViewCreationCallback(
-                    v -> v.setColorResources(wallpaperColorResources));
-        }
-
+        mWidgetHolder.startListeningForSharedUpdate();
         mItemInflater = new ItemInflater<>(
                 this,
-                widgetHolder,
+                mWidgetHolder,
                 view -> { },
                 (view, b) -> { },
                 mHotseat
         );
         onViewCreated();
-        model.addCallbacksAndLoad(this);
+        if (useModelRepositoryBinding()) {
+            model.activate();
+        } else {
+            model.addCallbacksAndLoad(this);
+        }
         getLifecycle().addObserver(new DefaultLifecycleObserver() {
             @Override
             public void onDestroy(@NonNull LifecycleOwner owner) {
                 model.removeCallbacks(LauncherPreviewRenderer.this);
-                widgetHolder.destroy();
+                mWidgetHolder.destroy();
             }
         });
+
+        if (LauncherModel.useModelRepositoryBinding()) {
+            var repo = LauncherComponentProvider.get(this).getHomeScreenRepository();
+            var state = repo.getWorkspaceState();
+
+            closeOnDestroy(state.getChanges().forEach(MAIN_EXECUTOR, ev -> {
+                // Add and remove events are rare on preview screen. We handle update event to apply
+                // only diff, and for everything else just redraw everything.
+                if (ev instanceof UpdateEvent ue) {
+                    updateContainerItems(ue.getItems(), this);
+                } else {
+                    bindCompleteUI(state.getValue());
+                }
+                return null;
+            }));
+
+            if (state.getValue().getVersion() > 0) {
+                bindCompleteUI(state.getValue());
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public LauncherWidgetHolder getAppWidgetHolder() {
+        return mWidgetHolder;
     }
 
     @Override
@@ -285,10 +344,10 @@ public class LauncherPreviewRenderer extends BaseContext
      */
     @UiThread
     public void hideBottomRow(boolean hide) {
-        if (mDp.isTaskbarPresent) {
+        if (mDp.getDeviceProperties().getTaskbarConfiguration().isTaskbarPresent()) {
             // hotseat icons on bottom
             mHotseat.setIconsAlpha(hide ? 0 : 1, ALPHA_CHANNEL_PREVIEW_RENDERER);
-            if (mDp.isQsbInline) {
+            if (mDp.getHotseatProfile().isQsbInline()) {
                 mHotseat.setQsbAlpha(hide ? 0 : 1, ALPHA_CHANNEL_PREVIEW_RENDERER);
             }
         } else {
@@ -338,8 +397,7 @@ public class LauncherPreviewRenderer extends BaseContext
         }
     }
 
-    @Override
-    public void bindCompleteModel(@NonNull WorkspaceData itemIdMap, boolean isBindingSync) {
+    private void bindCompleteUI(@NonNull WorkspaceData itemIdMap) {
         getAllLayouts().forEach(CellLayout::removeAllViews);
 
         // Separate the items that are on the current screen, and the other remaining items.
@@ -348,6 +406,7 @@ public class LauncherPreviewRenderer extends BaseContext
                 .forEach(this::inflateAndAdd);
         populateHotseatPredictions(itemIdMap);
 
+<<<<<<< HEAD
         // Add first page QSB
         if (PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getEnableSmartspace())) {
             CellLayout firstScreen = mWorkspaceScreens.get(FIRST_SCREEN_ID);
@@ -361,6 +420,8 @@ public class LauncherPreviewRenderer extends BaseContext
                 firstScreen.addViewToCellLayout(qsb, 0, R.id.search_container_workspace, lp, true);
             }
         }
+=======
+>>>>>>> aosp/android17-release
         measureAndLayoutRootView();
         dispatchVisibilityAggregated(mRootView, true);
         measureAndLayoutRootView();
@@ -369,16 +430,28 @@ public class LauncherPreviewRenderer extends BaseContext
         initialRender.complete(mRootView);
     }
 
+
+    @Override
+    public void bindCompleteModel(@NonNull WorkspaceData itemIdMap, boolean isBindingSync) {
+        if (LauncherModel.useModelRepositoryBinding()) return;
+        bindCompleteUI(itemIdMap);
+    }
+
     @Override
     public void bindItemsUpdated(@NonNull Set<ItemInfo> updates) {
+        if (LauncherModel.useModelRepositoryBinding()) return;
         updateContainerItems(updates, this);
     }
 
     private void populateHotseatPredictions(WorkspaceData itemIdMap) {
         List<ItemInfo> predictions = itemIdMap.getPredictedContents(CONTAINER_HOTSEAT_PREDICTION);
         int predictionIndex = 0;
+<<<<<<< HEAD
         int totalHotseatSlots = mDp.numShownHotseatIcons * mDp.numHotseatRows;
         for (int rank = 0; rank < totalHotseatSlots; rank++) {
+=======
+        for (int rank = 0; rank < mDp.getHotseatProfile().getNumShownIcons(); rank++) {
+>>>>>>> aosp/android17-release
             if (predictions.size() <= predictionIndex) continue;
 
             int cellX = mHotseat.getCellXFromOrder(rank);

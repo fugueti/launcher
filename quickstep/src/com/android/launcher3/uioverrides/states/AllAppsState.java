@@ -15,11 +15,9 @@
  */
 package com.android.launcher3.uioverrides.states;
 
-import static com.android.app.animation.Interpolators.DECELERATE_2;
-import static com.android.launcher3.Flags.enableScalingRevealHomeAnimation;
+import static com.android.launcher3.Utilities.shouldReduceWorkspaceBlurUsage;
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_ALLAPPS;
 
-import android.content.Context;
 import android.graphics.Color;
 
 import app.lawnchair.theme.color.tokens.ColorTokens;
@@ -28,10 +26,14 @@ import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Flags;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherState;
+import com.android.launcher3.LauncherUiState;
 import com.android.launcher3.R;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
+<<<<<<< HEAD
 import com.android.quickstep.util.BaseDepthControllerImpl;
+=======
+>>>>>>> aosp/android17-release
 import com.android.systemui.shared.system.InteractionJankMonitorWrapper;
 
 import java.util.concurrent.TimeUnit;
@@ -54,9 +56,13 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public int getTransitionDuration(ActivityContext context, boolean isToState) {
+        if (Flags.allAppsSurface() && !isToState) {
+            // TODO(b/414847564): Temporary workaround for no state transition during the swipe.
+            return 100;
+        }
         return isToState
-                ? context.getDeviceProfile().allAppsOpenDuration
-                : context.getDeviceProfile().allAppsCloseDuration;
+                ? context.getDeviceProfile().getAllAppsProfile().getOpenDuration()
+                : context.getDeviceProfile().getAllAppsProfile().getCloseDuration();
     }
 
     @Override
@@ -116,25 +122,21 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public ScaleAndTranslation getWorkspaceScaleAndTranslation(Launcher launcher) {
-        return new ScaleAndTranslation(launcher.getDeviceProfile().workspaceContentScale, NO_OFFSET,
-                NO_OFFSET);
+        final float scale = shouldReduceWorkspaceBlurUsage(launcher)
+                ? NO_SCALE
+                : launcher.getDeviceProfile().getWorkspaceProfile().getWorkspaceContentScale();
+        return new ScaleAndTranslation(scale, NO_OFFSET, NO_OFFSET);
     }
 
     @Override
-    public ScaleAndTranslation getHotseatScaleAndTranslation(Launcher launcher) {
-        if (launcher.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            return getWorkspaceScaleAndTranslation(launcher);
-        } else {
-            ScaleAndTranslation overviewScaleAndTranslation = LauncherState.OVERVIEW
-                    .getWorkspaceScaleAndTranslation(launcher);
-            return new ScaleAndTranslation(
-                    launcher.getDeviceProfile().workspaceContentScale,
-                    overviewScaleAndTranslation.translationX,
-                    overviewScaleAndTranslation.translationY);
-        }
+    protected float getDepthUnchecked(ActivityContext context) {
+        return shouldReduceWorkspaceBlurUsage(context.asContext())
+                ? 0f
+                : context.getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth();
     }
 
     @Override
+<<<<<<< HEAD
     protected <DEVICE_PROFILE_CONTEXT extends Context & ActivityContext>
             float getDepthUnchecked(DEVICE_PROFILE_CONTEXT context) {
         if (context.getDeviceProfile().shouldShowAllAppsOnSheet()) {
@@ -150,37 +152,17 @@ public class AllAppsState extends LauncherState {
                 return 2f;
             }
         }
+=======
+    public boolean shouldBlurWorkspace(Launcher launcher, LauncherState targetState) {
+        return !shouldReduceWorkspaceBlurUsage(launcher) && (targetState == ALL_APPS
+                || targetState == NORMAL);
+>>>>>>> aosp/android17-release
     }
 
     @Override
-    public boolean shouldBlurWorkspace(LauncherState targetState) {
-        return targetState == ALL_APPS || targetState == NORMAL;
-    }
-
-    @Override
-    public PageAlphaProvider getWorkspacePageAlphaProvider(Launcher launcher) {
-        PageAlphaProvider superPageAlphaProvider = super.getWorkspacePageAlphaProvider(launcher);
-        return new PageAlphaProvider(DECELERATE_2) {
-            @Override
-            public float getPageAlpha(int pageIndex) {
-                return isWorkspaceVisible(launcher.getDeviceProfile())
-                        ? superPageAlphaProvider.getPageAlpha(pageIndex)
-                        : 0;
-            }
-        };
-    }
-
-    @Override
-    public int getVisibleElements(Launcher launcher) {
-        int elements = ALL_APPS_CONTENT | FLOATING_SEARCH_BAR;
-        if (isWorkspaceVisible(launcher.getDeviceProfile())) {
-            elements |= HOTSEAT_ICONS;
-        }
-        return elements;
-    }
-
-    private static boolean isWorkspaceVisible(DeviceProfile deviceProfile) {
-        return deviceProfile.getDeviceProperties().isTablet() || (Flags.allAppsSheetForHandheld() && Flags.allAppsBlur());
+    public int getVisibleElements(LauncherUiState launcherUiState) {
+        return Flags.allAppsSurface() ? HOTSEAT_ICONS
+                : ALL_APPS_CONTENT | FLOATING_SEARCH_BAR | HOTSEAT_ICONS;
     }
 
     @Override
@@ -191,13 +173,13 @@ public class AllAppsState extends LauncherState {
     @Override
     public int getFloatingSearchBarRestingMarginStart(Launcher launcher) {
         DeviceProfile dp = launcher.getDeviceProfile();
-        return dp.allAppsLeftRightMargin + dp.getAllAppsIconStartMargin(launcher);
+        return dp.getAllAppsProfile().getLeftRightMargin() + dp.getAllAppsIconStartMargin(launcher);
     }
 
     @Override
     public int getFloatingSearchBarRestingMarginEnd(Launcher launcher) {
         DeviceProfile dp = launcher.getDeviceProfile();
-        return dp.allAppsLeftRightMargin + dp.getAllAppsIconStartMargin(launcher);
+        return dp.getAllAppsProfile().getLeftRightMargin() + dp.getAllAppsIconStartMargin(launcher);
     }
 
     @Override
@@ -208,6 +190,7 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public ScrimColors getWorkspaceScrimColor(Launcher launcher) {
+<<<<<<< HEAD
         int backgroundColor;
         if (!launcher.getDeviceProfile().shouldShowAllAppsOnSheet()) {
             // Always use an opaque scrim if there's no sheet.
@@ -218,7 +201,13 @@ public class AllAppsState extends LauncherState {
                 ColorTokens.WidgetsPickerScrim.resolveColor(launcher));
         } else {
             backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
+=======
+        if (Flags.allAppsSurface()) {
+            // No scrim.
+            return super.getWorkspaceScrimColor(launcher);
+>>>>>>> aosp/android17-release
         }
+        int backgroundColor = Themes.getAttrColor(launcher, R.attr.allAppsScrimColor);
         return new ScrimColors(backgroundColor, /* foregroundColor */ Color.TRANSPARENT);
     }
 }

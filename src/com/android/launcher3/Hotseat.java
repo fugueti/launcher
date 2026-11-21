@@ -34,7 +34,6 @@ import android.graphics.drawable.InsetDrawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewDebug;
@@ -46,13 +45,23 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.accessibility.DragAndDropAccessibilityDelegate;
 import com.android.launcher3.celllayout.CellLayoutLayoutParams;
+<<<<<<< HEAD
 import com.android.launcher3.pageindicators.PageIndicatorDots;
+=======
+import com.android.launcher3.dagger.LauncherComponentProvider;
+import com.android.launcher3.dragndrop.SystemDragItemInfo;
+import com.android.launcher3.homescreenfiles.HomeScreenFilesUtilsKt;
+import com.android.launcher3.model.data.ItemInfo;
+import com.android.launcher3.model.data.LauncherAppWidgetInfo;
+>>>>>>> aosp/android17-release
 import com.android.launcher3.util.HorizontalInsettableView;
+import com.android.launcher3.util.LauncherBindableItemsContainer.ItemOperator;
 import com.android.launcher3.util.MultiPropertyFactory;
 import com.android.launcher3.util.MultiPropertyFactory.MultiProperty;
 import com.android.launcher3.util.MultiTranslateDelegate;
 import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.views.ActivityContext;
+import com.android.launcher3.widget.PendingAddWidgetInfo;
 
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
@@ -130,6 +139,7 @@ public class Hotseat extends FrameLayout implements Insettable {
 
     public Hotseat(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+<<<<<<< HEAD
         mActivity = ActivityContext.lookupContext(context);
 
         preferenceManager2 = PreferenceManager2.getInstance(context);
@@ -179,6 +189,9 @@ public class Hotseat extends FrameLayout implements Insettable {
             mQsb = LayoutInflater.from(context).inflate(layoutId, this,
                     false);
         }
+=======
+        mQsb = LauncherComponentProvider.get(context).getQsbWidgetFactory().createView(this);
+>>>>>>> aosp/android17-release
 
         addView(mQsb);
 
@@ -319,6 +332,14 @@ public class Hotseat extends FrameLayout implements Insettable {
         return mHasVerticalHotseat;
     }
 
+    /** Returns whether the hotseat is a valid drop target for the specified drag object. */
+    public boolean isValidDropTarget(DropTarget.DragObject dragObject) {
+        final ShortcutAndWidgetContainer shortcutAndWidgetContainer = getShortcutsAndWidgets();
+        return shortcutAndWidgetContainer != null
+                && shortcutAndWidgetContainer.getVisibility() == View.VISIBLE
+                && isSupportedDrag(dragObject);
+    }
+
     public void resetLayout(boolean hasVerticalHotseat) {
         ActivityContext activityContext = ActivityContext.lookupContext(getContext());
         boolean bubbleBarEnabled = activityContext.isBubbleBarEnabled();
@@ -329,6 +350,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         mPagedView.resetPages(hasVerticalHotseat, mWorkspace, dp);
 
         if (bubbleBarEnabled) {
+<<<<<<< HEAD
             for (CellLayout page : getPageLayouts()) {
                 if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
                     page.getShortcutsAndWidgets().setTranslationProvider(
@@ -341,11 +363,33 @@ public class Hotseat extends FrameLayout implements Insettable {
                 HorizontalInsettableView insettableQsb = (HorizontalInsettableView) mQsb;
                 if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
                     final float insetFraction = (float) dp.iconSizePx / dp.hotseatQsbWidth;
+=======
+            if (dp.shouldAdjustHotseatForBubbleBar(getContext(), hasBubbles)) {
+                getShortcutsAndWidgets().setTranslationProvider(
+                        cellX -> dp.getHotseatAdjustedTranslation(getContext(), cellX));
+                if (mQsb instanceof HorizontalInsettableView) {
+                    HorizontalInsettableView insettableQsb = (HorizontalInsettableView) mQsb;
+                    final float insetFraction =
+                            (float) dp.getWorkspaceProfile().getIconSizePx()
+                                    / dp.getHotseatProfile().getQsbWidth();
+                    // post this to the looper so that QSB has a chance to redraw itself, e.g.
+                    // after device rotation
+>>>>>>> aosp/android17-release
                     mQsb.post(() -> insettableQsb.setHorizontalInsets(insetFraction));
                 } else {
                     insettableQsb.setHorizontalInsets(0);
                 }
             }
+<<<<<<< HEAD
+=======
+        }
+
+        resetCellSize(dp);
+        if (hasVerticalHotseat) {
+            setGridSize(1, dp.getHotseatProfile().getNumShownIcons());
+        } else {
+            setGridSize(dp.getHotseatProfile().getNumShownIcons(), 1);
+>>>>>>> aosp/android17-release
         }
     }
 
@@ -387,7 +431,9 @@ public class Hotseat extends FrameLayout implements Insettable {
         if (mQsb instanceof HorizontalInsettableView horizontalInsettableQsb) {
             final float currentInsetFraction = horizontalInsettableQsb.getHorizontalInsets();
             final float targetInsetFraction = shouldAdjustQsb
-                    ? (float) dp.iconSizePx / dp.hotseatQsbWidth : 0;
+                    ? (float) dp.getWorkspaceProfile().getIconSizePx() / dp.getHotseatProfile()
+                    .getQsbWidth()
+                    : 0;
             ValueAnimator qsbAnimator =
                     ValueAnimator.ofFloat(currentInsetFraction, targetInsetFraction);
             qsbAnimator.addUpdateListener(animation -> {
@@ -404,26 +450,33 @@ public class Hotseat extends FrameLayout implements Insettable {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
         DeviceProfile grid = mActivity.getDeviceProfile();
 
+        int topOverlap = 0;
         if (grid.isVerticalBarLayout()) {
             mQsb.setVisibility(View.GONE);
             mPageIndicator.setVisibility(GONE);
             lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
             if (grid.isSeascape()) {
                 lp.gravity = Gravity.LEFT;
-                lp.width = grid.hotseatBarSizePx + insets.left;
+                lp.width = grid.getHotseatProfile().getBarSizePx() + insets.left;
             } else {
                 lp.gravity = Gravity.RIGHT;
-                lp.width = grid.hotseatBarSizePx + insets.right;
+                lp.width = grid.getHotseatProfile().getBarSizePx() + insets.right;
             }
         } else {
             mQsb.setVisibility(View.VISIBLE);
             lp.gravity = Gravity.BOTTOM;
             lp.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            lp.height = grid.hotseatBarSizePx;
+
+            // Since QSB is laid out relative to bottom, it expects a certain amount of available
+            // space in its parent (hotseat). If hotseatBarSizePx is less than that, we let it go
+            // beyond and offset the content accordingly.
+            int totalHeightForQsb = grid.getQsbOffsetY() + grid.getHotseatProfile().getQsbHeight();
+            topOverlap = Math.max(0, totalHeightForQsb - grid.getHotseatProfile().getBarSizePx());
+            lp.height = grid.getHotseatProfile().getBarSizePx() + topOverlap;
         }
 
         Rect padding = grid.getHotseatLayoutPadding(getContext());
-        setPadding(padding.left, padding.top, padding.right, padding.bottom);
+        setPadding(padding.left, padding.top + topOverlap, padding.right, padding.bottom);
         setLayoutParams(lp);
         InsettableFrameLayout.dispatchInsets(this, insets);
     }
@@ -514,6 +567,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         int paddingBottom = getPaddingBottom();
 
         DeviceProfile dp = mActivity.getDeviceProfile();
+<<<<<<< HEAD
         boolean showIndicator = mPagedView.isPagingEnabled() && !dp.isVerticalBarLayout();
         int indicatorSpace = showIndicator ? mPageIndicatorHeight : 0;
 
@@ -543,6 +597,12 @@ public class Hotseat extends FrameLayout implements Insettable {
 
         mQsb.measure(makeMeasureSpec(Math.max(0, width), MeasureSpec.EXACTLY),
                 makeMeasureSpec(dp.getHotseatProfile().getQsbHeight(), MeasureSpec.EXACTLY));
+=======
+        mQsb.measure(
+                makeMeasureSpec(dp.getHotseatProfile().getQsbWidth(), MeasureSpec.EXACTLY),
+                makeMeasureSpec(dp.getHotseatProfile().getQsbHeight(), MeasureSpec.EXACTLY)
+        );
+>>>>>>> aosp/android17-release
     }
 
     @Override
@@ -576,8 +636,14 @@ public class Hotseat extends FrameLayout implements Insettable {
 
         int qsbMeasuredWidth = mQsb.getMeasuredWidth();
         int left;
+<<<<<<< HEAD
         if (dp.isQsbInline) {
             int qsbSpace = dp.hotseatBorderSpace;
+=======
+        DeviceProfile dp = mActivity.getDeviceProfile();
+        if (dp.getHotseatProfile().isQsbInline()) {
+            int qsbSpace = dp.getHotseatProfile().getBorderSpace();
+>>>>>>> aosp/android17-release
             left = Utilities.isRtl(getResources()) ? r - getPaddingRight() + qsbSpace
                     : l + getPaddingLeft() - qsbMeasuredWidth - qsbSpace;
         } else {
@@ -621,6 +687,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         return mQsb;
     }
 
+<<<<<<< HEAD
     /** Delegates to the current page's shortcuts container. */
     @Nullable
     public ShortcutAndWidgetContainer getShortcutsAndWidgets() {
@@ -633,6 +700,18 @@ public class Hotseat extends FrameLayout implements Insettable {
     public DragAndDropAccessibilityDelegate getDragAndDropAccessibilityDelegate() {
         CellLayout page = getCurrentPageLayout();
         return page != null ? page.getDragAndDropAccessibilityDelegate() : null;
+=======
+    @Nullable
+    @Override
+    public View mapOverItems(ItemOperator op) {
+        if (Flags.enableQsbOnHotseat()
+                && mQsb != null
+                && mQsb.getTag() instanceof ItemInfo info
+                && op.evaluate(info, mQsb)) {
+            return mQsb;
+        }
+        return super.mapOverItems(op);
+>>>>>>> aosp/android17-release
     }
 
     /** Dumps the Hotseat internal state */
@@ -655,6 +734,16 @@ public class Hotseat extends FrameLayout implements Insettable {
                 "ALPHA_CHANNEL_PREVIEW_RENDERER",
                 "ALPHA_CHANNEL_TASKBAR_STASH"
         );
+    }
+
+    // TODO(b/479881252): Determine whether it still makes sense to disallow all instances of
+    //  `SystemDragItemInfo` once `SystemDragController` is supported in all `ActivityContext`s. The
+    //  current assumption is that `SystemDragItemInfo` indicates files dragged from another app.
+    private boolean isSupportedDrag(DropTarget.DragObject d) {
+        return !(HomeScreenFilesUtilsKt.isFileSystemItem(d.dragInfo)
+                || d.dragInfo instanceof LauncherAppWidgetInfo
+                || d.dragInfo instanceof PendingAddWidgetInfo
+                || d.dragInfo instanceof SystemDragItemInfo);
     }
 
 }

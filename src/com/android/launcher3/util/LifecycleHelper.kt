@@ -24,7 +24,11 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+<<<<<<< HEAD
 import com.android.launcher3.Utilities
+=======
+import com.android.launcher3.BaseActivity
+>>>>>>> aosp/android17-release
 
 /** Utility class for triggering various lifecycle events based on activity callbacks */
 class LifecycleHelper(
@@ -104,6 +108,9 @@ class LifecycleHelper(
 
     override fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
+        if (activity is BaseActivity && activity.hasBeenResumed()) {
+            lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+        }
         savedStateRegistryController.performSave(bundle)
     }
 }
