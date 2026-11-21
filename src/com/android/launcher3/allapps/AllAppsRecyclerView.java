@@ -74,11 +74,7 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
     private int mCumulativeVerticalScroll;
     private ConstraintLayout mLetterList;
 
-<<<<<<< HEAD
     public AlphabeticalAppsList<?> mApps;
-=======
-    protected AlphabeticalAppsList mApps;
->>>>>>> aosp/android17-release
 
     public AllAppsRecyclerView(Context context) {
         this(context, null);

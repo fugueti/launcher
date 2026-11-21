@@ -86,13 +86,9 @@ public abstract class UserProfileManager {
      */
     private void setQuietModeSafely(boolean enable, UserHandle userHandle, Context context) {
         try {
-<<<<<<< HEAD
             if (ATLEAST_P) {
-                mUserManager.requestQuietModeEnabled(enable, userHandle);
+                context.getSystemService(UserManager.class).requestQuietModeEnabled(enable, userHandle);
             }
-=======
-            context.getSystemService(UserManager.class).requestQuietModeEnabled(enable, userHandle);
->>>>>>> aosp/android17-release
         } catch (SecurityException ex) {
             ApiWrapper.INSTANCE.get(context).assignDefaultHomeRole(context);
         }

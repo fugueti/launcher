@@ -139,7 +139,6 @@ public class WorkUtilityView extends LinearLayout implements Insettable,
         mWorkFAB = findViewById(R.id.work_mode_toggle);
         mSchedulerButton = findViewById(R.id.work_scheduler);
         mWorkUtilityView = findViewById(R.id.work_utility_view);
-<<<<<<< HEAD
         setSelected(true);
 
         // LC-Note: Theme work FAB and scheduler button with Lawnchair tokens
@@ -152,8 +151,6 @@ public class WorkUtilityView extends LinearLayout implements Insettable,
         mSchedulerButton.setBackground(DrawableTokens.WorkSchedulerBackground.resolve(getContext()));
         mSchedulerButton.setImageTintList(ColorStateList.valueOf(onPrimaryColor));
 
-=======
->>>>>>> aosp/android17-release
         KeyboardInsetAnimationCallback keyboardInsetAnimationCallback =
             null;
         if (Utilities.ATLEAST_R) {

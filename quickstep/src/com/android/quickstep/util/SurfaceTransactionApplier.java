@@ -38,12 +38,8 @@ import app.lawnchair.compat.LawnchairQuickstepCompat;
  *   android.view.SyncRtSurfaceTransactionApplier
  * with some Launcher specific utility methods
  */
-<<<<<<< HEAD
 @TargetApi(Build.VERSION_CODES.R)
-public class SurfaceTransactionApplier extends ReleaseCheck {
-=======
 public class SurfaceTransactionApplier extends SurfaceReleaseCheck {
->>>>>>> aosp/android17-release
 
     private static final int MSG_UPDATE_SEQUENCE_NUMBER = 0;
 

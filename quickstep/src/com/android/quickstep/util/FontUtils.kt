@@ -39,19 +39,12 @@ object FontUtils {
         }
 
     fun getFontWeight(resources: Resources): Int {
-<<<<<<< HEAD
         val fontWeightAdjustment: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             resources.configuration.fontWeightAdjustment
         } else {
-            // LC-Note: Android 11 don't have font weight adjustment, assume 400 Normal
-            400
+            // LC-Note: Android 11 doesn't have font weight adjustment
+            Configuration.FONT_WEIGHT_ADJUSTMENT_UNDEFINED
         }
-        return if (fontWeightAdjustment != Configuration.FONT_WEIGHT_ADJUSTMENT_UNDEFINED) {
-            Typeface.Builder.NORMAL_WEIGHT + fontWeightAdjustment
-        } else {
-            Typeface.Builder.NORMAL_WEIGHT
-=======
-        val fontWeightAdjustment: Int = resources.configuration.fontWeightAdjustment
         val adjusted =
             if (fontWeightAdjustment != Configuration.FONT_WEIGHT_ADJUSTMENT_UNDEFINED) {
                 Typeface.Builder.NORMAL_WEIGHT + fontWeightAdjustment
@@ -64,7 +57,6 @@ object FontUtils {
                 "Calculated font weight $adjusted is out of bounds (0-1000) " +
                     "after adjustment: $fontWeightAdjustment.",
             )
->>>>>>> aosp/android17-release
         }
         return adjusted.coerceIn(0, 1000)
     }

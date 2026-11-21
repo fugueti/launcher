@@ -126,22 +126,6 @@ class TaskContainer(
         hasHeader: Boolean,
         canShowAppTimer: Boolean,
         clickCloseListener: OnClickListener?,
-<<<<<<< HEAD
-    ) {
-            if (enableRefactorTaskContentView()) {
-                (taskContentView as TaskContentView).setState(
-                    TaskUiStateMapper.toTaskHeaderState(state, hasHeader, clickCloseListener),
-                    TaskUiStateMapper.toTaskThumbnailUiState(state),
-                    TaskUiStateMapper.toTaskAppTimerUiState(canShowAppTimer, stagePosition, state),
-                    state?.taskId,
-                )
-            } else {
-                thumbnailView.setState(
-                    TaskUiStateMapper.toTaskThumbnailUiState(state),
-                    state?.taskId,
-                )
-            }
-=======
     ) =
         traceSection("TaskContainer.setState") {
             taskContentView.setState(
@@ -150,7 +134,6 @@ class TaskContainer(
                 TaskUiStateMapper.toTaskAppTimerUiState(canShowAppTimer, stagePosition, state),
                 state?.taskId,
             )
->>>>>>> aosp/android17-release
             thumbnailData = if (state is TaskData.Data) state.thumbnailData else null
             overlay.setThumbnailState(thumbnailData)
         }

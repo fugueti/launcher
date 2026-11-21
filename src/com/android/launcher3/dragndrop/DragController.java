@@ -206,13 +206,10 @@ public class DragController implements DragDriver.EventListener, TouchController
      */
     public DragController(ActivityContext activity) {
         mActivity = activity;
-<<<<<<< HEAD
         pref2 = PreferenceManager2.getInstance(LawnchairApp.getInstance());
-=======
 
         // Register the default handler for system-level drag events.
         addSystemDragHandler(mActivity.getActivityComponent().getSystemDragController());
->>>>>>> aosp/android17-release
     }
 
     /**

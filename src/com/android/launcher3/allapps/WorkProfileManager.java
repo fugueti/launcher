@@ -144,16 +144,11 @@ public class WorkProfileManager extends UserProfileManager
         if (mWorkUtilityView.getParent() == null) {
             mAllApps.addView(mWorkUtilityView);
         }
-<<<<<<< HEAD
         int currentPage = mAllApps.getCurrentPage();
         if (currentPage != WORK) {
             mWorkUtilityView.animateVisibility(false);
         } else {
             mWorkUtilityView.animateVisibility(true);
-=======
-        if (mAllApps.getCurrentPage() != WORK) {
-            mWorkUtilityView.setVisibility(GONE);
->>>>>>> aosp/android17-release
         }
         if (getAH() != null) {
             getAH().applyPadding();

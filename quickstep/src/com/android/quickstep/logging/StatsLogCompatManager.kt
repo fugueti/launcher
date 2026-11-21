@@ -577,51 +577,12 @@ object StatsLogCompatManager {
 
     @JvmField val LOGS_CONSUMER: CopyOnWriteArrayList<StatsLogConsumer> = CopyOnWriteArrayList()
 
-<<<<<<< HEAD
-        /** Synchronously writes an itemInfo to stats log */
-        @WorkerThread
-        @JvmStatic
-        fun writeSnapshot(info: LauncherAtom.ItemInfo, instanceId: InstanceId) {
-            if (IS_VERBOSE) {
-                Log.d(TAG, String.format("\nwriteSnapshot(%d):\n%s", instanceId.id, info))
-            }
-            if (Utilities.isRunningInTestHarness()) {
-                return
-            }
-
-            if (!Utilities.ATLEAST_R) return
-
-            SysUiStatsLog.write(
-                SysUiStatsLog.LAUNCHER_SNAPSHOT,
-                LAUNCHER_WORKSPACE_SNAPSHOT.id, /* event_id */
-                info.itemCase.number, /* target_id */
-                instanceId.id, /* instance_id */
-                0, /* uid */
-                getPackageName(info), /* package_name */
-                getComponentName(info), /* component_name */
-                getGridX(info, false), /* grid_x */
-                getGridY(info, false), /* grid_y */
-                getPageId(info), /* page_id */
-                getGridX(info, true), /* grid_x_parent */
-                getGridY(info, true), /* grid_y_parent */
-                getParentPageId(info), /* page_id_parent */
-                getHierarchy(info), /* hierarchy */
-                info.isWork, /* is_work_profile */
-                0, /* origin */
-                getCardinality(info), /* cardinality */
-                info.widget.spanX,
-                info.widget.spanY,
-                getFeatures(info),
-                getAttributes(info), /* attributes */
-            )
-=======
     /** Synchronously writes an itemInfo to stats log */
     @WorkerThread
     @JvmStatic
     fun writeSnapshot(info: LauncherAtom.ItemInfo, instanceId: InstanceId) {
         if (IS_VERBOSE) {
             Log.d(TAG, String.format("\nwriteSnapshot(%d):\n%s", instanceId.id, info))
->>>>>>> aosp/android17-release
         }
         if (Utilities.isRunningInTestHarness()) {
             return

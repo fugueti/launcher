@@ -78,12 +78,8 @@ public class AllAppsGridAdapter extends BaseAllAppsAdapter {
         mOnLayoutCompletedListeners.remove(listener);
     }
 
-<<<<<<< HEAD
-    public AllAppsGridAdapter(T activityContext, LayoutInflater inflater,
-=======
 
     public AllAppsGridAdapter(ActivityContext activityContext, LayoutInflater inflater,
->>>>>>> aosp/android17-release
             AlphabeticalAppsList apps, SearchAdapterProvider<?> adapterProvider) {
         super(activityContext, inflater, apps, adapterProvider);
         mGridLayoutMgr = new AppsGridLayoutManager(mActivityContext.asContext());

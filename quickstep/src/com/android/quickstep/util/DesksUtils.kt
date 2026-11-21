@@ -29,7 +29,6 @@ class DesksUtils {
             Resources.getSystem().getString(com.android.internal.R.string.config_systemUi)
 
         @JvmStatic
-<<<<<<< HEAD
         fun areMultiDesksFlagsEnabled() =
             if (false) {
                 // LC-Ignored: Intentional, all Android desktop flags are disabled
@@ -45,8 +44,6 @@ class DesksUtils {
             task.key.component?.let(::isDesktopWallpaperComponent) == true
 
         @JvmStatic
-=======
->>>>>>> aosp/android17-release
         fun isDesktopWallpaperTask(taskInfo: TaskInfo): Boolean {
             // TODO: b/403118101 - In some launcher tests, there is a task with baseIntent set to
             // null. Remove this check after finding out how that task is created.

@@ -216,7 +216,6 @@ public class PrivateProfileManager extends UserProfileManager {
 
     /** Whether private profile should be hidden on Launcher. */
     public boolean isPrivateSpaceHidden() {
-<<<<<<< HEAD
         return getCurrentState() == STATE_DISABLED && isPrivateSpaceHiddenWhenLocked();
     }
 
@@ -228,10 +227,6 @@ public class PrivateProfileManager extends UserProfileManager {
             Log.e("PrivateSpaceManager", "Cannot access setting: hide_privatespace_entry_point", t);
             return false;
         }
-=======
-        return getCurrentState() == STATE_DISABLED && SettingsCache.INSTANCE
-                .get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI);
->>>>>>> aosp/android17-release
     }
 
     BitmapInfo preparePSBitmapInfo() {
