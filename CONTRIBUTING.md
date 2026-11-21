@@ -1,32 +1,54 @@
-# Contributing to Lawnchair
+# Contributing to Fugueti
 
-Thank you for your interest in contributing to the Lawnchair project. This document provides general reminders and directs you to our official, living documentation hub at [docs.lawnchair.app](https://docs.lawnchair.app).
+Thanks for helping! Fugueti is a small project, so a few conventions keep it easy to work on.
 
-## General reminders
+## Reporting bugs and ideas
 
-Before participating in any area of the project, please keep these core guidelines in mind:
+- Use the issue forms: **[BUG]** for problems, **[FEATURE]** for ideas. In the app,
+  *Settings → About → Support* opens them with your app version, device and Android version
+  already filled in.
+- Search the existing issues first.
+- For a crash, attach the log: *Settings → About* → long press the version shows the commit, and
+  `adb logcat -d -b crash` gives the stack trace.
 
-* Adhere to our [Code of Conduct](CODE_OF_CONDUCT.md) during all interactions.
-* Always search our [GitHub issue tracker](https://github.com/LawnchairLauncher/lawnchair/issues) to see if a bug has already been reported or a feature requested before opening a new issue.
-* Avoid using the issue tracker for personal support. If you need help, please visit our [community channels](https://docs.lawnchair.app/project-and-community/get-involved/community-channels) on Telegram or Discord.
+## Development workflow
 
-### Contributing non-code
+| | Trigger | What happens |
+|---|---|---|
+| **Changes** | branch + pull request to `main` | CI builds the app and runs the unit tests |
+| **Nightly** | every push to `main` | CI builds the signed nightly app and replaces the `nightly` release |
+| **Release** | a `v*` tag (e.g. `v0.0.2`) | CI runs the tests, builds the signed app and publishes the release |
 
-You do not need to write code to make a significant impact on Lawnchair. We welcome and encourage several forms of non-code contributions:
+- Branch names: `feat/…`, `fix/…`, `chore/…`, `docs/…`.
+- Pull requests are squash merged, so each change lands as one commit on `main`.
+- Commit messages in English, imperative mood (`Fix double tap on empty workspace`).
 
-* You can help make Lawnchair accessible to a global audience by contributing translations through [Lawnchair on Crowdin](https://lawnchair.crowdin.com/lawnchair).
-* You can help make development sustainable by [donating to the project](https://opencollective.com/lawnchair/).
-* You can help maintain a clean and effective issue tracker by joining our [triaging issues](https://docs.lawnchair.app/community/get-involved/triage-issues).
-* You can help keep our documentation accurate and clear by contributing directly to our [documentation files](https://docs.lawnchair.app/community/get-involved/writing-documentation).
+### Releasing
 
-### Contributing code
+1. Update `fuguetiVersion` in `build.gradle` and the top entry of `CHANGELOG.md`, merge to `main`.
+2. Create the tag from `main` (`git tag v0.0.2 && git push origin v0.0.2`) or run the **Release**
+   workflow by hand with the tag name.
 
-Lawnchair is built on a highly complex, AOSP-derived foundation. Because of this, direct code contribution is challenging and may not be suitable for beginners. 
+Versions follow `MAJOR.MINOR.PATCH`; `versionCode = MAJOR*1000000 + MINOR*10000 + PATCH*100`.
+Nightlies show `<next version>-nightly.<build>` and install next to the release app
+(`app.fugueti.launcher.nightly`).
 
-Before setting up your environment or writing any code, please read our [onboarding preface](https://docs.lawnchair.app/developers) to understand the unique challenges of this codebase.
+## Code
 
-If you are ready to write code, refer to [our official developer guides](https://docs.lawnchair.app/developers) on our documentation site:
+- Requirements and build commands: see the [README](README.md#building).
+- New Fugueti code goes in `fugueti/` (package `app.fugueti.*`). When you change code under
+  `lawnchair/`, `src/` or `quickstep/`, mark the file with
+  `// Modified by Fugueti Launcher contributors (2026): …` and comment the change with `Fugueti:`.
+- User-facing strings: English in `fugueti/res/values`, Portuguese in `values-pt-rBR` and
+  `values-pt` (`LocaleStringsTest` checks it).
+- Run the unit tests before opening a pull request:
 
-* [Setup your build environment](https://docs.lawnchair.app/developers/introduction/get-started)
-* [Understand our development workflow](https://docs.lawnchair.app/developers/standards/development-workflow)
-* [Follow code standards](https://docs.lawnchair.app/developer-guide/standards/coding-standards)
+  ```bash
+  ./gradlew testLawnWithQuickstepGithubDebugUnitTest --tests 'app.fugueti.*'
+  ```
+
+- Clean room: never copy code, assets or text from proprietary apps.
+
+## Code of conduct
+
+Everyone taking part follows the [Code of Conduct](CODE_OF_CONDUCT.md).
