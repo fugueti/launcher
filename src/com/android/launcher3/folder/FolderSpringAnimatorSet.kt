@@ -30,15 +30,10 @@ import androidx.dynamicanimation.animation.DynamicAnimation.MIN_VISIBLE_CHANGE_P
 import androidx.dynamicanimation.animation.DynamicAnimation.MIN_VISIBLE_CHANGE_SCALE
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.LauncherAnimUtils
+import com.android.launcher3.LauncherState
 import com.android.launcher3.LauncherAnimUtils.HOTSEAT_SCALE_PROPERTY_FACTORY
 import com.android.launcher3.LauncherAnimUtils.SCALE_INDEX_FOLDER_ANIM
-import com.android.launcher3.LauncherAnimUtils.SCALE_PROPERTY
-import com.android.launcher3.LauncherAnimUtils.VIEW_ALPHA
-import com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_X
-import com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_Y
-import com.android.launcher3.LauncherAnimUtils.VIEW_TRANSLATE_Z
 import com.android.launcher3.LauncherAnimUtils.WORKSPACE_SCALE_PROPERTY_FACTORY
-import com.android.launcher3.LauncherState
 import com.android.launcher3.LauncherAnimUtils.getScaleProperty
 import com.android.launcher3.R
 import com.android.launcher3.Utilities.isDarkTheme
@@ -46,7 +41,6 @@ import com.android.launcher3.anim.SpringAnimationBuilder
 import com.android.launcher3.apppairs.AppPairIcon
 import com.android.launcher3.folder.ClippedFolderIconLayoutRule.MAX_NUM_ITEMS_IN_PREVIEW
 import com.android.launcher3.util.MultiPropertyFactory
-import com.android.launcher3.util.MultiPropertyFactory.MULTI_PROPERTY_VALUE
 import com.android.launcher3.util.MultiPropertyFactory.*
 import com.android.launcher3.util.Themes
 
@@ -120,13 +114,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     .setMinimumVisibleChange(minVisibleChange)
 
             val animator =
-<<<<<<< HEAD
-                animatorBuilder.build(view, property).apply {
-                    setStartDelay(startDelay.toLong())
-                }
-=======
                 animatorBuilder.build(view, property).apply { setStartDelay(startDelay.toLong()) }
->>>>>>> aosp/android17-release
             animatorSet.play(animator)
         }
 
@@ -166,11 +154,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                 startValue = animationData.xDistance,
                 endValue = 0f,
                 minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                property = VIEW_TRANSLATE_X,
-=======
                 property = LauncherAnimUtils.VIEW_TRANSLATE_X,
->>>>>>> aosp/android17-release
                 view = folder,
             )
             playSpringAnimation(
@@ -183,11 +167,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                 startValue = animationData.yDistance,
                 endValue = 0f,
                 minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                property = VIEW_TRANSLATE_Y,
-=======
                 property = LauncherAnimUtils.VIEW_TRANSLATE_Y,
->>>>>>> aosp/android17-release
                 view = folder,
             )
             playSpringAnimation(
@@ -227,11 +207,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                 startValue = -(animationData.contentHeightDifference),
                 endValue = 0f,
                 minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                property = VIEW_TRANSLATE_Y,
-=======
                 property = LauncherAnimUtils.VIEW_TRANSLATE_Y,
->>>>>>> aosp/android17-release
                 view = folder.mFooter,
             )
 
@@ -247,11 +223,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                 startValue = -folder.elevation,
                 endValue = 0f,
                 minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                property = VIEW_TRANSLATE_Z,
-=======
                 property = LauncherAnimUtils.VIEW_TRANSLATE_Z,
->>>>>>> aosp/android17-release
                 view = folder,
             )
             // store clip variables
@@ -288,8 +260,9 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
         ) {
             with(folder) {
                 val folderBackground = folder.background as GradientDrawable
-                // Set up the Folder background (respects Lawnchair folder color pref).
+                // Set up the Folder background.
                 val isOpening = animationData.isOpening
+                // Lawnchair: respect the folder color preference
                 val initialColor = app.lawnchair.util.resolveFolderPreviewColor(context)
                 val finalColor = app.lawnchair.util.resolveFolderBackgroundColor(context)
                 folderBackground.mutate()
@@ -326,11 +299,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     startValue = 0f,
                     endValue = 1f,
                     minVisibleChange = MIN_VISIBLE_CHANGE_ALPHA,
-<<<<<<< HEAD
-                    property = VIEW_ALPHA,
-=======
                     property = LauncherAnimUtils.VIEW_ALPHA,
->>>>>>> aosp/android17-release
                     view = mFooter,
                 )
                 // Fade in the folder name, as the text can overlap the icons when grid size is
@@ -346,11 +315,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     startValue = 0f,
                     endValue = 1f,
                     minVisibleChange = MIN_VISIBLE_CHANGE_ALPHA,
-<<<<<<< HEAD
-                    property = VIEW_ALPHA,
-=======
                     property = LauncherAnimUtils.VIEW_ALPHA,
->>>>>>> aosp/android17-release
                     view = folderName,
                 )
             }
@@ -395,8 +360,9 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
             launcherDelegate: LauncherDelegate,
         ) {
             val launcher = launcherDelegate.launcher ?: return
-            // Folder scrim uses a black overlay with alpha 0→dimmed; that replaces the app drawer
-            // scrim colors and starts fully transparent, so the list background disappears (#6551).
+            // Lawnchair: folder scrim uses a black overlay with alpha 0→dimmed; that replaces the
+            // app drawer scrim colors and starts fully transparent, so the list background
+            // disappears (#6551).
             if (launcher.isInState(LauncherState.ALL_APPS)) {
                 return
             }
@@ -478,13 +444,8 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     startValue = 0f,
                     endValue = 1f,
                     minVisibleChange = MIN_VISIBLE_CHANGE_ALPHA,
-<<<<<<< HEAD
-                    property = BubbleTextView.TEXT_ALPHA_PROPERTY,
-                    view = titleText,
-=======
                     property = MULTI_PROPERTY_VALUE,
                     view = titleText.getFloatingViewTextAlpha(),
->>>>>>> aosp/android17-release
                 )
                 if (!itemsInPreview.contains(icon)) {
                     playSpringAnimation(
@@ -497,11 +458,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                         startValue = 0f,
                         endValue = 1f,
                         minVisibleChange = MIN_VISIBLE_CHANGE_ALPHA,
-<<<<<<< HEAD
-                        property = VIEW_ALPHA,
-=======
                         property = LauncherAnimUtils.VIEW_ALPHA,
->>>>>>> aosp/android17-release
                         view = icon,
                     )
                 }
@@ -515,11 +472,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     startValue = xDistance,
                     endValue = 0f,
                     minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                    property = VIEW_TRANSLATE_X,
-=======
                     property = LauncherAnimUtils.VIEW_TRANSLATE_X,
->>>>>>> aosp/android17-release
                     view = icon,
                 )
                 playSpringAnimation(
@@ -532,11 +485,7 @@ class FolderSpringAnimatorSet(val animatorSet: AnimatorSet) {
                     startValue = yDistance,
                     endValue = 0f,
                     minVisibleChange = MIN_VISIBLE_CHANGE_PIXELS,
-<<<<<<< HEAD
-                    property = VIEW_TRANSLATE_Y,
-=======
                     property = LauncherAnimUtils.VIEW_TRANSLATE_Y,
->>>>>>> aosp/android17-release
                     view = icon,
                 )
                 playSpringAnimation(

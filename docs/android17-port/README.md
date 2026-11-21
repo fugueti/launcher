@@ -26,7 +26,7 @@ Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 - [x] `src/com/android/launcher3/folder/PreviewBackground.java` (140 lines of ours)
 - [x] `quickstep/src/com/android/launcher3/taskbar/TaskbarView.java` (138 lines of ours)
 - [x] `src/com/android/launcher3/folder/FolderPagedView.java` (138 lines of ours)
-- [ ] `src/com/android/launcher3/folder/FolderSpringAnimatorSet.kt` (137 lines of ours)
+- [x] `src/com/android/launcher3/folder/FolderSpringAnimatorSet.kt` (137 lines of ours)
 - [x] `src/com/android/launcher3/model/WorkspaceItemProcessor.kt` (132 lines of ours)
 - [x] `src/com/android/launcher3/Utilities.java` (130 lines of ours)
 - [x] `src/com/android/launcher3/graphics/ShapeDelegate.kt` (105 lines of ours)
