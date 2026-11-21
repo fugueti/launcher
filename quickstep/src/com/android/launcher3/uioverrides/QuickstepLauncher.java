@@ -338,18 +338,11 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
 
     @Override
     protected void setupViews() {
-<<<<<<< HEAD
         // pE-TODO(CompatTier2): Android 9/10/11 support
         if (ATLEAST_S) {
             getAppWidgetHolder().setOnViewCreationCallback(new QuickstepInteractionHandler(this));
         }
-        mDepthController = new DepthController(this);
-        mOverviewBlurEnabled = isOverviewBackgroundBlurEnabled();
-        getTheme().applyStyle(getOverviewBlurStyleResId(), true);
-=======
-        getAppWidgetHolder().setOnViewCreationCallback(new QuickstepInteractionHandler(this));
         setupBlurState();
->>>>>>> aosp/android17-release
         super.setupViews();
         SurfaceTransactionApplier surfaceTransactionApplier = new SurfaceTransactionApplier(
                 getRootView());
@@ -362,14 +355,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
                 new SplitSelectStateController(this, getStateManager(),
                         getDepthController(), getStatsLogManager(),
                         systemUiProxy, RecentsModel.INSTANCE.get(this),
-<<<<<<< HEAD
-                        () -> onStateBack());
-        if (DesktopModeStatus.canEnterDesktopMode(this) && LawnchairApp.isRecentsEnabled()) {
-=======
                         () -> onStateBack(), mLauncherUiState.getSplitScreenUiState(),
                         new SplitScreenAppResolver(this));
-        if (DesktopModeStatus.canEnterDesktopMode(this)) {
->>>>>>> aosp/android17-release
+        if (DesktopModeStatus.canEnterDesktopMode(this) && LawnchairApp.isRecentsEnabled()) {
             mDesktopRecentsTransitionController = new DesktopRecentsTransitionController(
                     getStateManager(), systemUiProxy, LawnchairApp.getInstance().getIApplicationThread(),
                     getDepthController());
@@ -404,17 +392,13 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         mEnableWidgetDepth = LawnchairApp.isRecentsEnabled() ? SystemProperties.getBoolean("ro.launcher.depth.widget", true) : false;
         getWorkspace().addOverlayCallback(progress ->
                 onTaskbarInAppDisplayProgressUpdate(progress, MINUS_ONE_PAGE_PROGRESS_INDEX));
-<<<<<<< HEAD
         if (Utilities.ATLEAST_U) {
             addBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
         }
-=======
-        addBackAnimationCallback(mSplitSelectStateController.getSplitBackHandler());
         mTaskbarUiState = TaskbarUiStateMonitor.INSTANCE.get(this)
                 .getTaskbarUiState(getDisplayId());
 
         mBubbleFeatureConfig = new BubbleFeatureConfigImpl(this, getDesktopState(this));
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -865,22 +849,9 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     @Override
     protected boolean initDeviceProfile(InvariantDeviceProfile idp) {
         final boolean ret = super.initDeviceProfile(idp);
-<<<<<<< HEAD
-        try {
-            mDeviceProfile.isPredictiveBackSwipe =
-                    getApplicationInfo().isOnBackInvokedCallbackEnabled();
-        } catch (Throwable t) {
-            mDeviceProfile.isPredictiveBackSwipe = false;
-        }
-        if (ATLEAST_S_V2) {
-            if (ret) {
-                SystemUiProxy.INSTANCE.get(this).setLauncherAppIconSize(mDeviceProfile.iconSizePx);
-            }
-=======
-        if (ret) {
+        if (ret && ATLEAST_S_V2) {
             SystemUiProxy.INSTANCE.get(this).setLauncherAppIconSize(
                     mDeviceProfile.getWorkspaceProfile().getIconSizePx());
->>>>>>> aosp/android17-release
         }
         return ret;
     }
@@ -1044,8 +1015,10 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     protected void logOnNewIntent(boolean alreadyOnHome, boolean shouldMoveToDefaultScreen,
             String action, boolean internalStateHandled) {
         if (!Utilities.ATLEAST_S) return;
-        OverviewCommandHelperProtoLogProxy.logOnNewIntent(alreadyOnHome, shouldMoveToDefaultScreen,
-                action, internalStateHandled);
+        if (Utilities.ATLEAST_S) {
+            OverviewCommandHelperProtoLogProxy.logOnNewIntent(alreadyOnHome, shouldMoveToDefaultScreen,
+                    action, internalStateHandled);
+        }
     }
 
     public QuickstepTransitionManager getAppTransitionManager() {
@@ -1248,20 +1221,6 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
 
     @Override
     public void setResumed() {
-<<<<<<< HEAD
-        DesktopVisibilityController desktopVisibilityController =
-                DesktopVisibilityController.INSTANCE.get(this);
-        if (ATLEAST_BAKLAVA) {
-            if (!false
-                && desktopVisibilityController.isInDesktopModeAndNotInOverview(getDisplayId())
-                && !desktopVisibilityController.isRecentsGestureInProgress()) {
-                // Return early to skip setting activity to appear as resumed
-                // TODO: b/333533253 - Remove after flag rollout
-                return;
-            }
-        }
-=======
->>>>>>> aosp/android17-release
         super.setResumed();
     }
 
@@ -1417,11 +1376,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     }
 
     @Override
-<<<<<<< HEAD
-    public DepthController getDepthController() {
-=======
     public LauncherDepthController getDepthController() {
->>>>>>> aosp/android17-release
         return mDepthController;
     }
 
@@ -1485,20 +1440,14 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     public ActivityOptionsWrapper makeDefaultActivityOptions(int splashScreenStyle) {
         RunnableList callbacks = new RunnableList();
         ActivityOptions options = ActivityOptions.makeCustomAnimation(this, 0, 0);
-<<<<<<< HEAD
         if (ATLEAST_T) {
             options.setSplashScreenStyle(splashScreenStyle);
         }
+        // Lawnchair: version-checked MODE_BACKGROUND_ACTIVITY_START_ALLOWED
         Utilities.allowBGLaunch(options);
-        IRemoteCallback endCallback = completeRunnableListCallback(callbacks, this);
-=======
-        options.setSplashScreenStyle(splashScreenStyle);
-        options.setPendingIntentBackgroundActivityStartMode(
-                ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED);
 
         IRemoteCallback endCallback = completeRunnableListCallback(
                 callbacks, this, getUiExecutor());
->>>>>>> aosp/android17-release
         options.setOnAnimationAbortListener(endCallback);
         options.setOnAnimationFinishedListener(endCallback);
         return new ActivityOptionsWrapper(options, callbacks);
@@ -1601,16 +1550,11 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
     @Override
     public void dispatchDeviceProfileChanged() {
         super.dispatchDeviceProfileChanged();
-<<<<<<< HEAD
-        SystemUiProxy.INSTANCE.get(this).setLauncherAppIconSize(mDeviceProfile.iconSizePx);
-        TaskbarManager taskbarManager = mTISBindHelper.getTaskbarManager();
-        if (taskbarManager != null) {
-            taskbarManager.debugPrimaryTaskbar("QuickstepLauncher#onDeviceProfileChanged",
-                    true);
+        if (Utilities.ATLEAST_Q) {
+            android.os.Trace.instantForTrack(android.os.Trace.TRACE_TAG_APP,
+                    "QuickstepLauncher#DeviceProfileChanged",
+                    getDeviceProfile().toSmallString());
         }
-=======
-        Trace.instantForTrack(TRACE_TAG_APP, "QuickstepLauncher#DeviceProfileChanged",
-                getDeviceProfile().toSmallString());
         SystemUiProxy.INSTANCE.get(this).setLauncherAppIconSize(
                 mDeviceProfile.getWorkspaceProfile().getIconSizePx());
     }
@@ -1620,7 +1564,6 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         TaskbarInteractor ti = mTaskbarInteractor;
         if (ti == null) return super.getPinnedItems();
         return ti.getPinnedApps();
->>>>>>> aosp/android17-release
     }
 
     /**

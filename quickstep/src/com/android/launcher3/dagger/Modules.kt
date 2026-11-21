@@ -30,6 +30,7 @@ import com.android.internal.util.LatencyTracker
 import com.android.launcher3.AbstractFloatingViewHelper
 import com.android.launcher3.Flags.enableSystemDrag
 import com.android.launcher3.Launcher
+import com.android.launcher3.Utilities
 import com.android.launcher3.automation.AutomationRepository
 import com.android.launcher3.backuprestore.LauncherRestoreEventLogger
 import com.android.launcher3.display.DisplayController
@@ -234,13 +235,19 @@ object StaticObjectModule {
     @LauncherAppSingleton
     @Named(WINDOW_BLUR_STATE)
     fun provideWindowBlurState(lifecycle: DaggerSingletonTracker): ListenableRef<Boolean> {
-        val blurListeners = CrossWindowBlurListeners.getInstance()
-        val value = MutableListenableRef(blurListeners.isCrossWindowBlurEnabled)
+        // Lawnchair: CrossWindowBlurListeners needs Android 12 and may be missing on some ROMs
+        if (!Utilities.ATLEAST_S) return MutableListenableRef(false).asListenable()
+        return try {
+            val blurListeners = CrossWindowBlurListeners.getInstance()
+            val value = MutableListenableRef(blurListeners.isCrossWindowBlurEnabled)
 
-        val callback = Consumer<Boolean> { value.dispatchValue(it) }
-        blurListeners.addListener(IMMEDIATE_EXECUTOR, callback)
-        lifecycle.addCloseable { blurListeners.removeListener(callback) }
-        return value.asListenable()
+            val callback = Consumer<Boolean> { value.dispatchValue(it) }
+            blurListeners.addListener(IMMEDIATE_EXECUTOR, callback)
+            lifecycle.addCloseable { blurListeners.removeListener(callback) }
+            value.asListenable()
+        } catch (t: Throwable) {
+            MutableListenableRef(false).asListenable()
+        }
     }
 
     @Provides fun provideAbstractFloatingViewHelper() = AbstractFloatingViewHelper

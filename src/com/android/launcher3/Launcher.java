@@ -66,27 +66,17 @@ import static com.android.launcher3.LauncherState.FLAG_WORKSPACE_ICONS_BEING_DRA
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.LauncherState.NO_OFFSET;
 import static com.android.launcher3.LauncherState.NO_SCALE;
-<<<<<<< HEAD
 import static com.android.launcher3.LauncherState.SPRING_LOADED;
 import static com.android.launcher3.Utilities.ATLEAST_Q;
 import static com.android.launcher3.Utilities.ATLEAST_R;
 import static com.android.launcher3.Utilities.postAsyncCallback;
-=======
 import static com.android.launcher3.Utilities.shouldEnableMouseInteractionChanges;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.Workspace.mapOverCellLayouts;
 import static com.android.launcher3.anim.AnimatorListeners.forEndCallback;
 import static com.android.launcher3.config.FeatureFlags.FOLDABLE_SINGLE_PAGE;
 import static com.android.launcher3.config.FeatureFlags.MULTI_SELECT_EDIT_MODE;
-<<<<<<< HEAD
-import static com.android.launcher3.icons.BitmapRenderer.createHardwareBitmap;
-import static com.android.launcher3.folder.FolderGridOrganizer.createFolderGridOrganizer;
-import static com.android.launcher3.logging.KeyboardStateManager.KeyboardState.HIDE;
-import static com.android.launcher3.logging.KeyboardStateManager.KeyboardState.SHOW;
-=======
 import static com.android.launcher3.keyboard.KeyboardStateManager.KeyboardState.HIDE;
 import static com.android.launcher3.keyboard.KeyboardStateManager.KeyboardState.SHOW;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.logging.StatsLogManager.EventEnum;
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_BACKGROUND;
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_HOME;
@@ -524,21 +514,17 @@ public class Launcher extends StatefulActivity<LauncherState>
         getRootView().dispatchInsets();
 
         final SettingsCache settingsCache = SettingsCache.INSTANCE.get(this);
-<<<<<<< HEAD
+        // Lawnchair: the touchpad setting is not readable on every device
         try {
-            settingsCache.register(TOUCHPAD_NATURAL_SCROLLING, mNaturalScrollingChangedListener);
-            mIsNaturalScrollingEnabled = settingsCache.getValue(TOUCHPAD_NATURAL_SCROLLING);
+            mNaturalScrollingChangedSafeCloseable = settingsCache.getListenableRef(
+                    TOUCHPAD_NATURAL_SCROLLING).forEach(
+                            MAIN_EXECUTOR, (enabled) -> {
+                                mIsNaturalScrollingEnabled = enabled;
+                                return null;
+                            });
         } catch (Exception e) {
             mIsNaturalScrollingEnabled = false;
         }
-=======
-        mNaturalScrollingChangedSafeCloseable = settingsCache.getListenableRef(
-                TOUCHPAD_NATURAL_SCROLLING).forEach(
-                        MAIN_EXECUTOR, (enabled) -> {
-                            mIsNaturalScrollingEnabled = enabled;
-                            return null;
-                        });
->>>>>>> aosp/android17-release
 
         // Listen for screen turning off
         ScreenOnTracker.INSTANCE.get(this).addListener(mScreenOnListener);
@@ -697,7 +683,6 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     private void updateFixedLandscape() {
-<<<<<<< HEAD
         if (!com.android.launcher3.Flags.oneGridSpecs()) {
             return;
         }
@@ -706,15 +691,12 @@ public class Launcher extends StatefulActivity<LauncherState>
         // afterwards.
 //        if (getDeviceProfile().getDeviceProperties().isPhone()) {
 //            LauncherPrefs.get(this).put(LauncherPrefs.ALLOW_ROTATION, false);
-//        } else if (getDeviceProfile().getDeviceProperties().isTablet()) {
+//        } else if (getDeviceProfile().getDeviceProperties().isLargeScreen()) {
         
         // pE-TODO(oneGridSpec): Investigate!
         //
         // LC-Note: Don't rotation prefs to false on phones! See original code above
-        if (getDeviceProfile().getDeviceProperties().isTablet()) {
-=======
         if (getDeviceProfile().getDeviceProperties().isLargeScreen()) {
->>>>>>> aosp/android17-release
             // Tablet do not use fixed landscape mode, make sure it can't be activated by mistake
             LauncherPrefs.get(this).put(FIXED_LANDSCAPE_MODE, false);
         }
@@ -744,12 +726,8 @@ public class Launcher extends StatefulActivity<LauncherState>
             mCellPosMapper = new TwoPanelCellPosMapper(mDeviceProfile.inv.numColumns);
         } else {
             mCellPosMapper = new CellPosMapper(mDeviceProfile.isVerticalBarLayout(),
-<<<<<<< HEAD
-                    mDeviceProfile.numShownHotseatIcons, mDeviceProfile.numHotseatRows,
-                    mDeviceProfile.numHotseatPages);
-=======
-                    mDeviceProfile.getHotseatProfile().getNumShownIcons());
->>>>>>> aosp/android17-release
+                    mDeviceProfile.getHotseatProfile().getNumShownIcons(),
+                    mDeviceProfile.numHotseatRows, mDeviceProfile.numHotseatPages);
         }
         mModelWriter = mModel.getWriter(true, this, modelCallbacks);
         updateFixedLandscape();
@@ -1035,45 +1013,25 @@ public class Launcher extends StatefulActivity<LauncherState>
         mAppWidgetHolder.setActivityResumed(true);
 
         // Listen for IME changes to keep state up to date.
-<<<<<<< HEAD
         if (ATLEAST_R) {
             getRootView().setWindowInsetsAnimationCallback(
-                    new Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+                    new WindowInsetsAnimation.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
                         @Override
                         public WindowInsets onProgress(WindowInsets windowInsets,
                                 List<WindowInsetsAnimation> windowInsetsAnimations) {
                             return windowInsets;
                         }
-    
+
                         @Override
                         public void onEnd(WindowInsetsAnimation animation) {
                             WindowInsets insets = getRootView().getRootWindowInsets();
                             boolean isImeVisible =
-                                    insets != null && insets.isVisible(Type.ime());
-                            getStatsLogManager().keyboardStateManager().setKeyboardState(
+                                    insets != null && insets.isVisible(WindowInsets.Type.ime());
+                            getActivityComponent().getKeyboardStateManager().setKeyboardState(
                                     isImeVisible ? SHOW : HIDE);
                         }
                     });
         }
-=======
-        getRootView().setWindowInsetsAnimationCallback(
-                new WindowInsetsAnimation.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
-                    @Override
-                    public WindowInsets onProgress(WindowInsets windowInsets,
-                            List<WindowInsetsAnimation> windowInsetsAnimations) {
-                        return windowInsets;
-                    }
-
-                    @Override
-                    public void onEnd(WindowInsetsAnimation animation) {
-                        WindowInsets insets = getRootView().getRootWindowInsets();
-                        boolean isImeVisible =
-                                insets != null && insets.isVisible(WindowInsets.Type.ime());
-                        getActivityComponent().getKeyboardStateManager().setKeyboardState(
-                                isImeVisible ? SHOW : HIDE);
-                    }
-                });
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -2425,67 +2383,7 @@ public class Launcher extends StatefulActivity<LauncherState>
      */
     public void onPageEndTransition() {}
 
-<<<<<<< HEAD
-    /**
-     * See {@code LauncherBindingDelegate}
-     */
-    @Override
-    @TargetApi(Build.VERSION_CODES.S)
-    @UiThread
-    public void bindAllApplications(AppInfo[] apps, int flags,
-            Map<PackageUserKey, Integer> packageUserKeytoUidMap) {
-        mModelCallbacks.bindAllApplications(apps, flags, packageUserKeytoUidMap);
-        if (Utilities.ATLEAST_S) {
-            Trace.endAsyncSection(DISPLAY_ALL_APPS_TRACE_METHOD_NAME, SINGLE_TRACE_COOKIE);
-        }
-    }
-
-    /**
-     * See {@code LauncherBindingDelegate}
-     */
-    @Override
-    public void bindDeepShortcutMap(HashMap<ComponentKey, Integer> deepShortcutMapCopy) {
-        mModelCallbacks.bindDeepShortcutMap(deepShortcutMapCopy);
-    }
-
-    @Override
-    public void bindIncrementalDownloadProgressUpdated(AppInfo app) {
-        mModelCallbacks.bindIncrementalDownloadProgressUpdated(app);
-    }
-
-    /**
-     * See {@code LauncherBindingDelegate}
-     */
-    @Override
-    public void bindItemsUpdated(Set<ItemInfo> updates) {
-        mModelCallbacks.bindItemsUpdated(updates);
-    }
-
-    /**
-     * See {@code LauncherBindingDelegate}
-     */
-    @Override
-    public void bindWorkspaceComponentsRemoved(Predicate<ItemInfo> matcher) {
-        mModelCallbacks.bindWorkspaceComponentsRemoved(matcher);
-    }
-
-    /**
-     * See {@code LauncherBindingDelegate}
-     */
-    @Override
-    public void bindAllWidgets(@NonNull final List<WidgetsListBaseEntry> allWidgets) {
-        mModelCallbacks.bindAllWidgets(allWidgets);
-    }
-
-    @Override
-    public void bindStringCache(StringCache cache) {
-        mModelCallbacks.bindStringCache(cache);
-    }
-
-    /** Called to updated any prediction info by the {@link #mModelCallbacks} */
-=======
     /** Called to updated any prediction info by the {@link #modelCallbacks} */
->>>>>>> aosp/android17-release
     public void bindPredictedContainerInfo(PredictedContainerInfo info) { }
 
     /** Called after an item is pinned using the context menu. */
@@ -2679,19 +2577,6 @@ public class Launcher extends StatefulActivity<LauncherState>
         mBackPressedHandlers.remove(callback);
     }
 
-<<<<<<< HEAD
-    private void updateDisallowBack() {
-        try {
-            if (BuildCompat.isAtLeastV()
-                && Flags.enableDesktopWindowingMode()
-                && !Flags.enableDesktopWindowingWallpaperActivity()
-                && mDeviceProfile.getDeviceProperties().isTablet()) {
-                // TODO(b/333533253): Clean up after desktop wallpaper activity flag is rolled out
-                return;
-            }
-        } catch (Throwable t) {
-            // LC-Ignored
-=======
     protected boolean shouldDisableBackGesture() {
         boolean isSplitSelectionEnabled = isSplitSelectionActive();
         View topOpenFloatingView = AbstractFloatingView.getTopOpenView(this);
@@ -2705,7 +2590,6 @@ public class Launcher extends StatefulActivity<LauncherState>
         LauncherRootView rv = getRootView();
         if (rv == null) {
             return;
->>>>>>> aosp/android17-release
         }
         rv.setDisallowBackGesture(shouldDisableBackGesture());
     }
