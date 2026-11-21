@@ -157,14 +157,9 @@ public final class TaskbarOverlayController
         mLauncherDeviceProfile = launcherDeviceProfile;
         mMaxBlurRadius = mTaskbarContext.getResources().getDimensionPixelSize(
                 R.dimen.max_depth_blur_radius_enhanced);
-<<<<<<< HEAD
 //        mEarlyWakeupInfo.token = new Binder();
 //        mEarlyWakeupInfo.trace = TaskbarOverlayController.class.getName();
-=======
-        mEarlyWakeupInfo.token = new Binder();
-        mEarlyWakeupInfo.trace = TaskbarOverlayController.class.getName();
         mBubbleBarActivityStarter = BubbleActivityStarter.INSTANCE.get(taskbarContext);
->>>>>>> aosp/android17-release
     }
 
     /** Initialize the controller. */

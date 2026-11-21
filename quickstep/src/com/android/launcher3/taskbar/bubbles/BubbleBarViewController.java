@@ -25,14 +25,11 @@ import static com.android.launcher3.taskbar.TaskbarPinningController.PINNING_TRA
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
-<<<<<<< HEAD
 import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import static java.util.stream.Collectors.toList;
 
-=======
 import android.annotation.SuppressLint;
->>>>>>> aosp/android17-release
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.graphics.PointF;

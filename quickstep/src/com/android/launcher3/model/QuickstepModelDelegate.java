@@ -96,12 +96,9 @@ public class QuickstepModelDelegate extends ModelDelegate {
     @VisibleForTesting
     protected final PredictorState mHotseatPredictionState = new PredictorState(
             CONTAINER_HOTSEAT_PREDICTION, "hotseat_predictions", DESKTOP_ICON_FLAG);
-<<<<<<< HEAD
     @VisibleForTesting
     protected final PredictorState mWidgetsRecommendationState = new PredictorState(
             CONTAINER_WIDGETS_PREDICTION, "widgets_prediction", DESKTOP_ICON_FLAG);
-=======
->>>>>>> aosp/android17-release
 
     private final InvariantDeviceProfile mIDP;
     private final PredictedItemFactory.Factory mItemParserFactory;

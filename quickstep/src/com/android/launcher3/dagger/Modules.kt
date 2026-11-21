@@ -185,16 +185,12 @@ abstract class ApiWrapperModule {
 abstract class WidgetModule {
 
     @Binds
-<<<<<<< HEAD
     abstract fun bindWidgetHolderFactory(factor: LawnchairWidgetHolder.Factory): WidgetHolderFactory
-=======
-    abstract fun bindWidgetHolderFactory(factor: QuickstepWidgetHolderFactory): WidgetHolderFactory
 
     @Binds
     abstract fun bindUpdateDispatcher(
         dispatcher: QuickstepProvidersUpdateDispatcher
     ): ProvidersUpdateDispatcher
->>>>>>> aosp/android17-release
 }
 
 @Module

@@ -77,13 +77,8 @@ class DesktopAppLaunchTransitionManager(
     }
 
     private fun shouldRegisterTransitions(): Boolean =
-<<<<<<< HEAD
         Utilities.ATLEAST_BAKLAVA && // LC-Note: This is only available for Baklava
-            DesktopModeStatus.canEnterDesktopMode(context) &&
-            DesktopModeFlags.ENABLE_DESKTOP_APP_LAUNCH_TRANSITIONS_BUGFIX.isTrue
-=======
-        DesktopModeStatus.canEnterDesktopMode(context)
->>>>>>> aosp/android17-release
+            DesktopModeStatus.canEnterDesktopMode(context)
 
     companion object {
         /** Returns whether the given transition is a Desktop app launch. */

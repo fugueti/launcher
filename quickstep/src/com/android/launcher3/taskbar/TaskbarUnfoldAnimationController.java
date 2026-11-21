@@ -92,16 +92,6 @@ public class TaskbarUnfoldAnimationController implements
 
         @Override
         public void onTransitionStarted() {
-<<<<<<< HEAD
-            mMoveFromCenterAnimator.updateDisplayProperties();
-            View[] icons = mTaskbarViewController.getIconViews();
-            for (View icon : icons) {
-                // TODO(b/193794563) we should re-register views if they are
-                // re-bound/re-inflated
-                // during the animation
-                mMoveFromCenterAnimator.registerViewForAnimation(icon);
-            }
-=======
             getTaskbarUiThread().getHandler().postAtTime(() -> {
                 mMoveFromCenterAnimator.updateDisplayProperties();
                 if (mTaskbarViewController != null) {
@@ -112,7 +102,6 @@ public class TaskbarUnfoldAnimationController implements
                         mMoveFromCenterAnimator.registerViewForAnimation(icon);
                     }
                 }
->>>>>>> aosp/android17-release
 
                 mMoveFromCenterAnimator.onTransitionStarted();
             }, mTransitionListener, SystemClock.uptimeMillis());

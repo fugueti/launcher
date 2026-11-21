@@ -123,22 +123,13 @@ public class PredictionRowView<T extends Context & ActivityContext>
     }
 
     private void updateVisibility() {
-<<<<<<< HEAD
+        // Lawnchair: also honour the "suggested apps in drawer" preference
         boolean enabled = mPredictionsEnabled && PreferenceCacheExtensionsKt.firstCached(prefs2.getShowSuggestedAppsInDrawer());
         setVisibility(enabled ? VISIBLE : GONE);
-        if (mActivityContext.getAppsView() != null) {
-            if (enabled) {
-                mActivityContext.getAppsView().getAppsStore().registerIconContainer(this);
-            } else {
-                mActivityContext.getAppsView().getAppsStore().unregisterIconContainer(this);
-            }
-=======
-        setVisibility(mPredictionsEnabled ? VISIBLE : GONE);
-        if (mPredictionsEnabled) {
+        if (enabled) {
             mActivityContext.getActivityComponent().getAppsStore().registerIconContainer(this);
         } else {
             mActivityContext.getActivityComponent().getAppsStore().unregisterIconContainer(this);
->>>>>>> aosp/android17-release
         }
     }
 

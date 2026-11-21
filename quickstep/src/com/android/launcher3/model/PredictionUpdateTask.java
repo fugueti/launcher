@@ -58,14 +58,7 @@ public class PredictionUpdateTask implements ModelUpdateTask {
     private final List<AppTarget> mTargets;
     private final PredictorState mPredictorState;
 
-<<<<<<< HEAD
     public PredictionUpdateTask(PredictorState predictorState, List<AppTarget> targets) {
-=======
-    PredictionUpdateTask(
-            PredictorState predictorState,
-            List<AppTarget> targets
-    ) {
->>>>>>> aosp/android17-release
         mPredictorState = predictorState;
         mTargets = targets;
     }

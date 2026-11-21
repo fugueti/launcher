@@ -226,13 +226,6 @@ public class TaskbarOverlayContext extends BaseTaskbarContext {
     }
 
     @Override
-<<<<<<< HEAD
-    public void onDragStart() {
-    }
-
-    @Override
-=======
->>>>>>> aosp/android17-release
     public void onDragEnd() {
         mDragToBubbleController.ifPresent(c -> c.setOverlayContainerView(null));
         mOverlayController.maybeCloseWindow();

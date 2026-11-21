@@ -1411,19 +1411,12 @@ public class TaskbarStashController implements TaskbarControllers.LoggableTaskba
         long animDuration = TASKBAR_STASH_DURATION;
         long startDelay = 0;
 
-<<<<<<< HEAD
-        updateStateForFlag(FLAG_STASHED_IN_APP_SYSUI, hasAnyFlag(systemUiStateFlags,
-                SYSUI_STATE_DIALOG_SHOWING | (ENABLE_TASKBAR_BEHIND_SHADE
-                        ? 0
-                        : SYSUI_STATE_NOTIFICATION_PANEL_VISIBLE)
-        ));
-=======
         final boolean isDualShadeDesktop =
                 ((systemUiStateFlags & SYSUI_STATE_DUAL_SHADE_ENABLED) != 0)
                         && mActivity.isDesktopFormFactor();
 
         long stashMask = SYSUI_STATE_DIALOG_SHOWING;
-        if (!ENABLE_TASKBAR_BEHIND_SHADE.isTrue() && !isDualShadeDesktop) {
+        if (!ENABLE_TASKBAR_BEHIND_SHADE && !isDualShadeDesktop) {
             // Stash when the notification panel is visible, UNLESS:
             // 1. The "Taskbar behind shade" flag is enabled.
             // 2. It is a dual-shade desktop environment.
@@ -1431,7 +1424,6 @@ public class TaskbarStashController implements TaskbarControllers.LoggableTaskba
         }
 
         updateStateForFlag(FLAG_STASHED_IN_APP_SYSUI, hasAnyFlag(systemUiStateFlags, stashMask));
->>>>>>> aosp/android17-release
 
         boolean stashForBubbles = hasAnyFlag(FLAG_IN_OVERVIEW)
                 && hasAnyFlag(systemUiStateFlags, SYSUI_STATE_BUBBLES_EXPANDED)

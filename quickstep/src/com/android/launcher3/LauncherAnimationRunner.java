@@ -215,7 +215,7 @@ public class LauncherAnimationRunner extends RemoteAnimationRunnerCompat {
                     }
                 });
                 if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
-                    mAnimator.start();
+                    animation.start();
                 }
 
                 if (skipFirstFrame) {
@@ -225,13 +225,9 @@ public class LauncherAnimationRunner extends RemoteAnimationRunnerCompat {
                     animation.setCurrentPlayTime(
                             Math.min(getSingleFrameMs(context), animation.getTotalDuration()));
                 }
-<<<<<<< HEAD
                 if (Utilities.ATLEAST_U) {
-                    mAnimator.start();
+                    animation.start();
                 }
-=======
-                animation.start();
->>>>>>> aosp/android17-release
             }
         }
 
