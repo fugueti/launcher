@@ -85,15 +85,11 @@ import com.android.launcher3.model.IModelWriter;
 import com.android.launcher3.model.StringCache;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
-<<<<<<< HEAD
 import com.android.launcher3.popup.PopupDataProvider;
 import com.android.launcher3.statehandlers.BaseDepthController;
-=======
 import com.android.launcher3.model.repository.StringCacheRepository;
 import com.android.launcher3.popup.SystemShortcut;
-import com.android.launcher3.statehandlers.BaseDepthController;
 import com.android.launcher3.touch.CustomActionsListener;
->>>>>>> aosp/android17-release
 import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.ApiWrapper;
 import com.android.launcher3.util.ApplicationInfoWrapper;

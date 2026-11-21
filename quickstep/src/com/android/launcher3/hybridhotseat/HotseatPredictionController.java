@@ -38,13 +38,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
-<<<<<<< HEAD
 import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.DragSource;
 import com.android.launcher3.DropTarget;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.Flags;
 import com.android.launcher3.CellLayout;
 import com.android.launcher3.Hotseat;

@@ -28,22 +28,16 @@ import android.view.ViewTreeObserver;
 
 import androidx.annotation.VisibleForTesting;
 
-<<<<<<< HEAD
 import com.android.launcher3.BaseActivity;
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.Utilities;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.statemanager.BaseState;
 import com.android.launcher3.statemanager.StateManager.StateHandler;
 import com.android.launcher3.statemanager.StatefulContainer;
 import com.android.launcher3.states.StateAnimationConfig;
-<<<<<<< HEAD
 import com.android.launcher3.uioverrides.QuickstepLauncher;
-=======
 import com.android.launcher3.util.ListenableRef;
->>>>>>> aosp/android17-release
 import com.android.quickstep.util.BaseDepthControllerImpl;
 
 import java.io.PrintWriter;

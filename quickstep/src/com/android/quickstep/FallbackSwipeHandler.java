@@ -32,12 +32,9 @@ import static com.android.launcher3.anim.AnimatorListeners.forEndCallback;
 import static com.android.quickstep.OverviewComponentObserver.startHomeIntentSafely;
 
 import android.animation.ObjectAnimator;
-<<<<<<< HEAD
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
-=======
->>>>>>> aosp/android17-release
 import android.app.ActivityOptions;
 import android.app.TaskInfo;
 import android.content.Context;

@@ -72,11 +72,8 @@ import com.android.launcher3.LauncherAnimationRunner.AnimationResult;
 import com.android.launcher3.LauncherAnimationRunner.RemoteAnimationFactory;
 import com.android.launcher3.LauncherRootView;
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
-=======
 import com.android.launcher3.SplitScreenUiState;
->>>>>>> aosp/android17-release
 import com.android.launcher3.anim.AnimatorPlaybackController;
 import com.android.launcher3.anim.PendingAnimation;
 import com.android.launcher3.compat.AccessibilityManagerCompat;

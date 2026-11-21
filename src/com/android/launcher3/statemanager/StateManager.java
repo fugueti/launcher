@@ -33,12 +33,9 @@ import android.os.Looper;
 import androidx.annotation.FloatRange;
 import androidx.annotation.Nullable;
 
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
-=======
 import com.android.launcher3.LauncherState;
 import com.android.launcher3.LauncherUiState;
->>>>>>> aosp/android17-release
 import com.android.launcher3.anim.AnimationSuccessListener;
 import com.android.launcher3.anim.AnimatorPlaybackController;
 import com.android.launcher3.anim.PendingAnimation;

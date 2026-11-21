@@ -28,13 +28,10 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 
-<<<<<<< HEAD
 import android.util.Log;
 import androidx.annotation.UiThread;
-=======
 import androidx.annotation.AnyThread;
 import androidx.annotation.WorkerThread;
->>>>>>> aosp/android17-release
 
 import com.android.launcher3.concurrent.annotations.LightweightBackground;
 import com.android.launcher3.dagger.ApplicationContext;

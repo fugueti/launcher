@@ -32,12 +32,9 @@ import com.android.launcher3.R;
 import com.android.wm.shell.shared.animation.PhysicsAnimator;
 import com.android.wm.shell.shared.bubbles.DismissCircleView;
 import com.android.wm.shell.shared.bubbles.DismissView;
-<<<<<<< HEAD
 //import com.android.wm.shell.shared.animation.PhysicsAnimator;
 
 import app.lawnchair.animation.PhysicsAnimator;
-=======
->>>>>>> aosp/android17-release
 
 /**
  * The animator performs the bubble animations while dragging and coordinates bubble and dismiss

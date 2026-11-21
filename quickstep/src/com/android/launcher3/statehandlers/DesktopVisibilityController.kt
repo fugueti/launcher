@@ -16,27 +16,20 @@
 package com.android.launcher3.statehandlers
 
 import android.content.Context
-<<<<<<< HEAD
 import android.hardware.display.DisplayManager
 import android.os.Debug
-=======
->>>>>>> aosp/android17-release
 import android.util.Log
 import android.util.SparseArray
-<<<<<<< HEAD
 import android.view.Display.DEFAULT_DISPLAY
 import androidx.core.util.forEach
 import com.android.internal.util.LatencyTracker
 import com.android.launcher3.LauncherState
 import com.android.launcher3.Utilities
 //import com.android.launcher3.R
-=======
 import android.util.SparseBooleanArray
 import androidx.annotation.AnyThread
 import androidx.core.util.set
 import com.android.launcher3.Flags.enableTaskbarUiThread
-import com.android.launcher3.LauncherState
->>>>>>> aosp/android17-release
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppComponent
 import com.android.launcher3.dagger.LauncherAppSingleton

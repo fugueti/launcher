@@ -132,11 +132,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CancellationException;
-<<<<<<< HEAD
 import java.util.stream.Collectors;
-=======
 import java.util.concurrent.CompletableFuture;
->>>>>>> aosp/android17-release
 
 import javax.inject.Named;
 import javax.inject.Provider;

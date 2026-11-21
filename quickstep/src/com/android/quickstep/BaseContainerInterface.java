@@ -51,11 +51,8 @@ import androidx.annotation.UiThread;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
-=======
 import com.android.launcher3.display.DisplayController;
->>>>>>> aosp/android17-release
 import com.android.launcher3.statehandlers.DesktopVisibilityController;
 import com.android.launcher3.statemanager.BaseState;
 import com.android.launcher3.statemanager.StatefulContainer;

@@ -32,11 +32,8 @@ import android.view.MotionEvent;
 import android.view.Surface;
 
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
-=======
 import com.android.launcher3.display.LauncherDisplayInfo;
->>>>>>> aosp/android17-release
 import com.android.launcher3.testing.shared.ResourceUtils;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.NavigationMode;

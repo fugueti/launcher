@@ -78,11 +78,8 @@ import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-<<<<<<< HEAD
 import android.app.WindowConfiguration;
-=======
 import android.app.ActivityManager;
->>>>>>> aosp/android17-release
 import android.content.Context;
 import android.content.Intent;
 import android.content.LocusId;

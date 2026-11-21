@@ -27,11 +27,8 @@ import com.android.launcher3.statehandlers.DepthController;
 import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
-<<<<<<< HEAD
 import com.android.quickstep.util.BaseDepthControllerImpl;
-=======
 import com.android.quickstep.fallback.RecentsState;
->>>>>>> aosp/android17-release
 import com.android.quickstep.util.LayoutUtils;
 import com.android.quickstep.views.RecentsView;
 

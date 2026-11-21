@@ -25,11 +25,8 @@ import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.content.IntentFilter;
 import android.content.pm.LauncherActivityInfo;
-=======
->>>>>>> aosp/android17-release
 import android.content.pm.LauncherApps;
 import android.database.ContentObserver;
 import android.net.Uri;

@@ -21,14 +21,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.content.pm.LauncherApps.ArchiveCompatibilityParams
-<<<<<<< HEAD
 import app.lawnchair.icons.LawnchairIconProvider
 import com.android.launcher3.BuildConfigs
-=======
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.android.launcher3.BuildConfig
->>>>>>> aosp/android17-release
 import com.android.launcher3.Flags
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.OnIDPChangeListener
@@ -42,10 +39,7 @@ import com.android.launcher3.graphics.ThemeManager.ThemeChangeListener
 import com.android.launcher3.homescreenfiles.HomeScreenFilesProvider
 import com.android.launcher3.homescreenfiles.HomeScreenFilesUpdateTask
 import com.android.launcher3.icons.IconCache
-<<<<<<< HEAD
-=======
 import com.android.launcher3.icons.IconChangeTracker
->>>>>>> aosp/android17-release
 import com.android.launcher3.icons.LauncherIcons.IconPool
 import com.android.launcher3.logging.FileLog
 import com.android.launcher3.model.tasks.AutomationChangedTask

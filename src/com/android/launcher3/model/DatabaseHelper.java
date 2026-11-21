@@ -40,11 +40,8 @@ import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.AutoInstallsLayout;
 import com.android.launcher3.AutoInstallsLayout.LayoutParserCallback;
 import com.android.launcher3.BuildConfig;
-<<<<<<< HEAD
 import com.android.launcher3.BuildConfigs;
-=======
 import com.android.launcher3.Flags;
->>>>>>> aosp/android17-release
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.Utilities;

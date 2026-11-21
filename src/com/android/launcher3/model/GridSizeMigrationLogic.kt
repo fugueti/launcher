@@ -20,13 +20,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Point
 import android.util.Log
 import androidx.annotation.VisibleForTesting
-<<<<<<< HEAD
 import app.lawnchair.preferences2.PreferenceManager2
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.BuildConfigs
 import com.android.launcher3.Flags
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.LauncherSettings.Favorites
@@ -49,13 +46,10 @@ import com.android.launcher3.provider.LauncherDbUtils.shiftWorkspaceByXCells
 import com.android.launcher3.util.CellAndSpan
 import com.android.launcher3.util.GridOccupancy
 import com.android.launcher3.util.IntArray
-<<<<<<< HEAD
 import app.lawnchair.preferences2.firstCached
-=======
 import dagger.Lazy
 import javax.inject.Inject
 import javax.inject.Named
->>>>>>> aosp/android17-release
 
 class GridSizeMigrationLogic
 @Inject

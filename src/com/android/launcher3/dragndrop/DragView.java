@@ -69,13 +69,10 @@ import com.android.launcher3.util.ViewEx;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.BaseDragLayer;
 
-<<<<<<< HEAD
 import app.lawnchair.icons.CustomAdaptiveIconDrawable;
-=======
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
->>>>>>> aosp/android17-release
 
 /** A custom view for rendering an icon, folder, shortcut or widget during drag-n-drop. */
 @SuppressLint("ViewConstructor")

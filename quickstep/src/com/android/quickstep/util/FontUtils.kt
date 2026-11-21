@@ -19,12 +19,9 @@ package com.android.quickstep.util
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Typeface
-<<<<<<< HEAD
 import android.os.Build
 import com.android.launcher3.Utilities
-=======
 import android.util.Log
->>>>>>> aosp/android17-release
 import com.android.wm.shell.shared.TypefaceUtils
 
 object FontUtils {

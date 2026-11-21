@@ -47,17 +47,14 @@ import androidx.annotation.Nullable;
 import com.android.launcher3.CheckLongPressHelper;
 import com.android.launcher3.Flags;
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
 import com.android.launcher3.model.data.ItemInfo;
-=======
 import com.android.launcher3.popup.Poppable;
 import com.android.launcher3.popup.PoppableType;
 import com.android.launcher3.touch.CustomActionsListener;
 import com.android.launcher3.touch.CustomEventsTouchHandler;
 import com.android.launcher3.touch.CustomTouchDelegate;
 import com.android.launcher3.touch.WorkspaceWidgetCustomActionsListener;
->>>>>>> aosp/android17-release
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.BaseDragLayer;

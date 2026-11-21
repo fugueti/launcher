@@ -45,12 +45,9 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
-<<<<<<< HEAD
 import android.util.SparseArray;
 import android.util.Xml;
 import android.view.Display;
-=======
->>>>>>> aosp/android17-release
 
 import androidx.annotation.DimenRes;
 import androidx.annotation.IntDef;

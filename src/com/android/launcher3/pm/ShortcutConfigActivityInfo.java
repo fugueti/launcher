@@ -41,11 +41,8 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.LauncherSettings;
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
 import com.android.launcher3.icons.cache.BaseIconCache;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.icons.cache.CachedObject;
 import com.android.launcher3.icons.cache.IconLoadRequest;
 import com.android.launcher3.model.data.WorkspaceItemInfo;

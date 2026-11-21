@@ -47,11 +47,8 @@ import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.model.data.ItemInfoWithIcon;
 import com.android.launcher3.model.data.WorkspaceItemInfo;
 import com.android.launcher3.popup.PopupContainerWithArrow;
-<<<<<<< HEAD
-=======
 import com.android.launcher3.util.Themes;
 import com.android.launcher3.views.ActivityContext;
->>>>>>> aosp/android17-release
 import com.android.launcher3.views.BubbleTextHolder;
 
 import app.lawnchair.theme.color.tokens.ColorTokens;

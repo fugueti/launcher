@@ -17,17 +17,13 @@ package com.android.launcher3.model;
 
 import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
 
-<<<<<<< HEAD
 import android.content.Context;
 import android.util.LongSparseArray;
 
 import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.BuildConfigs;
-=======
 import android.util.SparseArray;
-
->>>>>>> aosp/android17-release
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.LauncherModel;
 import com.android.launcher3.LauncherSettings;
@@ -116,11 +112,8 @@ public class WorkspaceItemSpaceFinder {
             }
         }
 
-<<<<<<< HEAD
         // Add items that are due to be added to the database from AddWorkspaceItemsTask#execute.
-=======
         // Add items that are due to be added to the database.
->>>>>>> aosp/android17-release
         for (ItemInfo info : addItemsFinal) {
             if (info.container == LauncherSettings.Favorites.CONTAINER_DESKTOP) {
                 ArrayList<ItemInfo> items = screenItems.get(info.screenId);

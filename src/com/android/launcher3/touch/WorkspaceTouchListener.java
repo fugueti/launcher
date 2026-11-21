@@ -32,12 +32,9 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_SPLIT_SELECTION_EXIT_INTERRUPTED;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WORKSPACE_LONGPRESS;
 
-<<<<<<< HEAD
 import android.content.Intent;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
-=======
->>>>>>> aosp/android17-release
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.view.GestureDetector;

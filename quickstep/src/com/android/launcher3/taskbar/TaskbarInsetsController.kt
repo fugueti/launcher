@@ -50,11 +50,8 @@ import androidx.core.graphics.toRegion
 
 import com.android.internal.policy.GestureNavigationSettingsObserver
 import com.android.launcher3.DeviceProfile
-<<<<<<< HEAD
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.anim.AlphaUpdateListener
 import com.android.launcher3.folder.Folder
 import com.android.launcher3.taskbar.TaskbarControllers.LoggableTaskbarController

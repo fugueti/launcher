@@ -26,14 +26,11 @@ import android.provider.SearchIndexablesProvider
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET
 import com.android.launcher3.R
-<<<<<<< HEAD
 import com.android.launcher3.model.DeviceGridState
 import java.io.IOException
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserException
-=======
 import com.android.launcher3.util.XmlElement.Companion.getRootElement
->>>>>>> aosp/android17-release
 
 @TargetApi(Build.VERSION_CODES.O)
 class LauncherSearchIndexablesProvider : SearchIndexablesProvider() {

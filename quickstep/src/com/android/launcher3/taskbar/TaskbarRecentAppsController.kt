@@ -22,15 +22,12 @@ import androidx.annotation.VisibleForTesting
 import com.android.internal.policy.DesktopModeCompatPolicy
 import com.android.launcher3.BubbleTextView.RunningAppState
 import com.android.launcher3.Flags
-<<<<<<< HEAD
 import com.android.launcher3.Flags.enableRecentsInTaskbar
 import com.android.launcher3.Utilities
-=======
 import com.android.launcher3.Flags.enableTaskbarUiThread
 import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.graphics.ThemeManager.ThemeChangeListener
 import com.android.launcher3.model.data.AppPairInfo
->>>>>>> aosp/android17-release
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.model.data.TaskItemInfo
 import com.android.launcher3.model.data.TaskItemInfo.Companion.isSameItem

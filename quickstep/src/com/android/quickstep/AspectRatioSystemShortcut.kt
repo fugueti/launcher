@@ -26,11 +26,8 @@ import com.android.launcher3.logging.StatsLogManager.LauncherEvent
 import com.android.launcher3.popup.SystemShortcut
 import com.android.quickstep.views.RecentsViewContainer
 import com.android.quickstep.views.TaskContainer
-<<<<<<< HEAD
 import com.android.window.flags2.Flags.universalResizableByDefault
-=======
 import javax.inject.Inject
->>>>>>> aosp/android17-release
 
 /**
  * System shortcut to change the application's aspect ratio compatibility mode.

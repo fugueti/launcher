@@ -16,17 +16,13 @@
 
 package com.android.launcher3.dagger
 
-<<<<<<< HEAD
 import app.lawnchair.predictions.LawnchairModelDelegate
 import com.android.launcher3.model.ModelDelegate
-=======
 import com.android.launcher3.MainProcessInitializer
-import com.android.launcher3.model.ModelDelegate
 import com.android.launcher3.model.QuickstepModelDelegate
 import com.android.launcher3.util.BaseDefaultsValueProvider
 import com.android.launcher3.util.DefaultsValueProvider
 import com.android.quickstep.QuickstepProcessInitializer
->>>>>>> aosp/android17-release
 import dagger.Binds
 import dagger.Module
 

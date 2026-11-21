@@ -21,13 +21,10 @@ import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import androidx.annotation.VisibleForTesting
-<<<<<<< HEAD
 import com.android.launcher3.Utilities
 import com.android.launcher3.anim.AnimatedFloat
-=======
 import com.android.launcher3.Utilities.shouldEnableMouseInteractionChanges
 import com.android.launcher3.statehandlers.DesktopVisibilityController
->>>>>>> aosp/android17-release
 import com.android.launcher3.statemanager.BaseState
 import com.android.launcher3.statemanager.StatefulContainer
 import com.android.launcher3.taskbar.TaskbarApiProxy

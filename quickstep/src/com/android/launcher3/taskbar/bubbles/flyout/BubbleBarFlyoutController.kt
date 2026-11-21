@@ -21,15 +21,12 @@ import android.graphics.Rect
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
-<<<<<<< HEAD
 import androidx.core.animation.addListener
 import com.android.app.animation.Interpolators
 import com.android.launcher3.R
-=======
 import androidx.core.animation.ValueAnimator
 import com.android.app.animation.InterpolatorsAndroidX
 import com.android.systemui.util.addListener
->>>>>>> aosp/android17-release
 
 /** Creates and manages the visibility of the [BubbleBarFlyoutView]. */
 class BubbleBarFlyoutController

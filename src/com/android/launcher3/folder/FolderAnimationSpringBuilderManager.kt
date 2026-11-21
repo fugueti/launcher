@@ -22,11 +22,8 @@ import com.android.launcher3.BubbleTextView
 import com.android.launcher3.LauncherAnimUtils.HOTSEAT_SCALE_PROPERTY_FACTORY
 import com.android.launcher3.LauncherAnimUtils.SCALE_INDEX_FOLDER_ANIM
 import com.android.launcher3.LauncherAnimUtils.WORKSPACE_SCALE_PROPERTY_FACTORY
-<<<<<<< HEAD
 import com.android.launcher3.LauncherState
 import com.android.launcher3.Utilities
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.apppairs.AppPairIcon
 import com.android.launcher3.folder.ClipRevealData.Factory.getClipRevealData
 import com.android.launcher3.folder.FolderAnimationData.Factory.getAnimationData

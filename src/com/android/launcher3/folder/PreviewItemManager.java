@@ -33,10 +33,7 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-<<<<<<< HEAD
-=======
 import android.util.FloatProperty;
->>>>>>> aosp/android17-release
 import android.util.Log;
 import android.view.View;
 

@@ -42,22 +42,16 @@ import android.view.ViewStub
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.FrameLayout
 import android.widget.Toast
-<<<<<<< HEAD
 import androidx.annotation.IntDef
 import androidx.annotation.RequiresApi
-=======
->>>>>>> aosp/android17-release
 import androidx.annotation.VisibleForTesting
 import androidx.core.animation.doOnCancel
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.updateLayoutParams
 import com.android.app.animation.Interpolators
-<<<<<<< HEAD
-=======
 import com.android.app.tracing.traceSection
 import com.android.internal.jank.Cuj.CUJ_LAUNCHER_APP_LAUNCH_FROM_RECENTS
->>>>>>> aosp/android17-release
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.Flags.enableRefactorDigitalWellbeingToast
 import com.android.launcher3.R

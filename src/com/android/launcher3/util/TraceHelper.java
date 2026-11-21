@@ -20,14 +20,11 @@ import android.os.Trace;
 
 import androidx.annotation.MainThread;
 
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
 
 import kotlin.random.Random;
 
-=======
 import java.util.Random;
->>>>>>> aosp/android17-release
 import java.util.function.Supplier;
 
 /**

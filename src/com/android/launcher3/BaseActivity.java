@@ -28,11 +28,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.content.res.Configuration;
 import android.graphics.Point;
-=======
->>>>>>> aosp/android17-release
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;

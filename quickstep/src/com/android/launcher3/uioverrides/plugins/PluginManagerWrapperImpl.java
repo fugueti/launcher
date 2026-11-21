@@ -25,13 +25,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 
-<<<<<<< HEAD
 import androidx.core.content.ContextCompat;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.BuildConfigs;
-=======
 import com.android.launcher3.LauncherPrefs;
->>>>>>> aosp/android17-release
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.util.PluginManagerWrapper;

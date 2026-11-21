@@ -20,11 +20,8 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.ElapsedRealtimeLong
 import android.content.Intent
 import android.graphics.PointF
-<<<<<<< HEAD
 import android.os.SystemClock
-=======
 import android.os.Trace
->>>>>>> aosp/android17-release
 import android.util.Log
 import android.view.Display.DEFAULT_DISPLAY
 import android.view.KeyEvent
@@ -38,12 +35,9 @@ import com.android.app.displaylib.PerDisplayRepository
 import com.android.internal.jank.Cuj
 import com.android.internal.util.LatencyTracker
 import com.android.launcher3.DeviceProfile
-<<<<<<< HEAD
 import com.android.launcher3.PagedView
 import com.android.launcher3.Utilities
-=======
 import com.android.launcher3.anim.AnimatorListeners
->>>>>>> aosp/android17-release
 import com.android.launcher3.logger.LauncherAtom
 import com.android.launcher3.logging.StatsLogManager
 import com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_OVERVIEW_SHOW_OVERVIEW_FROM_3_BUTTON

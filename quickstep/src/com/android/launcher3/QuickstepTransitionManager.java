@@ -144,11 +144,8 @@ import com.android.launcher3.uioverrides.QuickstepLauncher;
 import com.android.launcher3.util.ActivityOptionsWrapper;
 import com.android.launcher3.util.RunnableList;
 import com.android.launcher3.util.StableViewInfo;
-<<<<<<< HEAD
 import com.android.launcher3.util.Themes;
-=======
 import com.android.launcher3.util.TaskbarAsyncAnimator;
->>>>>>> aosp/android17-release
 import com.android.launcher3.views.FloatingIconView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
 import com.android.quickstep.AnimatedSurfaces;

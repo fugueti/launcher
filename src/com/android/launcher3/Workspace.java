@@ -77,12 +77,9 @@ import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
-<<<<<<< HEAD
 import android.util.SparseIntArray;
 import android.view.HapticFeedbackConstants;
-=======
 import android.view.DragAndDropPermissions;
->>>>>>> aosp/android17-release
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;

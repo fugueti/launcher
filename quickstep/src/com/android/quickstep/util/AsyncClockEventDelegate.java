@@ -34,10 +34,7 @@ import android.util.ArrayMap;
 import android.widget.TextClock.ClockEventDelegate;
 
 import androidx.annotation.Nullable;
-<<<<<<< HEAD
 import androidx.annotation.RequiresApi;
-=======
->>>>>>> aosp/android17-release
 import androidx.annotation.WorkerThread;
 
 import com.android.launcher3.dagger.ApplicationContext;

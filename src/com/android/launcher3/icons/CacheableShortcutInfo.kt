@@ -24,11 +24,8 @@ import android.content.pm.ShortcutInfo
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
 import android.util.Log
-<<<<<<< HEAD
 import com.android.launcher3.LauncherAppState
-=======
 import com.android.launcher3.BuildConfig
->>>>>>> aosp/android17-release
 import com.android.launcher3.icons.BaseIconFactory.IconOptions
 import com.android.launcher3.icons.cache.CachingLogic
 import com.android.launcher3.icons.cache.IconLoadRequest

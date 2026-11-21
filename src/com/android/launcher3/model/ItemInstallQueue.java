@@ -28,17 +28,14 @@ import androidx.annotation.AnyThread;
 import androidx.annotation.WorkerThread;
 
 import com.android.launcher3.AbstractFloatingView;
-<<<<<<< HEAD
 import com.android.launcher3.Flags;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherSettings.Favorites;
 import com.android.launcher3.Utilities;
-=======
 import com.android.launcher3.LauncherModel;
 import com.android.launcher3.UndoDeleteController;
->>>>>>> aosp/android17-release
 import com.android.launcher3.dagger.ApplicationContext;
 import com.android.launcher3.dagger.LauncherAppSingleton;
 import com.android.launcher3.dagger.LauncherBaseAppComponent;

@@ -24,12 +24,9 @@ import static android.view.WindowManager.TAKE_SCREENSHOT_PROVIDED_IMAGE;
 import static com.android.launcher3.util.Executors.THREAD_POOL_EXECUTOR;
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
 
-<<<<<<< HEAD
 import android.annotation.UiThread;
 import android.app.Activity;
 import android.app.ActivityOptions;
-=======
->>>>>>> aosp/android17-release
 import android.app.prediction.AppTarget;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;

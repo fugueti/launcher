@@ -41,17 +41,14 @@ import com.android.launcher3.util.DaggerSingletonTracker
 import com.android.launcher3.util.LooperExecutor
 import com.android.launcher3.util.RetryingExecutor
 import com.android.launcher3.util.SettingsCache
-<<<<<<< HEAD
 import com.android.launcher3.util.SettingsCache.OnChangeListener
 import com.android.quickstep.input.QuickstepKeyGestureEventsManager.OverviewGestureHandler.OverviewType.ALT_TAB
 import com.android.quickstep.input.QuickstepKeyGestureEventsManager.OverviewGestureHandler.OverviewType.UNDEFINED
 import com.android.window.flags2.Flags
-=======
 import com.android.quickstep.OverviewCommandHelper
 import com.android.quickstep.sysuiconnection.SysUIConnectionTracker
 import com.android.window.flags.Flags
 import javax.inject.Inject
->>>>>>> aosp/android17-release
 
 /**
  * Manages subscription and unsubscription to launcher's key gesture events, e.g. all apps and

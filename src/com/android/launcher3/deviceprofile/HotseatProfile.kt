@@ -16,7 +16,6 @@
 
 package com.android.launcher3.deviceprofile
 
-<<<<<<< HEAD
 import android.content.res.Resources
 import android.graphics.Rect
 import app.lawnchair.hotseat.HotseatMode
@@ -25,15 +24,12 @@ import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT
 import com.android.launcher3.R
 import com.android.launcher3.responsive.CalculatedHotseatSpec
-=======
 import com.android.launcher3.DeviceProfile
-import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.Utilities.getIconVisibleSizePx
 import com.android.launcher3.deviceprofile.HotseatProfileInitialValues.Factory.calculateHotseatBarSizePx
 import com.android.launcher3.folder.ClippedFolderIconLayoutRule.ICON_OVERLAP_FACTOR
 import kotlin.math.ceil
 import kotlin.math.min
->>>>>>> aosp/android17-release
 
 data class HotseatBorderAndSpace(var widthPx: Int, var columnSpan: Int, var borderSpace: Int)
 

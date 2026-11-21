@@ -18,20 +18,14 @@ package com.android.launcher3.widget.util;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.Rect;
-<<<<<<< HEAD
 import android.os.Bundle;
 import android.util.Log;
-=======
->>>>>>> aosp/android17-release
 import android.util.Size;
 
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.R;
-<<<<<<< HEAD
 import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.Utilities;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.model.WidgetItem;
 
 /** A utility class for widget sizes related calculations. */

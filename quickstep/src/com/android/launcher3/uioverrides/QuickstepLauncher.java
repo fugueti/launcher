@@ -100,11 +100,8 @@ import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-<<<<<<< HEAD
 import android.util.Log;
-=======
 import android.util.SparseArray;
->>>>>>> aosp/android17-release
 import android.view.HapticFeedbackConstants;
 import android.view.InflateException;
 import android.view.KeyEvent;

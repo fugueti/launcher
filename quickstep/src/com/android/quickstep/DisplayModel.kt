@@ -27,12 +27,9 @@ import com.android.app.displaylib.DisplaysWithDecorationsRepositoryCompat
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.util.SafeCloseable
 import com.android.quickstep.DisplayModel.DisplayResource
-<<<<<<< HEAD
-=======
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
->>>>>>> aosp/android17-release
 import java.io.PrintWriter
 import java.util.function.Consumer
 import java.util.function.IntFunction

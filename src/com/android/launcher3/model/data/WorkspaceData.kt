@@ -20,22 +20,16 @@ import android.content.Context
 import android.util.SparseArray
 import androidx.core.util.putAll
 import androidx.core.util.valueIterator
-<<<<<<< HEAD
 import app.lawnchair.preferences2.PreferenceManager2
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.BuildConfigs
 import com.android.launcher3.LauncherPrefs
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
 import com.android.launcher3.Workspace
 import com.android.launcher3.util.IntArray
 import com.android.launcher3.util.IntSet
-<<<<<<< HEAD
 import com.android.launcher3.util.ItemInfoMatcher
 import app.lawnchair.preferences2.firstCached
-=======
->>>>>>> aosp/android17-release
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Stream
 import java.util.stream.StreamSupport

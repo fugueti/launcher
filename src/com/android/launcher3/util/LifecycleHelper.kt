@@ -24,11 +24,8 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-<<<<<<< HEAD
 import com.android.launcher3.Utilities
-=======
 import com.android.launcher3.BaseActivity
->>>>>>> aosp/android17-release
 
 /** Utility class for triggering various lifecycle events based on activity callbacks */
 class LifecycleHelper(

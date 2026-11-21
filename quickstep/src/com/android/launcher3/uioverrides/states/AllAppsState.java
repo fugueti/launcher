@@ -30,10 +30,7 @@ import com.android.launcher3.LauncherUiState;
 import com.android.launcher3.R;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.views.ScrimColors;
-<<<<<<< HEAD
 import com.android.quickstep.util.BaseDepthControllerImpl;
-=======
->>>>>>> aosp/android17-release
 import com.android.systemui.shared.system.InteractionJankMonitorWrapper;
 
 import java.util.concurrent.TimeUnit;

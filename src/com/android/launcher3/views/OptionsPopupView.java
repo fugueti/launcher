@@ -54,12 +54,9 @@ import com.android.launcher3.logging.StatsLogManager.EventEnum;
 import com.android.launcher3.popup.ArrowPopup;
 import com.android.launcher3.shortcuts.DeepShortcutView;
 
-<<<<<<< HEAD
 import com.android.launcher3.util.MSDLPlayerWrapper;
 import com.google.android.msdl.data.model.MSDLToken;
 import java.util.ArrayList;
-=======
->>>>>>> aosp/android17-release
 import java.util.List;
 
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;

@@ -138,11 +138,8 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-<<<<<<< HEAD
 import android.os.Parcelable;
 import android.os.Process;
-=======
->>>>>>> aosp/android17-release
 import android.os.SystemClock;
 import android.os.Trace;
 import android.os.UserHandle;
@@ -175,11 +172,8 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-<<<<<<< HEAD
 import androidx.annotation.StringRes;
 import androidx.annotation.UiThread;
-=======
->>>>>>> aosp/android17-release
 import androidx.annotation.VisibleForTesting;
 import androidx.core.os.BuildCompat;
 import androidx.window.embedding.RuleController;
@@ -198,12 +192,9 @@ import com.android.launcher3.celllayout.CellPosMapper.TwoPanelCellPosMapper;
 import com.android.launcher3.compat.AccessibilityManagerCompat;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.dagger.LauncherComponentProvider;
-<<<<<<< HEAD
 import com.android.launcher3.debug.TestEventEmitter;
 import com.android.launcher3.debug.TestEventEmitter.TestEvent;
 import com.android.launcher3.dot.DotInfo;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.dragndrop.DragLayer;
 import com.android.launcher3.dragndrop.DragView;
 import com.android.launcher3.dragndrop.LauncherDragController;
@@ -220,11 +211,8 @@ import com.android.launcher3.logging.StartupLatencyLogger;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.model.IModelWriter;
 import com.android.launcher3.model.ItemInstallQueue;
-<<<<<<< HEAD
 import com.android.launcher3.model.ModelUtils;
 import com.android.launcher3.model.ModelWriter;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.model.StringCache;
 import com.android.launcher3.model.data.CollectionInfo;
 import com.android.launcher3.model.data.FolderInfo;
@@ -276,12 +264,9 @@ import com.android.launcher3.util.ViewEx;
 import com.android.launcher3.util.WallpaperThemeManager;
 import com.android.launcher3.views.FloatingIconView;
 import com.android.launcher3.views.FloatingSurfaceView;
-<<<<<<< HEAD
 import com.android.launcher3.views.OptionsPopupView;
 import app.lawnchair.views.EditModePageStrip;
-=======
 import com.android.launcher3.views.ListenerView;
->>>>>>> aosp/android17-release
 import com.android.launcher3.views.ScrimView;
 import com.android.launcher3.views.UpdateDeferrableView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
@@ -298,10 +283,7 @@ import com.android.launcher3.widget.picker.model.WidgetPickerDataProvider;
 import com.android.launcher3.widget.util.WidgetSizeHandler;
 import com.android.systemui.plugins.shared.LauncherOverlayManager;
 import com.android.systemui.plugins.shared.LauncherOverlayManager.LauncherOverlayTouchProxy;
-<<<<<<< HEAD
 import com.android.window.flags2.Flags;
-=======
->>>>>>> aosp/android17-release
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;

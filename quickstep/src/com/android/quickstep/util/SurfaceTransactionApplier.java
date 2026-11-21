@@ -25,14 +25,11 @@ import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.ViewRootImpl;
 
-<<<<<<< HEAD
 import com.android.launcher3.Utilities;
 import com.android.quickstep.RemoteAnimationTargets.ReleaseCheck;
-=======
 import androidx.annotation.NonNull;
 
 import com.android.quickstep.SurfaceReleaseCheck;
->>>>>>> aosp/android17-release
 
 import app.lawnchair.compat.LawnchairQuickstepCompat;
 

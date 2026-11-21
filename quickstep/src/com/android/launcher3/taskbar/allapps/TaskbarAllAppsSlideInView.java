@@ -39,12 +39,9 @@ import android.window.OnBackInvokedDispatcher;
 
 import androidx.annotation.Nullable;
 
-<<<<<<< HEAD
 import app.lawnchair.theme.color.tokens.ColorTokens;
 import app.lawnchair.util.LawnchairUtilsKt;
 import com.android.app.animation.Interpolators;
-=======
->>>>>>> aosp/android17-release
 import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.Insettable;
 import com.android.launcher3.R;

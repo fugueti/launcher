@@ -27,12 +27,9 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-<<<<<<< HEAD
 import com.android.launcher3.R;
 
 import com.android.launcher3.Utilities;
-=======
->>>>>>> aosp/android17-release
 import java.util.ArrayList;
 import java.util.List;
 

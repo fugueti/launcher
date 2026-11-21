@@ -19,12 +19,9 @@ package com.android.quickstep.util
 import android.app.TaskInfo
 import android.content.ComponentName
 import android.content.res.Resources
-<<<<<<< HEAD
 import android.window.DesktopExperienceFlags
 import com.android.launcher3.Utilities
 import com.android.systemui.shared.recents.model.Task
-=======
->>>>>>> aosp/android17-release
 
 class DesksUtils {
     companion object {
