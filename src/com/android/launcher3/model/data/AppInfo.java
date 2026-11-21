@@ -193,23 +193,15 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
         } else {
             info.runtimeStatusFlags &= ~FLAG_DISABLED_SUSPENDED;
         }
-<<<<<<< HEAD
         if (Utilities.ATLEAST_V && Flags.enableSupportForArchiving()) {
             try {
-                if (lai.getActivityInfo().isArchived) {
+                if (activityInfo.isArchived) {
                     info.runtimeStatusFlags |= FLAG_ARCHIVED;
                 } else {
                     info.runtimeStatusFlags &= ~FLAG_ARCHIVED;
                 }
             } catch (Throwable t) {
                 // LC-Ignored
-=======
-        if (Flags.enableSupportForArchiving()) {
-            if (activityInfo.isArchived) {
-                info.runtimeStatusFlags |= FLAG_ARCHIVED;
-            } else {
-                info.runtimeStatusFlags &= ~FLAG_ARCHIVED;
->>>>>>> aosp/android17-release
             }
         }
 

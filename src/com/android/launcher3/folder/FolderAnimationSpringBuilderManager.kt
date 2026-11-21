@@ -81,7 +81,6 @@ class FolderAnimationSpringBuilderManager(
             val launcher = launcherDelegate.launcher ?: return
             val scrim = launcher.scrimView
             launcherDelegate.launcher?.depthController?.folderZoom?.value = 0f
-<<<<<<< HEAD
             if (!launcher.isInState(LauncherState.ALL_APPS)) {
                 scrim.alpha = 1f
                 scrim.setBackgroundColor(Color.TRANSPARENT)
@@ -91,10 +90,6 @@ class FolderAnimationSpringBuilderManager(
                     target.setRenderEffect(null)
                 }
             }
-=======
-            scrim.alpha = 1f
-            scrim.setBackgroundColor(Color.TRANSPARENT)
->>>>>>> aosp/android17-release
         }
 
         /** Returns the list of "preview items" on {@param page}. */

@@ -202,48 +202,12 @@ public class LauncherAnimUtils {
                 property.set(view, v);
             }
 
-<<<<<<< HEAD
-                        @Override
-                        public Float get(View view) {
-                            return view.getTranslationY();
-                        }
-                    };
-
-    public static final FloatProperty<View> VIEW_TRANSLATE_Z =
-            View.TRANSLATION_Z instanceof FloatProperty ? (FloatProperty) View.TRANSLATION_Z
-                    : new FloatProperty<View>("translateZ") {
-                        @Override
-                        public void setValue(View view, float v) {
-                            view.setTranslationZ(v);
-                        }
-
-                        @Override
-                        public Float get(View view) {
-                            return view.getTranslationZ();
-                        }
-                    };
-
-    public static final FloatProperty<View> VIEW_ALPHA =
-            View.ALPHA instanceof FloatProperty ? (FloatProperty) View.ALPHA
-                    : new FloatProperty<View>("alpha") {
-                        @Override
-                        public void setValue(View view, float v) {
-                            view.setAlpha(v);
-                        }
-
-                        @Override
-                        public Float get(View view) {
-                            return view.getAlpha();
-                        }
-                    };
-=======
             @Override
             public Float get(View view) {
                 return property.get(view);
             }
         };
     }
->>>>>>> aosp/android17-release
 
     public static final IntProperty<View> VIEW_BACKGROUND_COLOR =
             new IntProperty<View>("backgroundColor") {

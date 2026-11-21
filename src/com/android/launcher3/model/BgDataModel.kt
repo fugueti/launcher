@@ -131,19 +131,8 @@ constructor(
     }
 
     @Synchronized
-<<<<<<< HEAD
-    fun removeItem(context: Context, vararg items: ItemInfo) {
-        removeItem(context, listOf(*items))
-    }
-
-    @Synchronized
-    @JvmOverloads
-    fun removeItem(context: Context, items: Collection<ItemInfo>, owner: Any? = null) {
-        if (BuildConfigs.IS_STUDIO_BUILD) {
-=======
     fun removeItems(context: Context, items: List<ItemInfo>, owner: ModificationSource) {
         if (BuildConfig.IS_STUDIO_BUILD) {
->>>>>>> aosp/android17-release
             items
                 .asSequence()
                 .filter { it.itemType == ITEM_TYPE_FOLDER || it.itemType == ITEM_TYPE_APP_GROUP }

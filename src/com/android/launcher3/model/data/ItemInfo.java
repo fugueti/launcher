@@ -486,15 +486,10 @@ public class ItemInfo {
     @NonNull
     protected LauncherAtom.ItemInfo.Builder getDefaultItemInfoBuilder(Context context) {
         LauncherAtom.ItemInfo.Builder itemBuilder = LauncherAtom.ItemInfo.newBuilder();
-<<<<<<< HEAD
         if (LawnchairApp.isRecentsEnabled()) {
             itemBuilder.setIsKidsMode(
                 SettingsCache.INSTANCE.get(context).getValue(NAV_BAR_KIDS_MODE, 0));
         }
-=======
-        itemBuilder.setIsKidsMode(
-                SettingsCache.INSTANCE.get(context).getValue(NAV_BAR_KIDS_MODE));
->>>>>>> aosp/android17-release
         itemBuilder.setUserType(getUserType(UserCache.INSTANCE.get(context).getUserInfo(user)));
         itemBuilder.setRank(rank);
         itemBuilder.addAllItemAttributes(mAttributeList);

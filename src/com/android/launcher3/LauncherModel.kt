@@ -247,7 +247,6 @@ constructor(
 
     /**
      * Checks whether the launcher model is active.
-<<<<<<< HEAD
      *
      * @return true if the model is loaded or if loader task is running.
      */
@@ -255,8 +254,6 @@ constructor(
 
     /**
      * Loads the model if not loaded
-=======
->>>>>>> aosp/android17-release
      *
      * @return true if the model is loaded or if loader task is running.
      */

@@ -659,8 +659,6 @@ constructor(
         LAUNCHER_DESKTOP_MODE_TASKBAR_UNPINNED(2242),
         @UiEvent(doc = "Launcher window insets controller reportedly null")
         LAUNCHER_WINDOW_INSETS_CONTROLLER_NULL(2400),
-<<<<<<< HEAD
-=======
         @UiEvent(doc = "Widget settings tapped on QSB in launcher")
         LAUNCHER_QSB_WIDGET_SETTINGS_TAP(2415),
         @UiEvent(doc = "User tapped to add an icon to home screen from all apps")
@@ -713,7 +711,6 @@ constructor(
         LAUNCHER_HOME_SCREEN_FILES_COUNT(2554),
         @UiEvent(doc = "User tapped more options A11y button")
         LAUNCHER_TASKBAR_MORE_OPTIONS_A11Y_BUTTON_TAP(2584),
->>>>>>> aosp/android17-release
         // ADD MORE
     }
 

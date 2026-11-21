@@ -79,10 +79,7 @@ constructor(
     private val themeManager: ThemeManager,
     private val userCache: UserCache,
     private val settingsCache: SettingsCache,
-<<<<<<< HEAD
     private val iconProvider: LawnchairIconProvider,
-=======
->>>>>>> aosp/android17-release
     private val customWidgetManager: CustomWidgetManager,
     private val installSessionHelper: InstallSessionHelper,
     private val homeScreenFilesProvider: HomeScreenFilesProvider,

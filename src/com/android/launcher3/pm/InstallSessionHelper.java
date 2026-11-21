@@ -238,13 +238,8 @@ public class InstallSessionHelper {
                         + sessionInfo.getInstallerPackageName()
                         + "Session id: "
                         + sessionInfo.getSessionId());
-<<<<<<< HEAD
-                ItemInstallQueue.INSTANCE.get(mAppContext)
-                        .queueItem(sessionInfo.getAppPackageName(), getUserHandle(sessionInfo));
-=======
                 ItemInstallQueue.INSTANCE.get(mAppContext).queueItem(new SerializedItemItem(
                         sessionInfo.getAppPackageName(), getUserHandle(sessionInfo)));
->>>>>>> aosp/android17-release
             }
 
             getPromiseIconIds().add(sessionInfo.getSessionId());

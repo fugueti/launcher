@@ -394,19 +394,12 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
             /*pause=*/ true,
             launcher.deviceProfile.deviceProperties.isTwoPanels,
         )
-<<<<<<< HEAD
         if (orderedScreenIds.isEmpty) {
             // If there are no screens, we need to have an empty screen
             launcher.workspace.addExtraEmptyScreens()
         } else if (orderedScreenIds.indexOf(FIRST_SCREEN_ID) < 0) {
             // Keep persisted order stable; only add FIRST_SCREEN_ID if missing.
             orderedScreenIds.add(0, FIRST_SCREEN_ID)
-=======
-        val firstScreenPosition = 0
-        if (orderedScreenIds.indexOf(FIRST_SCREEN_ID) != firstScreenPosition) {
-            orderedScreenIds.removeValue(FIRST_SCREEN_ID)
-            orderedScreenIds.add(firstScreenPosition, FIRST_SCREEN_ID)
->>>>>>> aosp/android17-release
         }
         bindAddScreens(orderedScreenIds)
         launcher.workspace.reorderBoundWorkspaceScreens(orderedScreenIds)

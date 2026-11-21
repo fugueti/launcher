@@ -57,7 +57,6 @@ public class MainProcessInitializer {
 
     private static final boolean DEBUG_STRICT_MODE = false;
 
-<<<<<<< HEAD
     public static void initialize(Context context) {
         try {
             Unseal.unseal();
@@ -83,8 +82,6 @@ public class MainProcessInitializer {
                 .init(context);
     }
 
-=======
->>>>>>> aosp/android17-release
     protected void init(Context context) {
         FileLog.setDir(context.getApplicationContext().getFilesDir());
 
