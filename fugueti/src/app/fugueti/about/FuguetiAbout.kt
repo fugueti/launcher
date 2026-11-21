@@ -100,6 +100,7 @@ object FuguetiAbout {
 /** Support, GitHub and Donate buttons of the Fugueti header. */
 @Composable
 fun FuguetiLinksRow(
+    onSupport: () -> Unit,
     onDonate: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -108,9 +109,9 @@ fun FuguetiLinksRow(
         LawnchairLink(
             iconResId = R.drawable.ic_help,
             label = stringResource(id = R.string.support),
-            url = "mailto:${FuguetiAbout.SUPPORT_EMAIL}",
+            url = "${FuguetiAbout.githubUrl}/issues",
             modifier = Modifier.weight(1f),
-            onClick = { FuguetiAbout.openSupportEmail(context) },
+            onClick = onSupport,
         )
         LawnchairLink(
             iconResId = R.drawable.ic_github,

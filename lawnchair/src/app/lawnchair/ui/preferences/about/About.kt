@@ -50,6 +50,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.fugueti.about.DonateSheet
+import app.fugueti.about.SupportSheet
 import app.fugueti.about.FuguetiAbout
 import app.fugueti.about.FuguetiLinksRow
 import app.lawnchair.preferences.PreferenceManager
@@ -83,6 +84,10 @@ fun About(
     val prefs: PreferenceManager = PreferenceManager.getInstance(context)
     var showDonateSheet by remember { mutableStateOf(false) }
 
+    var showSupportSheet by remember { mutableStateOf(false) }
+    if (showSupportSheet) {
+        SupportSheet(onDismiss = { showSupportSheet = false })
+    }
     if (showDonateSheet) {
         DonateSheet(onDismiss = { showDonateSheet = false })
     }
@@ -130,6 +135,7 @@ fun About(
                     context.startActivity(intent)
                 }
             },
+            onSupport = { showSupportSheet = true },
             onDonate = { showDonateSheet = true },
             onInstall = { viewModel.installUpdate(it) },
             onForceInstall = { viewModel.installUpdate(it, forceInstall = true) },
@@ -153,6 +159,7 @@ internal fun LazyListScope.aboutContent(
     fuguetiVersion: String,
     lawnchairVersion: String,
     openUrl: (String) -> Unit,
+    onSupport: () -> Unit,
     onDonate: () -> Unit,
     onInstall: (File) -> Unit,
     onForceInstall: (File) -> Unit,
@@ -228,7 +235,7 @@ internal fun LazyListScope.aboutContent(
         Spacer(modifier = Modifier.requiredHeight(16.dp))
     }
     item {
-        FuguetiLinksRow(onDonate = onDonate)
+        FuguetiLinksRow(onSupport = onSupport, onDonate = onDonate)
     }
     preferenceGroupItems(
         items = FuguetiAbout.team,
