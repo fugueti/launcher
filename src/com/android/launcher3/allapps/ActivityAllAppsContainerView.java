@@ -27,16 +27,10 @@ import static com.android.launcher3.allapps.BaseAllAppsAdapter.VIEW_TYPE_WORK_ED
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_COUNT;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_TAP_ON_PERSONAL_TAB;
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_TAP_ON_WORK_TAB;
-<<<<<<< HEAD
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.Executors.UI_HELPER_EXECUTOR;
 import static com.android.launcher3.util.ScrollableLayoutManager.PREDICTIVE_BACK_MIN_SCALE;
 import static com.android.launcher3.views.RecyclerViewFastScroller.FastScrollerLocation.ALL_APPS_SCROLLER;
-import static com.android.window.flags2.Flags.predictiveBackThreeButtonNav;
-=======
-import static com.android.launcher3.util.ScrollableLayoutManager.PREDICTIVE_BACK_MIN_SCALE;
-import static com.android.launcher3.views.RecyclerViewFastScroller.FastScrollerLocation.ALL_APPS_SCROLLER;
->>>>>>> aosp/android17-release
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -168,10 +162,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     protected WorkProfileManager mWorkManager;
     protected final PrivateProfileManager mPrivateProfileManager;
     protected final Point mFastScrollerOffset = new Point();
-<<<<<<< HEAD
     protected int mScrimColor;
-=======
->>>>>>> aosp/android17-release
     protected final float mHeaderThreshold;
     protected final AllAppsSearchUiDelegate mSearchUiDelegate;
 
@@ -245,17 +236,12 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     public ActivityAllAppsContainerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mActivityContext = ActivityContext.lookupContext(context);
-<<<<<<< HEAD
-        mAllAppsStore = new AllAppsStore<>(mActivityContext);
-        
-        pref2 = PreferenceManager2.getInstance(mActivityContext);
-        pref = PreferenceManager.getInstance(mActivityContext);
-        
-        mScrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context);
-=======
         mAllAppsStore = mActivityContext.getActivityComponent().getAppsStore();
 
->>>>>>> aosp/android17-release
+        pref2 = PreferenceManager2.getInstance(mActivityContext);
+        pref = PreferenceManager.getInstance(mActivityContext);
+
+        mScrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context);
         mHeaderThreshold = getResources().getDimensionPixelSize(
                 R.dimen.dynamic_grid_cell_border_spacing);
         mHeaderProtectionColor = ColorTokens.AllAppsHeaderProtectionColor.resolveColor(context);
@@ -314,24 +300,14 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mMainAdapterProvider = mSearchUiDelegate.createMainAdapterProvider();
 
         mAH.set(AdapterHolder.MAIN, new AdapterHolder(AdapterHolder.MAIN,
-<<<<<<< HEAD
-                new LawnchairAlphabeticalAppsList<>(mActivityContext,
-=======
-                new AlphabeticalAppsList(mActivityContext,
->>>>>>> aosp/android17-release
+                new LawnchairAlphabeticalAppsList(mActivityContext,
                         mAllAppsStore,
                         null,
                         mPrivateProfileManager)));
         mAH.set(AdapterHolder.WORK, new AdapterHolder(AdapterHolder.WORK,
-<<<<<<< HEAD
-                new LawnchairAlphabeticalAppsList<>(mActivityContext, mAllAppsStore, mWorkManager, null)));
+                new LawnchairAlphabeticalAppsList(mActivityContext, mAllAppsStore, mWorkManager, null)));
         mAH.set(SEARCH, new AdapterHolder(SEARCH,
-                new LawnchairAlphabeticalAppsList<>(mActivityContext, mAllAppsStore, null, null)));
-=======
-                new AlphabeticalAppsList(mActivityContext, mAllAppsStore, mWorkManager, null)));
-        mAH.set(SEARCH, new AdapterHolder(SEARCH,
-                new AlphabeticalAppsList(mActivityContext, null, null, null)));
->>>>>>> aosp/android17-release
+                new LawnchairAlphabeticalAppsList(mActivityContext, mAllAppsStore, null, null)));
 
         getLayoutInflater().inflate(R.layout.all_apps_content, this);
         mHeader = findViewById(R.id.all_apps_header);
@@ -339,14 +315,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mAdditionalHeaderRows.addAll(getAdditionalHeaderRows());
         mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
         mBottomSheetHandleArea = findViewById(R.id.bottom_sheet_handle_area);
-<<<<<<< HEAD
-        mBottomSheetHandle = findViewById(R.id.bottom_sheet_handle);
         // Fugueti: no drag handle pill on the app drawer (the handle area still takes the drag)
-        if (mBottomSheetHandle != null) {
-            mBottomSheetHandle.setVisibility(View.GONE);
+        View bottomSheetHandle = findViewById(R.id.bottom_sheet_handle);
+        if (bottomSheetHandle != null) {
+            bottomSheetHandle.setVisibility(View.GONE);
         }
-=======
->>>>>>> aosp/android17-release
         mSearchRecyclerView = findViewById(R.id.search_results_list_view);
         mFastScroller = findViewById(R.id.fast_scroller);
         mFastScroller.setPopupView(findViewById(R.id.fast_scroller_popup));
@@ -390,29 +363,16 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 0 // Bottom left
         };
 
-<<<<<<< HEAD
-        if (Flags.allAppsBlur()) {
-            int layerFg = ColorTokens.shade_panel_fg_color.resolveColor(getContext());
-            int layerBg = ColorTokens.shade_panel_bg_color.resolveColor(getContext());
-            mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
-            mBottomSheetBackgroundColorBlurFallback = ColorTokens.BottomSheetBackgroundColorBlurFallback.resolveColor(getContext());
-        }
-
-        mBottomSheetBackgroundColorLegacy = ColorTokens.SurfaceDimColor.resolveColor(getContext());
+        // Lawnchair: colors come from the Lawnchair color tokens
+        int layerFg = ColorTokens.shade_panel_fg_color.resolveColor(getContext());
+        int layerBg = ColorTokens.shade_panel_bg_color.resolveColor(getContext());
+        mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
+        mBottomSheetBackgroundColorBlurFallback =
+                ColorTokens.BottomSheetBackgroundColorBlurFallback.resolveColor(getContext());
 
         // LC-Note: Update our allapps cached colour
         updateBottomSheetBackgroundColor();
 
-        updateBackgroundVisibility(mActivityContext.getDeviceProfile());
-=======
-        int layerFg = getContext().getColor(R.color.blur_shade_panel_fg);
-        int layerBg = getContext().getColor(R.color.blur_shade_panel_bg);
-        mBottomSheetBackgroundColorOverBlur = ColorUtils.compositeColors(layerFg, layerBg);
-        mBottomSheetBackgroundColorBlurFallback = getContext().getColor(
-                Utilities.isDarkTheme(getContext()) ? android.R.color.system_accent2_800
-                        : android.R.color.system_accent2_200);
-
->>>>>>> aosp/android17-release
         mSearchUiManager.initializeSearch(this);
         if (useModelRepositoryBinding()) {
             ViewEx.registerLifecycleTask(this,
@@ -715,11 +675,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         }
         // Header keeps track of active recycler view to properly render header protection.
         mHeader.setActiveRV(currentActivePage);
-<<<<<<< HEAD
-        reset(true /* animate */, !isSearching() && !keepSearchFocus /* exitSearch */);
-=======
-        reset(true /* animate */, !isSearching() /* exitSearch */, false /* clearScrim */);
->>>>>>> aosp/android17-release
+        reset(true /* animate */, !isSearching() && !keepSearchFocus /* exitSearch */,
+                false /* clearScrim */);
 
         mWorkManager.onActivePageChanged(currentActivePage);
     }
@@ -1001,30 +958,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     protected int getHeaderColor(float blendRatio) {
-<<<<<<< HEAD
-        if (!mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            float opacity = mSearchContainer.getAlpha();
-            var showHeaderBackground = PreferenceCacheExtensionsKt.firstCached(
-                pref2.getAppDrawerSearchBarBackground(), pref2);
-            if (showHeaderBackground) {
-                opacity = pref.getDrawerOpacity().get();
-            }
-            opacity = MathUtils.clamp(opacity, 0f, 1f);
-            return ColorUtils.setAlphaComponent(
-                    ColorUtils.blendARGB(getBackgroundColor(), mHeaderProtectionColor, blendRatio),
-                    Math.round(opacity * 255));
-        }
-=======
->>>>>>> aosp/android17-release
         return isBackgroundBlurEnabled()
                 ? ColorUtils.setAlphaComponent(mHeaderProtectionColor, (int) (blendRatio * 255))
                 : ColorUtils.blendARGB(getBackgroundColor(), mHeaderProtectionColor, blendRatio);
     }
 
-<<<<<<< HEAD
-    private int getBackgroundColor() {
-        return mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()
-                ? getBottomSheetBackgroundColor() : mScrimColor;
+    int getBackgroundColor() {
+        return getBottomSheetBackgroundColor();
     }
 
     // LC-Note: Hey! We cache this! see updateBottomSheetBackgroundColor() for more details.
@@ -1032,33 +972,22 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         return mCachedBottomSheetBgColor;
     }
 
-    // LC-Note: This is getBottomSheetBackgroundColor() in AOSP, but we refactor it to cache our prefs.
+    // LC-Note: AOSP computes this in getBackgroundColor(); we cache it with our prefs applied.
     private boolean updateBottomSheetBackgroundColor() {
-        return updateBottomSheetBackgroundColor(mActivityContext.isAllAppsBackgroundBlurEnabled());
+        return updateBottomSheetBackgroundColor(isBackgroundBlurEnabled());
     }
 
     // LC-Note: For listener to avoid querying stale value.
     private boolean updateBottomSheetBackgroundColor(boolean blurEnabled) {
-        int defaultColor;
-        if (!Flags.allAppsBlur()) {
-            defaultColor = mBottomSheetBackgroundColorLegacy;
-        } else if (!blurEnabled) {
-            defaultColor = mBottomSheetBackgroundColorBlurFallback;
-        } else {
-            defaultColor = mBottomSheetBackgroundColorOverBlur;
-        }
+        int defaultColor = blurEnabled
+                ? mBottomSheetBackgroundColorOverBlur
+                : mBottomSheetBackgroundColorBlurFallback;
         int newColor = LawnchairUtilsKt.getAllAppsBackgroundColor(mActivityContext, defaultColor);
         if (mCachedBottomSheetBgColor != newColor) {
             mCachedBottomSheetBgColor = newColor;
             return true;
         }
         return false;
-=======
-    int getBackgroundColor() {
-        return isBackgroundBlurEnabled()
-                ? mBottomSheetBackgroundColorOverBlur
-                : mBottomSheetBackgroundColorBlurFallback;
->>>>>>> aosp/android17-release
     }
 
     boolean isBackgroundBlurEnabled() {
@@ -1172,7 +1101,6 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         layoutParams.removeRule(RelativeLayout.ALIGN_PARENT_TOP);
     }
 
-<<<<<<< HEAD
     private void layoutWithoutSearchContainer(View v, boolean includeTabsMargin) {
         if (!(v.getLayoutParams() instanceof RelativeLayout.LayoutParams)) {
             return;
@@ -1181,11 +1109,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) v.getLayoutParams();
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         int topMargin = 0;
-        if (mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            // Clear the bottom-sheet drag handle when search is not reserving that space.
-            topMargin = getContext().getResources().getDimensionPixelSize(
-                    R.dimen.bottom_sheet_handle_area_height);
-        }
+        // Clear the bottom-sheet drag handle when search is not reserving that space.
+        topMargin = getContext().getResources().getDimensionPixelSize(
+                R.dimen.bottom_sheet_handle_area_height);
         if (includeTabsMargin) {
             topMargin += getContext().getResources().getDimensionPixelSize(
                     R.dimen.all_apps_header_pill_height);
@@ -1193,12 +1119,8 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         layoutParams.topMargin = topMargin;
     }
 
-    protected BaseAllAppsAdapter<T> createAdapter(AlphabeticalAppsList<T> appsList) {
-        return new AllAppsGridAdapter<>(mActivityContext, getLayoutInflater(), appsList,
-=======
     protected BaseAllAppsAdapter createAdapter(AlphabeticalAppsList appsList) {
         return new AllAppsGridAdapter(mActivityContext, getLayoutInflater(), appsList,
->>>>>>> aosp/android17-release
                 mMainAdapterProvider);
     }
 
@@ -1539,21 +1461,14 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         StringCache cache = mActivityContext.getStringCache();
         if (cache != null) {
             Button personalTab = findViewById(R.id.tab_personal);
-<<<<<<< HEAD
-            personalTab.setText(R.string.all_apps_personal_tab);
+            personalTab.setText(cache.allAppsPersonalTab);
             personalTab.setAllCaps(false);
             FontManager.INSTANCE.get(getContext()).setCustomFont(personalTab, R.id.font_button);
 
             Button workTab = findViewById(R.id.tab_work);
-            workTab.setText(R.string.all_apps_work_tab);
+            workTab.setText(cache.allAppsWorkTab);
             workTab.setAllCaps(false);
             FontManager.INSTANCE.get(getContext()).setCustomFont(workTab, R.id.font_button);
-=======
-            personalTab.setText(cache.allAppsPersonalTab);
-
-            Button workTab = findViewById(R.id.tab_work);
-            workTab.setText(cache.allAppsWorkTab);
->>>>>>> aosp/android17-release
         }
     }
 
@@ -1688,23 +1603,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void setScaleY(float scaleY) {
         super.setScaleY(scaleY);
-<<<<<<< HEAD
-        try {
-            if (predictiveBackThreeButtonNav() && mNavBarScrimHeight > 0) {
-                // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
-                // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
-                // counter scale applied in dispatchDraw.
-                invalidate(20, getHeight() - mNavBarScrimHeight, getWidth(), getHeight());
-            }
-        } catch (Throwable t) {
-            // LC-Ignored
-=======
         if (mNavBarScrimHeight > 0) {
             // Call invalidate to prevent navbar scrim from scaling. The navbar scrim is drawn
             // directly onto the canvas. To prevent it from being scaled with the canvas, there's a
             // counter scale applied in dispatchDraw.
             invalidate(20, getHeight() - mNavBarScrimHeight, getWidth(), getHeight());
->>>>>>> aosp/android17-release
         }
     }
 

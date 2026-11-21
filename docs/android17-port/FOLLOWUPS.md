@@ -48,3 +48,9 @@ Check these when the tree compiles.
 - Depth/blur: `BaseDepthControllerImpl` rebuilt from AOSP 17 (lazy `EarlyWakeupInfo`, guarded hidden APIs, zoom only on R+). The cross-window blur state now comes from a `ListenableRef` passed by the caller: check the caller guards `CrossWindowBlurListeners` (S+) like Lawnchair did. Lawnchair's stuck-blur fix uses `DepthController.clearWorkspaceRenderEffects()`, implemented in `LauncherDepthController`.
 - Taskbar: `TaskbarView` is AOSP 17 (pinned apps overflow replaces Lawnchair's ignored icons; `getIgnoreTaskbarIconCount()` returns 0). The taskbar QSB now comes from `QsbWidgetFactory` (DI): make it honor Lawnchair's `HotseatMode` (empty view when the mode has no search bar), as Lawnchair did in `TaskbarView`.
 - Hotseat predictions: AOSP moved the logic into `util/HybridHotseatOrganizer.kt`; Lawnchair's paged/multi-row dock handling was ported there (fills the visible page, per-page outlines/listeners). Test with predictions on and several dock pages.
+- App drawer: AOSP 17 always presents All Apps as a bottom sheet (no `shouldShowAllAppsOnSheet`).
+  Lawnchair's drawer colour/opacity cache now feeds AOSP's `getBackgroundColor()`. The
+  non-sheet header opacity path (`getAppDrawerSearchBarBackground` + drawer opacity) was dropped
+  with AOSP's branch: check the search header still looks right with the drawer opacity setting.
+  `LawnchairAlphabeticalAppsList` must drop its `<T>` (AOSP `AlphabeticalAppsList` is no longer
+  generic).
