@@ -55,31 +55,11 @@ public class PluginManagerWrapperImpl extends PluginManagerWrapper {
     @Inject
     public PluginManagerWrapperImpl(@ApplicationContext Context c, LauncherPrefs launcherPrefs) {
         mContext = c;
-<<<<<<< HEAD
-        mPluginEnabler = new PluginEnablerImpl(c);
-        List<String> privilegedPlugins = Collections.emptyList();
-        PluginInstance.Factory instanceFactory = new PluginInstance.Factory(
-                getClass().getClassLoader(), new PluginInstance.InstanceFactory<>(),
-                new PluginInstance.VersionCheckerImpl(), privilegedPlugins,
-                BuildConfigs.IS_DEBUG_DEVICE);
-        PluginActionManager.Factory instanceManagerFactory = new PluginActionManager.Factory(
-                c, c.getPackageManager(), ContextCompat.getMainExecutor(c), MODEL_EXECUTOR,
-                c.getSystemService(NotificationManager.class), mPluginEnabler,
-                privilegedPlugins, instanceFactory);
-
-        // Use null preHandlerManager, as the handler is never unregistered which can cause leaks
-        // when using multiple dagger graphs.
-        mPluginManager = new PluginManagerImpl(c, instanceManagerFactory,
-                BuildConfigs.IS_DEBUG_DEVICE,
-                null /* preHandlerManager */, mPluginEnabler,
-                new PluginPrefs(c), privilegedPlugins);
-=======
         mPluginEnabler = new PluginEnablerImpl(launcherPrefs);
         // Use null preHandlerManager, as the handler is never unregistered which can cause leaks
         // when using multiple dagger graphs.
         mPluginManager = PluginManagerImpl.create(c, Collections.emptyList(),
                 mPluginEnabler, MODEL_EXECUTOR, null /* preHandlerManager */);
->>>>>>> aosp/android17-release
     }
 
     public PluginEnablerImpl getPluginEnabler() {

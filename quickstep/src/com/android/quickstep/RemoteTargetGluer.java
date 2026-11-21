@@ -240,15 +240,7 @@ public class RemoteTargetGluer {
         resizeRemoteTargetHandles(targets);
 
         for (int i = 0; i < mRemoteTargetHandles.length; i++) {
-<<<<<<< HEAD
-            RemoteAnimationTarget primaryTaskTarget = targets.apps[i];
-            List<RemoteAnimationTarget> excludeTargets = Arrays.stream(targets.apps)
-                    .filter(target -> target.taskId != primaryTaskTarget.taskId).collect(toList());
-            setRemoteTargetHandle(targets, primaryTaskTarget, excludeTargets, transitionInfo,
-                    /* splitBounds = */ null, i);
-=======
             assignTargetsToHandleForDesktop(mRemoteTargetHandles[i], i, targets, transitionInfo);
->>>>>>> aosp/android17-release
         }
         return mRemoteTargetHandles;
     }

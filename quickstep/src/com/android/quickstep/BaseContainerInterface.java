@@ -500,12 +500,8 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
         int sideMargin = dp.getOverviewProfile().getGridSideMargin();
 
         outRect.set(0, 0, dp.getDeviceProperties().getWidthPx(), dp.getDeviceProperties().getHeightPx());
-<<<<<<< HEAD
         if (Utilities.ATLEAST_S) {
-            outRect.inset(Math.max(insets.left, sideMargin), insets.top + topMargin,
-=======
-        outRect.inset(Math.max(insets.left, sideMargin), insets.top,
->>>>>>> aosp/android17-release
+            outRect.inset(Math.max(insets.left, sideMargin), insets.top,
                 Math.max(insets.right, sideMargin), Math.max(insets.bottom, bottomMargin));
         } else {
             outRect.set(

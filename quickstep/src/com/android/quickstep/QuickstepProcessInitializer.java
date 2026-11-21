@@ -72,7 +72,6 @@ public class QuickstepProcessInitializer extends MainProcessInitializer {
         super.init(context);
 
         // Elevate GPU priority for Quickstep and Remote animations.
-<<<<<<< HEAD
         // LC: https://github.com/LawnchairLauncher/lawnchair/pull/4331
         try {
                 if (!Utilities.ATLEAST_Q) return;
@@ -81,45 +80,6 @@ public class QuickstepProcessInitializer extends MainProcessInitializer {
         } catch (Exception e) {
                 Log.e(TAG, "init: " + e);
         }
-=======
-        ThreadedRenderer.setContextPriority(
-                ThreadedRenderer.EGL_CONTEXT_PRIORITY_HIGH_IMG);
-
-        // Enable Looper trace points.
-        // This allows us to see Handler callbacks on traces.
-        Looper.getMainLooper().setTraceTag(Trace.TRACE_TAG_APP);
-
-        if (BuildConfig.IS_STUDIO_BUILD) {
-            Set<String> allowedTargets = Set.of(
-                    "android.view.IWindowManager",
-                    "android.app.IActivityManager",
-                    "android.app.IActivityTaskManager",
-                    "android.app.IActivityClientController",
-                    "android.hardware.input.IInputManager",
-                    "android.content.IContentService",
-                    "android.hardware.display.IDisplayManager",
-                    "android.app.IUiModeManager",
-                    "android.app.trust.ITrustManager",
-                    "android.content.IContentProvider",
-                    "com.android.internal.appwidget.IAppWidgetService",
-                    "android.content.pm.IPackageManager",
-                    " android.view.accessibility.IAccessibilityManager"
-            );
-            BinderTracker.startTracking(call -> {
-                if (!allowedTargets.contains(call.descriptor)) {
-                    Log.e("BinderCall",
-                            call.descriptor + " called on main thread under " + call.activeTrace
-                                    + " stackTrace: " + call.stackTrace);
-                }
-            });
-        }
-
-        QuickstepProtoLogGroup.initProtoLog();
-        SurfaceControl.setDebugUsageAfterRelease(true);
-        ViewRootImpl.setDebugWrongThreadInit(true);
-
-        setupImageDecoder(context);
->>>>>>> aosp/android17-release
     }
 
     private void setupImageDecoder(Context context) {

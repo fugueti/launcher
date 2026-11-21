@@ -314,14 +314,10 @@ class TaskbarInsetsController(val context: TaskbarActivityContext) : LoggableTas
                     visInsetsSizeForTappableElement,
                 )
             )
-<<<<<<< HEAD
         if (
             (context.isGestureNav || ENABLE_TASKBAR_NAVBAR_UNIFICATION) &&
             provider.type == tappableElement()
         ) {
-=======
-        if (provider.type == tappableElement()) {
->>>>>>> aosp/android17-release
             provider.insetsSizeOverrides = insetsSizeOverrideForTappableElement
         }
     }

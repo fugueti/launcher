@@ -33,10 +33,7 @@ import dagger.Module
 @Module
 abstract class AppModule {
 
-<<<<<<< HEAD
     @Binds abstract fun bindModelDelegate(impl: LawnchairModelDelegate): ModelDelegate
-=======
-    @Binds abstract fun bindModelDelegate(impl: QuickstepModelDelegate): ModelDelegate
 
     @Binds
     abstract fun bindBaseDefaultsValueProvider(
@@ -47,7 +44,6 @@ abstract class AppModule {
     abstract fun bindMainProcessInitializer(
         impl: QuickstepProcessInitializer
     ): MainProcessInitializer
->>>>>>> aosp/android17-release
 }
 
 @Module abstract class ProductionAppModule

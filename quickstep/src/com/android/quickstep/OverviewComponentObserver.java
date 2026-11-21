@@ -129,19 +129,6 @@ public final class OverviewComponentObserver {
         ComponentName myHomeComponent =
                 new ComponentName(context.getPackageName(), info.activityInfo.name);
         mMyPrimaryHomeIntent.setComponent(myHomeComponent);
-<<<<<<< HEAD
-        // Set up secondary home intent
-        mSecondaryHomeIntent = createSecondaryHomeIntent().setPackage(
-                context.getPackageName());
-        ResolveInfo secondaryInfo = context.getPackageManager().resolveActivity(
-                mSecondaryHomeIntent, 0);
-        if (secondaryInfo != null) {
-            ComponentName secondaryComponent = new ComponentName(context,
-                    secondaryInfo.activityInfo.name);
-            mSecondaryHomeIntent.setComponent(secondaryComponent);
-        }
-=======
->>>>>>> aosp/android17-release
 
         mConfigChangesMap.append(myHomeComponent.hashCode(), info.activityInfo.configChanges);
         mSetupWizardPkg = context.getString(R.string.setup_wizard_pkg);

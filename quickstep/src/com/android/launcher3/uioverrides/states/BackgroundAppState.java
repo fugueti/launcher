@@ -107,13 +107,7 @@ public class BackgroundAppState extends OverviewState {
     protected float getDepthUnchecked(ActivityContext context) {
         if (Launcher.getLauncher(context.asContext()).areDesktopTasksVisible()) {
             // Don't blur the background while desktop tasks are visible
-<<<<<<< HEAD
-            return BaseDepthControllerImpl.DEPTH_0_PERCENT;
-        } else if (enableScalingRevealHomeAnimation()) {
-            return BaseDepthControllerImpl.DEPTH_70_PERCENT;
-=======
             return DepthController.DEPTH_0_PERCENT;
->>>>>>> aosp/android17-release
         } else {
             return DepthController.DEPTH_70_PERCENT;
         }

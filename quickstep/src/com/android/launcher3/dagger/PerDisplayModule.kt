@@ -84,8 +84,13 @@ object PerDisplayObjectsModule {
     @Provides
     @PerDisplaySingleton
     @WindowContext
-    fun provideWindowContext(@ApplicationContext context: Context, display: Display) =
-        context.createWindowContext(display, TYPE_APPLICATION_OVERLAY, /* options= */ null)
+    fun provideWindowContext(@ApplicationContext context: Context, display: Display): Context =
+        // Lawnchair: window contexts need Android 12
+        if (Utilities.ATLEAST_S) {
+            context.createWindowContext(display, TYPE_APPLICATION_OVERLAY, /* options= */ null)
+        } else {
+            context.createDisplayContext(display)
+        }
 }
 
 @Module
@@ -156,44 +161,6 @@ object PerDisplayRepositoriesModule {
 
     @Provides
     @LauncherAppSingleton
-<<<<<<< HEAD
-    @WindowContext
-    fun provideWindowContext(
-        repositoryFactory: PerDisplayInstanceRepositoryImpl.Factory<Context>,
-        displayRepository: DisplayRepository,
-        @ApplicationContext context: Context,
-    ): PerDisplayRepository<Context> {
-        return if (enableOverviewOnConnectedDisplays()) {
-            repositoryFactory.create(
-                "DisplayContextRepo",
-                { displayId ->
-                    displayRepository.getDisplay(displayId)?.let {
-                        if (Utilities.ATLEAST_S) {
-                            context.createWindowContext(
-                                it,
-                                TYPE_APPLICATION_OVERLAY,
-                                /* options=*/ null,
-                            )
-                        } else {
-                            context.createDisplayContext(it)
-                        }
-                    }
-                },
-            )
-        } else {
-            SingleInstanceRepositoryImpl(
-                "DisplayContextRepo",
-                if (Utilities.ATLEAST_S) {
-                    context.createWindowContext(
-                        displayRepository.getDisplay(DEFAULT_DISPLAY)!!,
-                        TYPE_APPLICATION_OVERLAY,
-                        /* options=*/ null,
-                    )
-                } else {
-                    context.createDisplayContext(displayRepository.getDisplay(DEFAULT_DISPLAY)!!)
-                }
-            )
-=======
     @DisplaysWithDecorations
     fun provideDisplaysWithDecorationsLifecycleManager(
         displaysWithDecorationsRepository: DisplaysWithDecorationsRepository
@@ -201,7 +168,6 @@ object PerDisplayRepositoriesModule {
         object : DisplayInstanceLifecycleManager {
             override val displayIds: StateFlow<Set<Int>>
                 get() = displaysWithDecorationsRepository.displayIdsWithSystemDecorations
->>>>>>> aosp/android17-release
         }
 }
 

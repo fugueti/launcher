@@ -118,13 +118,8 @@ public class ContextualSearchStateManager  {
         mSystemUiProxy = systemUiProxy;
         mTopTaskTracker = topTaskTracker;
 
-<<<<<<< HEAD
         if (!Utilities.ATLEAST_V // LC-Note: QuickSwitch compatibility!
-                || areAllContextualSearchFlagsDisabled()
                 || !context.getPackageManager().hasSystemFeature(FEATURE_CONTEXTUAL_SEARCH)) {
-=======
-        if (!context.getPackageManager().hasSystemFeature(FEATURE_CONTEXTUAL_SEARCH)) {
->>>>>>> aosp/android17-release
             // If we had previously registered a SystemAction which is no longer valid, we need to
             // unregister it here.
             if (Utilities.ATLEAST_R) {

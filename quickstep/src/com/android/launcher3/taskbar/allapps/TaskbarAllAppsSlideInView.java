@@ -270,7 +270,6 @@ public class TaskbarAllAppsSlideInView extends AbstractSlideInView<TaskbarOverla
 
     @Override
     protected int getScrimColor(Context context) {
-<<<<<<< HEAD
         if (!mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
             // Always use an opaque scrim if there's no sheet.
             return ColorTokens.AllAppsScrimColor.resolveColor(context);
@@ -280,9 +279,6 @@ public class TaskbarAllAppsSlideInView extends AbstractSlideInView<TaskbarOverla
                 ColorTokens.WidgetsPickerScrim.resolveColor(context));
         }
         return ColorTokens.AllAppsScrimColor.resolveColor(context);
-=======
-        return Themes.getAttrColor(context, R.attr.allAppsScrimColor);
->>>>>>> aosp/android17-release
     }
 
     @Override
