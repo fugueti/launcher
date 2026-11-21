@@ -587,6 +587,7 @@ object StatsLogCompatManager {
         if (Utilities.isRunningInTestHarness()) {
             return
         }
+        if (!Utilities.ATLEAST_R) return // Lawnchair: stats logging needs Android 11
         SysUiStatsLog.write(
             SysUiStatsLog.LAUNCHER_SNAPSHOT,
             LAUNCHER_WORKSPACE_SNAPSHOT.id, /* event_id */
