@@ -41,6 +41,7 @@ import com.android.quickstep.fallback.RecentsStateUtilsKt;
 import com.android.quickstep.util.LayoutUtils;
 import com.android.quickstep.views.RecentsView;
 
+import app.lawnchair.LawnchairApp;
 import app.lawnchair.preferences.PreferenceManager;
 import app.lawnchair.theme.color.tokens.ColorTokens;
 
@@ -120,14 +121,12 @@ public class OverviewState extends LauncherState {
     }
 
     @Override
-<<<<<<< HEAD
-    public int getVisibleElements(Launcher launcher) {
-        if (PreferenceManager.getInstance(launcher).getRecentsActionClearAll().get()) {
+    public int getVisibleElements(LauncherUiState launcherUiState) {
+        // Lawnchair: "clear all" moved into the overview actions
+        if (PreferenceManager.getInstance(LawnchairApp.getInstance())
+                .getRecentsActionClearAll().get()) {
             return OVERVIEW_ACTIONS;
         }
-=======
-    public int getVisibleElements(LauncherUiState launcherUiState) {
->>>>>>> aosp/android17-release
         int elements = CLEAR_ALL_BUTTON | OVERVIEW_ACTIONS | ADD_DESK_BUTTON;
         boolean showFloatingSearch;
         DeviceProfile dp = launcherUiState.getDeviceProfileRef().getValue();
@@ -181,15 +180,8 @@ public class OverviewState extends LauncherState {
         // Lawnchair-TODO-Colour: Check overviewScrimForegroundPrimary and overviewScrimForegroundSecondary
         // Lawnchair-TODO-Colour: Move to OverviewScrim
         return new ScrimColors(
-<<<<<<< HEAD
-                /* backgroundColor */ Themes.getAttrColor(launcher, ColorTokens.OverviewScrimOverBlur.resolveColor(launcher)),
-                /* foregroundColor */ ColorUtils.compositeColors(
-                Themes.getAttrColor(launcher, R.attr.overviewScrimForegroundPrimary),
-                Themes.getAttrColor(launcher, R.attr.overviewScrimForegroundSecondary)));
-=======
                 /* backgroundColor= */ Themes.getAttrColor(launcher, R.attr.overviewScrimColor),
                 /* foregroundColor= */ Color.TRANSPARENT);
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -231,12 +223,6 @@ public class OverviewState extends LauncherState {
     @Override
     protected float getDepthUnchecked(ActivityContext context) {
         // TODO(178661709): revert to always scaled
-<<<<<<< HEAD
-        if (enableScalingRevealHomeAnimation()) {
-            return SystemProperties.getBoolean("ro.launcher.depth.overview", true)
-                    ? BaseDepthControllerImpl.DEPTH_70_PERCENT
-                    : BaseDepthControllerImpl.DEPTH_0_PERCENT;
-=======
         return SystemProperties.getBoolean("ro.launcher.depth.overview", true)
                 ? DepthController.DEPTH_70_PERCENT
                 : DepthController.DEPTH_0_PERCENT;
@@ -246,7 +232,6 @@ public class OverviewState extends LauncherState {
     public void onBackStarted(Launcher launcher) {
         if (enablePredictiveBackInOverview()) {
             RecentsStateUtilsKt.toRecentsState(this).onBackStarted((QuickstepLauncher) launcher);
->>>>>>> aosp/android17-release
         } else {
             super.onBackStarted(launcher);
         }

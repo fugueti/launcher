@@ -403,13 +403,8 @@ constructor(
                 if (Utilities.ATLEAST_S) OverviewCommandHelperProtoLogProxy.logLaunchingTaskCallback(command)
                 onCallbackResult()
             }
-<<<<<<< HEAD
             if (Utilities.ATLEAST_S) OverviewCommandHelperProtoLogProxy.logLaunchingTaskWaitingForCallback(command)
-            return false
-=======
-            OverviewCommandHelperProtoLogProxy.logLaunchingTaskWaitingForCallback(command)
             false
->>>>>>> aosp/android17-release
         } else {
             recents.startHome()
             true
@@ -614,13 +609,7 @@ constructor(
                     targets: RecentsAnimationTargets,
                     transitionInfo: TransitionInfo?,
                 ) {
-<<<<<<< HEAD
                     if (Utilities.ATLEAST_S) OverviewCommandHelperProtoLogProxy.logRecentsAnimStarted(command)
-                    if (recentsViewContainer is RecentsWindowManager) {
-                        recentsViewContainer.rootView?.let { view ->
-                            InteractionJankMonitorWrapper.begin(view, Cuj.CUJ_LAUNCHER_QUICK_SWITCH)
-=======
-                    OverviewCommandHelperProtoLogProxy.logRecentsAnimStarted(command)
                     if (gestureEndTarget == GestureEndTarget.RECENTS) {
                         if (recentsViewContainer is RecentsWindowManager) {
                             recentsViewContainer.rootView.let { view ->
@@ -629,7 +618,6 @@ constructor(
                                     Cuj.CUJ_LAUNCHER_QUICK_SWITCH,
                                 )
                             }
->>>>>>> aosp/android17-release
                         }
 
                         updateRecentsViewFocus(command)
@@ -678,12 +666,8 @@ constructor(
             interactionHandler.onGestureStarted(false /*isLikelyToStartNewTask*/)
             command.addListener(recentAnimListener)
         }
-<<<<<<< HEAD
-        if (Utilities.ATLEAST_S) OverviewCommandHelperProtoLogProxy.logSwitchingViaRecentsAnim(command)
-=======
         Trace.beginAsyncSection(TRANSITION_NAME, 0)
-        OverviewCommandHelperProtoLogProxy.logSwitchingViaRecentsAnim(command, gestureEndTarget)
->>>>>>> aosp/android17-release
+        if (Utilities.ATLEAST_S) OverviewCommandHelperProtoLogProxy.logSwitchingViaRecentsAnim(command, gestureEndTarget)
         return false
     }
 

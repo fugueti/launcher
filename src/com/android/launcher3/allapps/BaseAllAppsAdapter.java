@@ -72,16 +72,14 @@ public abstract class BaseAllAppsAdapter
     public static final int VIEW_TYPE_PRIVATE_SPACE_APP_ICON = 1 << 9;
     public static final int NEXT_ID = 10;
 
-    // LC-Feature: Folder support in All Apps, can be any ID
+    // LC-Feature: Folder support in All Apps, can be any ID (bits 11-22 are used by
+    // LawnchairSearchAdapterProvider; 1 << 10 only with VIEW_TYPE_ICON there)
     public static final int VIEW_TYPE_FOLDER = 1 << 10;
 
     // Common view type masks
     public static final int VIEW_TYPE_MASK_DIVIDER = VIEW_TYPE_ALL_APPS_DIVIDER;
-<<<<<<< HEAD
-    public static final int VIEW_TYPE_MASK_ICON = VIEW_TYPE_FOLDER | VIEW_TYPE_ICON;
-=======
-    public static final int VIEW_TYPE_MASK_ICON = VIEW_TYPE_ICON | VIEW_TYPE_PRIVATE_SPACE_APP_ICON;
->>>>>>> aosp/android17-release
+    public static final int VIEW_TYPE_MASK_ICON =
+            VIEW_TYPE_FOLDER | VIEW_TYPE_ICON | VIEW_TYPE_PRIVATE_SPACE_APP_ICON;
 
     public static final int VIEW_TYPE_MASK_PRIVATE_SPACE_HEADER =
             VIEW_TYPE_PRIVATE_SPACE_HEADER;
@@ -278,18 +276,14 @@ public abstract class BaseAllAppsAdapter
                 return new ViewHolder(mLayoutInflater.inflate(
                         R.layout.private_space_header, parent, false));
             case VIEW_TYPE_BOTTOM_VIEW_TO_SCROLL_TO:
-<<<<<<< HEAD
-                return new ViewHolder(new View(mActivityContext));
+                return new ViewHolder(new View(mActivityContext.asContext()));
             case VIEW_TYPE_FOLDER:
                 // LC-Feature: Folder support in All Apps
-                FrameLayout fl = new FrameLayout(mActivityContext);
+                FrameLayout fl = new FrameLayout(mActivityContext.asContext());
                 fl.setLayoutParams(new RecyclerView.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         mActivityContext.getDeviceProfile().getAllAppsProfile().getCellHeightPx()));
                 return new ViewHolder(fl);
-=======
-                return new ViewHolder(new View(mActivityContext.asContext()));
->>>>>>> aosp/android17-release
             default:
                 if (mAdapterProvider.isViewSupported(viewType)) {
                     return mAdapterProvider.onCreateViewHolder(mLayoutInflater, parent, viewType);
@@ -317,12 +311,8 @@ public abstract class BaseAllAppsAdapter
                 icon.setSkipUserBadge(skipUserBadge);
                 icon.applyFromApplicationInfo(adapterItem.itemInfo);
                 icon.setOnFocusChangeListener(mIconFocusListener);
-<<<<<<< HEAD
-=======
                 icon.configureMinimalPopup(
                         holder.getItemViewType() == VIEW_TYPE_PRIVATE_SPACE_APP_ICON);
-                PrivateProfileManager privateProfileManager = mApps.getPrivateProfileManager();
->>>>>>> aosp/android17-release
                 if (privateProfileManager != null) {
                     // Set the alpha of the private space icon to 0 upon expanding the header so the
                     // alpha can animate -> 1. This should only be in effect when doing a

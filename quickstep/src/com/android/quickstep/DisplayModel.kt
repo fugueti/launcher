@@ -51,11 +51,8 @@ constructor(
     private val useDisplayDecorationListener: Boolean =
         DesktopExperienceFlags.ENABLE_SYS_DECORS_CALLBACKS_VIA_WM.isTrue() &&
             DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()
-<<<<<<< HEAD
-=======
 
     private var closed = false
->>>>>>> aosp/android17-release
 
     override fun onDisplayAddSystemDecorations(displayId: Int) {
         if (closed) return
@@ -75,17 +72,10 @@ constructor(
         deleteDisplayResource(displayId)
     }
 
-<<<<<<< HEAD
-    protected abstract fun createDisplayResource(display: Display): RESOURCE_TYPE
-
-    protected fun initializeDisplays() {
-        if (useDisplayDecorationListener) {
-=======
     fun initializeDisplays() {
         if (useDisplayDecorationListener) {
             // NOTE: `registerDisplayDecorationListener` will invoke the listener immediately for
             // eligible displays (which will end up storing resources for those displays).
->>>>>>> aosp/android17-release
             displaysWithDecorationsRepositoryCompat.registerDisplayDecorationListener(
                 this,
                 dispatcher,
@@ -99,9 +89,6 @@ constructor(
         }
     }
 
-<<<<<<< HEAD
-    fun destroy() {
-=======
     fun forEach(callback: Consumer<RESOURCE_TYPE>) {
         displayResourceArray.valueIterator().forEach { callback.accept(it) }
     }
@@ -109,7 +96,6 @@ constructor(
     override fun close() {
         closed = true
 
->>>>>>> aosp/android17-release
         if (useDisplayDecorationListener) {
             displaysWithDecorationsRepositoryCompat.unregisterDisplayDecorationListener(this)
         } else {

@@ -48,11 +48,7 @@ sealed class WorkspaceData : Iterable<ItemInfo> {
 
         val screenSet = IntSet()
         forEach { if (it.container == CONTAINER_DESKTOP) screenSet.add(it.screenId) }
-<<<<<<< HEAD
         if (smartspaceEnabled || screenSet.isEmpty) {
-=======
-        if (screenSet.isEmpty) {
->>>>>>> aosp/android17-release
             screenSet.add(Workspace.FIRST_SCREEN_ID)
         }
         val persistedOrder = LauncherPrefs.get(context).get(LauncherPrefs.WORKSPACE_SCREEN_ORDER)
@@ -111,11 +107,6 @@ sealed class WorkspaceData : Iterable<ItemInfo> {
         inline fun modifyItems(block: SparseArray<ItemInfo>.() -> Unit) {
             block.invoke(itemsIdMap)
             modificationId++
-<<<<<<< HEAD
-            changeHistory.add(0, update)
-            if (changeHistory.size > MAX_HISTORY_SIZE) changeHistory.removeAt(changeHistory.lastIndex)
-=======
->>>>>>> aosp/android17-release
         }
 
         override fun copy(): WorkspaceData =
@@ -139,11 +130,7 @@ sealed class WorkspaceData : Iterable<ItemInfo> {
     }
 
     companion object {
-<<<<<<< HEAD
-        // Maximum number of historic change events to keep in memory
-        @VisibleForTesting const val MAX_HISTORY_SIZE = 4
-
-        private val VERSION_COUNTER = AtomicInteger()
+        private val VERSION_COUNTER = AtomicInteger(1)
 
         @VisibleForTesting
         fun mergeWorkspaceScreens(itemScreens: IntArray, persistedOrder: String): IntArray {
@@ -167,8 +154,5 @@ sealed class WorkspaceData : Iterable<ItemInfo> {
             }
             return merged
         }
-=======
-        private val VERSION_COUNTER = AtomicInteger(1)
->>>>>>> aosp/android17-release
     }
 }

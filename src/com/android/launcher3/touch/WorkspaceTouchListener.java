@@ -85,13 +85,10 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
     private int mLongPressState = STATE_CANCELLED;
 
     private final GestureDetector mGestureDetector;
-<<<<<<< HEAD
     private boolean mDoubleTapPending = false;
 
     DevicePolicyManager mDpm;
-=======
     private final BoxSelectionHelper mBoxSelectionHelper;
->>>>>>> aosp/android17-release
 
     public WorkspaceTouchListener(Launcher launcher, Workspace<?> workspace) {
         mLauncher = launcher;
@@ -100,18 +97,19 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
         // likely to cause movement.
         mTouchSlop = 2 * ViewConfiguration.get(launcher).getScaledTouchSlop();
         mGestureDetector = new GestureDetector(workspace.getContext(), this);
-<<<<<<< HEAD
         mDpm = (DevicePolicyManager) workspace.getContext().getSystemService(Context.DEVICE_POLICY_SERVICE);
-=======
         mBoxSelectionHelper = enableWorkspaceSelection()
                 ? new BoxSelectionHelper(launcher, workspace)
                 : null;
->>>>>>> aosp/android17-release
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent ev) {
-<<<<<<< HEAD
+        // TODO(http://b/465503610): Unify touch delegation logic into CustomEventsTouchHandler
+        if (mBoxSelectionHelper != null) {
+            mBoxSelectionHelper.onTouchEvent(ev);
+        }
+
         int action = ev.getActionMasked();
         if (action == ACTION_DOWN) {
             mDoubleTapPending = false;
@@ -121,11 +119,6 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
             // so double tap gestures would never see both taps on empty space.
             ((LawnchairLauncher) mLauncher).getGestureController()
                     .noteEmptySpaceDown(ev.getEventTime());
-=======
-        // TODO(http://b/465503610): Unify touch delegation logic into CustomEventsTouchHandler
-        if (mBoxSelectionHelper != null) {
-            mBoxSelectionHelper.onTouchEvent(ev);
->>>>>>> aosp/android17-release
         }
 
         mGestureDetector.onTouchEvent(ev);

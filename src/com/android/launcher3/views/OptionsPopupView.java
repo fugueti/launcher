@@ -15,7 +15,6 @@
  */
 package com.android.launcher3.views;
 
-<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.WIDGETS_ENABLED;
 import static com.android.launcher3.LauncherState.ALL_APPS;
 import static com.android.launcher3.LauncherState.EDIT_MODE;
@@ -32,12 +31,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.provider.Settings;
-=======
-import android.content.Context;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
->>>>>>> aosp/android17-release
 import android.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -71,7 +64,6 @@ import app.lawnchair.ui.popup.LauncherOptionsPopup;
 public class OptionsPopupView<T extends Context & ActivityContext> extends ArrowPopup<T>
         implements OnClickListener, OnLongClickListener {
 
-<<<<<<< HEAD
     // An intent extra to indicate the horizontal scroll of the wallpaper.
     private static final String EXTRA_WALLPAPER_OFFSET = "com.android.launcher3.WALLPAPER_OFFSET";
     private static final String EXTRA_WALLPAPER_FLAVOR = "com.android.launcher3.WALLPAPER_FLAVOR";
@@ -80,9 +72,6 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
             "com.android.wallpaper.LAUNCH_SOURCE";
 
     public final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
-=======
-    private final ArrayMap<View, OptionItem> mItemMap = new ArrayMap<>();
->>>>>>> aosp/android17-release
     private RectF mTargetRect;
     private boolean mShouldAddArrow;
 
@@ -218,7 +207,6 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         return popup;
     }
 
-<<<<<<< HEAD
     /**
      * Returns the list of supported actions
      */
@@ -318,8 +306,6 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
         return placeholderInfo;
     }
 
-=======
->>>>>>> aosp/android17-release
     public static class OptionItem {
 
         // Used to create AccessibilityNodeInfo in AccessibilityActionsView.java.

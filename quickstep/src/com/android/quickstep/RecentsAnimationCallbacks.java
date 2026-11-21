@@ -102,7 +102,6 @@ public class RecentsAnimationCallbacks implements
         onAnimationCanceled(new HashMap<>());
     }
 
-<<<<<<< HEAD
     // Called only in Q platform
     @BinderThread
     @Deprecated
@@ -125,8 +124,6 @@ public class RecentsAnimationCallbacks implements
 //        onAnimationStart(controller, apps, wallpapers, homeContentInsets, minimizedHomeBounds);
     }
 
-=======
->>>>>>> aosp/android17-release
     // Called only in R+ platform
     @BinderThread
     public final void onAnimationStart(RecentsAnimationControllerCompat animationController,
@@ -142,14 +139,8 @@ public class RecentsAnimationCallbacks implements
         boolean isOpeningHome = Arrays.stream(appTargets).filter(app -> app.mode == MODE_OPENING
                         && app.windowConfiguration.getActivityType() == ACTIVITY_TYPE_HOME)
                 .count() > 0;
-<<<<<<< HEAD
-        if (appCount == 0 && (!(mContainer instanceof RecentsWindowManager)
-                || isOpeningHome)) {
-            if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logOnRecentsAnimationStartCancelled();
-=======
         if (appCount == 0 && (!mIsContainerRecentsWindowManager || isOpeningHome)) {
-            ActiveGestureProtoLogProxy.logOnRecentsAnimationStartCancelled();
->>>>>>> aosp/android17-release
+            if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logOnRecentsAnimationStartCancelled();
             // Edge case, if there are no closing app targets, then Launcher has nothing to handle
             notifyAnimationCanceled();
             animationController.finish(false /* toHome */, false /* sendUserLeaveHint */,
@@ -211,11 +202,7 @@ public class RecentsAnimationCallbacks implements
 
     private void onAnimationFinished(RecentsAnimationController controller) {
         Utilities.postAsyncCallback(MAIN_EXECUTOR.getHandler(), () -> {
-<<<<<<< HEAD
-            if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logAbsSwipeUpHandlerOnRecentsAnimationFinished();
-=======
-            ActiveGestureProtoLogProxy.logRecentsAnimationCallbacksOnRecentsAnimationFinished();
->>>>>>> aosp/android17-release
+            if (Utilities.ATLEAST_S) ActiveGestureProtoLogProxy.logRecentsAnimationCallbacksOnRecentsAnimationFinished();
             for (RecentsAnimationListener listener : getListeners()) {
                 listener.onRecentsAnimationFinished(controller);
             }

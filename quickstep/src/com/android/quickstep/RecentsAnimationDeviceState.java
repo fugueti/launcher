@@ -198,45 +198,28 @@ public class RecentsAnimationDeviceState implements ExclusionListener {
 
         if (mIsOneHandedModeSupported) {
             Uri oneHandedUri = Settings.Secure.getUriFor(ONE_HANDED_ENABLED);
-<<<<<<< HEAD
-            SettingsCache.OnChangeListener onChangeListener =
-                    enabled -> mIsOneHandedModeEnabled = enabled;
-            settingsCache.register(oneHandedUri, onChangeListener);
-            mIsOneHandedModeEnabled = LawnchairApp.isRecentsEnabled() && settingsCache.getValue(oneHandedUri);
-            lifeCycle.addCloseable(() -> settingsCache.unregister(oneHandedUri, onChangeListener));
-=======
-            mIsOneHandedModeEnabled = settingsCache.getValue(oneHandedUri);
+            mIsOneHandedModeEnabled = LawnchairApp.isRecentsEnabled()
+                    && settingsCache.getValue(oneHandedUri);
             lifeCycle.addCloseable(settingsCache.getListenableRef(oneHandedUri).forEach(
                     MAIN_EXECUTOR, (enabled) -> {
                         mIsOneHandedModeEnabled = enabled;
                         return null;
                     }));
->>>>>>> aosp/android17-release
         } else {
             mIsOneHandedModeEnabled = false;
         }
 
         Uri swipeBottomNotificationUri =
                 Settings.Secure.getUriFor(ONE_HANDED_SWIPE_BOTTOM_TO_NOTIFICATION_ENABLED);
-<<<<<<< HEAD
-        SettingsCache.OnChangeListener onChangeListener =
-                enabled -> mIsSwipeToNotificationEnabled = enabled;
-        settingsCache.register(swipeBottomNotificationUri, onChangeListener);
-        mIsSwipeToNotificationEnabled = LawnchairApp.isRecentsEnabled() && settingsCache.getValue(swipeBottomNotificationUri);
-        lifeCycle.addCloseable(
-                () -> settingsCache.unregister(swipeBottomNotificationUri, onChangeListener));
-
-        Uri setupCompleteUri = Settings.Secure.getUriFor(Settings.Secure.USER_SETUP_COMPLETE);
-        mIsUserSetupComplete = LawnchairApp.isRecentsEnabled() && settingsCache.getValue(setupCompleteUri, 0);
-=======
         lifeCycle.addCloseable(settingsCache.getListenableRef(swipeBottomNotificationUri).forEach(
                 MAIN_EXECUTOR, (enabled) -> {
                     mIsSwipeToNotificationEnabled = enabled;
                     return null;
                 }));
         Uri setupCompleteUri = Settings.Secure.getUriFor(Settings.Secure.USER_SETUP_COMPLETE);
-        mIsUserSetupComplete = settingsCache.getValue(setupCompleteUri);
->>>>>>> aosp/android17-release
+        // Lawnchair: without recents (no system permissions) these settings are not readable
+        mIsUserSetupComplete = LawnchairApp.isRecentsEnabled()
+                && settingsCache.getValue(setupCompleteUri);
         if (!mIsUserSetupComplete) {
             lifeCycle.addCloseable(
                     settingsCache.getListenableRef(setupCompleteUri).forEach(
@@ -746,15 +729,4 @@ public class RecentsAnimationDeviceState implements ExclusionListener {
         return mDisplayId;
     }
 
-<<<<<<< HEAD
-    @AssistedFactory
-    public interface Factory {
-        /** Creates a new instance of [RecentsAnimationDeviceState] for a given [displayId] and
-         * [rotationTouchHelper]. */
-        RecentsAnimationDeviceState create(int displayId, RotationTouchHelper rotationTouchHelper);
-    }
-
 }
-=======
-}
->>>>>>> aosp/android17-release

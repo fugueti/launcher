@@ -34,3 +34,4 @@ Check these when the tree compiles.
 - `AbstractFloatingView.TYPE_COMPOSE_VIEW` moved from bit 25 to bit 27 (AOSP took bit 25).
 - `WorkspaceItemSpaceFinder.findSpaceForItem` has a new signature (returns `WorkspaceItemCoordinates`, takes excluded screens); update `app.lawnchair.deck.AddFoldersWithItemsTask`. The smartspace first-screen rule now lives in `AddWorkspaceItemsTask`.
 - `NotificationListener` lost its static listener API upstream; Lawnchair hooks were reapplied and `getInstanceIfConnected()` kept (static connected instance). Check Lawnchair callers of the removed `addNotificationsChangedListener`.
+- `QuickstepKeyGestureEventsManager` implements hidden Android 16 APIs; `AllAppsActionManager` now uses it lazily (Android 16+ only). `TISBinder` still injects it directly: check it is only created when Recents is enabled.

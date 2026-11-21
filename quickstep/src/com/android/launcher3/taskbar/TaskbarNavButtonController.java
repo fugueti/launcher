@@ -36,10 +36,6 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.systemui.shared.system.ActivityManagerWrapper.CLOSE_SYSTEM_WINDOWS_REASON_HOME_KEY;
 import static com.android.systemui.shared.system.ActivityManagerWrapper.CLOSE_SYSTEM_WINDOWS_REASON_RECENTS;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_SCREEN_PINNING;
-<<<<<<< HEAD
-import static com.android.window.flags2.Flags.predictiveBackThreeButtonNav;
-=======
->>>>>>> aosp/android17-release
 
 import android.app.contextualsearch.ContextualSearchConfig;
 import android.content.Intent;
@@ -159,17 +155,7 @@ public class TaskbarNavButtonController implements TaskbarControllers.LoggableTa
         if (buttonType == BUTTON_SPACE) {
             return;
         }
-<<<<<<< HEAD
-        boolean predictiveBackThreeButtonNav;
-        try {
-            predictiveBackThreeButtonNav = predictiveBackThreeButtonNav();
-        } catch (Throwable t) {
-            predictiveBackThreeButtonNav = false;
-        }
-        if (predictiveBackThreeButtonNav && mLastSentBackAction == ACTION_DOWN) {
-=======
         if (mLastSentBackAction == ACTION_DOWN) {
->>>>>>> aosp/android17-release
             Log.i(TAG, "Button click ignored while back button is pressed");
             // prevent interactions with other buttons while back button is pressed
             return;
@@ -220,19 +206,8 @@ public class TaskbarNavButtonController implements TaskbarControllers.LoggableTa
         if (buttonType == BUTTON_SPACE) {
             return false;
         }
-<<<<<<< HEAD
-        boolean predictiveBackThreeButtonNav;
-        try {
-            predictiveBackThreeButtonNav = predictiveBackThreeButtonNav();
-        } catch (Throwable t) {
-            predictiveBackThreeButtonNav = false;
-        }
-        if (predictiveBackThreeButtonNav && mLastSentBackAction == ACTION_DOWN
-                && buttonType != BUTTON_BACK && buttonType != BUTTON_RECENTS) {
-=======
         if (mLastSentBackAction == ACTION_DOWN && buttonType != BUTTON_BACK
                 && buttonType != BUTTON_RECENTS) {
->>>>>>> aosp/android17-release
             // prevent interactions with other buttons while back button is pressed (except back
             // and recents button for screen-unpin action).
             Log.i(TAG, "Button long click ignored while back button is pressed");

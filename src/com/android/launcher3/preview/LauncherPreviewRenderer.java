@@ -138,12 +138,7 @@ public class LauncherPreviewRenderer extends BaseContext
         mPreferenceManager2 = PreferenceManager2.getInstance(context);
         
         mUiHandler = new Handler(Looper.getMainLooper());
-<<<<<<< HEAD
         mIdp = previewIdp != null ? previewIdp : InvariantDeviceProfile.INSTANCE.get(context);
-        mDp = getDeviceProfileForPreview(context).toBuilder(context)
-                .setViewScaleProvider(new PreviewScaleProvider(this)).build();
-=======
-        mIdp = InvariantDeviceProfile.INSTANCE.get(context);
 
         DeviceProfile.Builder dpBuilder = getDeviceProfileForPreview(context)
                 .toBuilder();
@@ -155,7 +150,6 @@ public class LauncherPreviewRenderer extends BaseContext
         mDp = dpBuilder
                 .setViewScaleProvider(new PreviewScaleProvider(this))
                 .build();
->>>>>>> aosp/android17-release
         Rect insets = getInsets(context);
         mDp.updateInsets(insets);
         mWidgetHolder =
@@ -403,7 +397,6 @@ public class LauncherPreviewRenderer extends BaseContext
                 .forEach(this::inflateAndAdd);
         populateHotseatPredictions(itemIdMap);
 
-<<<<<<< HEAD
         // Add first page QSB
         if (PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getEnableSmartspace())) {
             CellLayout firstScreen = mWorkspaceScreens.get(FIRST_SCREEN_ID);
@@ -417,8 +410,6 @@ public class LauncherPreviewRenderer extends BaseContext
                 firstScreen.addViewToCellLayout(qsb, 0, R.id.search_container_workspace, lp, true);
             }
         }
-=======
->>>>>>> aosp/android17-release
         measureAndLayoutRootView();
         dispatchVisibilityAggregated(mRootView, true);
         measureAndLayoutRootView();
@@ -443,12 +434,9 @@ public class LauncherPreviewRenderer extends BaseContext
     private void populateHotseatPredictions(WorkspaceData itemIdMap) {
         List<ItemInfo> predictions = itemIdMap.getPredictedContents(CONTAINER_HOTSEAT_PREDICTION);
         int predictionIndex = 0;
-<<<<<<< HEAD
-        int totalHotseatSlots = mDp.numShownHotseatIcons * mDp.numHotseatRows;
+        // Lawnchair: the dock can have several rows
+        int totalHotseatSlots = mDp.getHotseatProfile().getNumShownIcons() * mDp.numHotseatRows;
         for (int rank = 0; rank < totalHotseatSlots; rank++) {
-=======
-        for (int rank = 0; rank < mDp.getHotseatProfile().getNumShownIcons(); rank++) {
->>>>>>> aosp/android17-release
             if (predictions.size() <= predictionIndex) continue;
 
             int cellX = mHotseat.getCellXFromOrder(rank);

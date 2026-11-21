@@ -12,8 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Modifications copyright 2021, Lawnchair
  */
 
 package com.android.launcher3.model;
@@ -167,8 +165,10 @@ public class AllAppsList {
         }
         if (loadIcon) {
             mIconCache.getTitleAndIcon(info, activityInfo, DEFAULT_LOOKUP_FLAG);
-            info.sectionName = mIndex.computeSectionName(info.title == null ? "" : info.title);
+            info.sectionName = mIndex.computeSectionName(
+                    info.title == null ? "" : info.title) /* Lawnchair: null-safe */;
         } else {
+            // Lawnchair: keep a label (and section) while the icon is not loaded yet
             try {
                 info.title = activityInfo != null ? activityInfo.getLabel() : "";
             } catch (Throwable t) {
@@ -181,43 +181,9 @@ public class AllAppsList {
         mDataChanged = true;
     }
 
-<<<<<<< HEAD
-    @Nullable
-    public AppInfo addPromiseApp(Context context, PackageInstallInfo installInfo) {
-        return addPromiseApp(context, installInfo, true);
-    }
-
-    @Nullable
-    public AppInfo addPromiseApp(
-            Context context, PackageInstallInfo installInfo, boolean loadIcon) {
-        // only if not yet installed
-        if (new ApplicationInfoWrapper(context, installInfo.packageName, installInfo.user)
-                .isInstalled()) {
-            return null;
-        }
-        AppInfo promiseAppInfo = new AppInfo(installInfo);
-
-        if (loadIcon) {
-            mIconCache.getTitleAndIcon(promiseAppInfo, promiseAppInfo.getMatchingLookupFlag());
-            promiseAppInfo.sectionName = mIndex.computeSectionName(
-                    promiseAppInfo.title == null ? "" : promiseAppInfo.title);
-        } else {
-            promiseAppInfo.title = "";
-        }
-
-        data.add(promiseAppInfo);
-        mDataChanged = true;
-
-        return promiseAppInfo;
-    }
-
     public void updateSectionName(AppInfo appInfo) {
-        appInfo.sectionName = mIndex.computeSectionName(appInfo.title == null ? "" : appInfo.title);
-
-=======
-    public void updateSectionName(AppInfo appInfo) {
-        appInfo.sectionName = mIndex.computeSectionName(appInfo.title);
->>>>>>> aosp/android17-release
+        appInfo.sectionName = mIndex.computeSectionName(
+                    appInfo.title == null ? "" : appInfo.title) /* Lawnchair: null-safe */;
     }
 
     /** Updates the given PackageInstallInfo's associated AppInfo's installation info. */
@@ -288,11 +254,13 @@ public class AllAppsList {
     public void updateIconsAndLabels(HashSet<String> packages, UserHandle user) {
         for (AppInfo info : data) {
             if (info.user.equals(user) && packages.contains(info.componentName.getPackageName())) {
+                // Lawnchair: only mark data changed when the label or section changed
                 CharSequence oldTitle = info.title;
                 String oldSectionName = info.sectionName;
                 mIconCache.updateTitleAndIcon(info);
-                info.sectionName = mIndex.computeSectionName(info.title == null ? "" : info.title);
-                if (!TextUtils.equals(oldTitle, info.title) 
+                info.sectionName = mIndex.computeSectionName(
+                    info.title == null ? "" : info.title) /* Lawnchair: null-safe */;
+                if (!TextUtils.equals(oldTitle, info.title)
                         || !TextUtils.equals(oldSectionName, info.sectionName)) {
                     mDataChanged = true;
                 }
@@ -330,38 +298,12 @@ public class AllAppsList {
                                 + ", user=" + user);
                     }
                 } else {
-<<<<<<< HEAD
-                    Intent launchIntent = AppInfo.makeLaunchIntent(info);
-
-                    mIconCache.getTitleAndIcon(applicationInfo, info, DEFAULT_LOOKUP_FLAG);
-                    applicationInfo.sectionName = mIndex.computeSectionName(
-                            applicationInfo.title == null ? "" : applicationInfo.title);
-                    applicationInfo.intent = launchIntent;
-                    AppInfo.updateRuntimeFlagsForActivityTarget(applicationInfo, info,
-                            userCache.getUserInfo(user), apiWrapper, pmHelper);
-                    mDataChanged = true;
-                }
-            }
-        } else {
-            // Remove all data for this package.
-            if (DEBUG) {
-                Log.w(TAG, "updatePackage: no Activities matched updated package,"
-                        + " removing any AppInfo with package=" + packageName
-                        + ", user=" + user);
-            }
-            for (int i = data.size() - 1; i >= 0; i--) {
-                final AppInfo applicationInfo = data.get(i);
-                if (user.equals(applicationInfo.user)
-                        && packageName.equals(applicationInfo.componentName.getPackageName())) {
-                    mIconCache.remove(applicationInfo.componentName, user);
-                    removeApp(i);
-=======
                     appInfo.intent = AppInfo.makeLaunchIntent(lai);
                     mIconCache.getTitleAndIcon(appInfo, lai, DEFAULT_LOOKUP_FLAG);
-                    appInfo.sectionName = mIndex.computeSectionName(appInfo.title);
+                    appInfo.sectionName = mIndex.computeSectionName(
+                    appInfo.title == null ? "" : appInfo.title) /* Lawnchair: null-safe */;
                     AppInfo.updateRuntimeFlagsForActivityTarget(appInfo, lai,
                             userCache.getUserInfo(user), apiWrapper, pmHelper, automationRepo);
->>>>>>> aosp/android17-release
                 }
                 mDataChanged = true;
             }

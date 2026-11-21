@@ -25,6 +25,7 @@ import android.provider.Settings
 import android.provider.Settings.Secure.USER_SETUP_COMPLETE
 import android.view.accessibility.AccessibilityManager
 import com.android.launcher3.R
+import com.android.launcher3.Utilities
 import com.android.launcher3.concurrent.annotations.LightweightBackground
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.taskbar.TaskbarManagerImpl
@@ -46,23 +47,29 @@ private val USER_SETUP_COMPLETE_URI = Settings.Secure.getUriFor(USER_SETUP_COMPL
  * home and overview are the same, we can control Launcher's or Taskbar's All Apps tray. If they are
  * not the same, but Taskbar is present, we can only control Taskbar's tray.
  */
-<<<<<<< HEAD
-class AllAppsActionManager(
-    private val context: Context,
-    private val bgExecutor: Executor,
-    private val quickstepKeyGestureEventsManager: QuickstepKeyGestureEventsManager?, // LC-Note: Nullable because this isn't available for U and lower
-    private val createAllAppsPendingIntent: () -> PendingIntent,
-=======
 @SysUIConnectionSingleton
 class AllAppsActionManager
 @Inject
 constructor(
     @ApplicationContext private val context: Context,
     @LightweightBackground private val bgExecutor: Executor,
-    private val quickstepKeyGestureEventsManager: QuickstepKeyGestureEventsManager,
+    // Lawnchair: lazy and only used on Android 16+, the class implements hidden
+    // KeyGestureEventHandler APIs that older platforms don't have (QuickSwitch compatibility)
+    private val lazyKeyGestureEventsManager: dagger.Lazy<QuickstepKeyGestureEventsManager>,
     private val allAppsIntentSenderProvider: Provider<TaskbarManagerImpl.AllAppsIntentSender>,
->>>>>>> aosp/android17-release
 ) {
+
+    private val quickstepKeyGestureEventsManager: QuickstepKeyGestureEventsManager?
+        get() =
+            if (Utilities.ATLEAST_BAKLAVA) {
+                try {
+                    lazyKeyGestureEventsManager.get()
+                } catch (t: Throwable) {
+                    null
+                }
+            } else {
+                null
+            }
 
     private var onSettingsChangeSafeCloseable: SafeCloseable? = null
 
@@ -115,28 +122,6 @@ constructor(
 
     @Volatile private var isUserUnlocked = false
 
-<<<<<<< HEAD
-        bgExecutor.execute {
-            val accessibilityManager =
-                context.getSystemService(AccessibilityManager::class.java) ?: return@execute
-            if (shouldRegisterAction) {
-                val allAppsPendingIntent = createAllAppsPendingIntent()
-                accessibilityManager.registerSystemAction(
-                    RemoteAction(
-                        Icon.createWithResource(context, R.drawable.ic_apps),
-                        context.getString(R.string.all_apps_label),
-                        context.getString(R.string.all_apps_label),
-                        allAppsPendingIntent,
-                    ),
-                    GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS,
-                )
-                quickstepKeyGestureEventsManager?.registerAllAppsKeyGestureEvent( // LC-Note: QuickSwitch compatibility!
-                    allAppsPendingIntent
-                )
-            } else {
-                accessibilityManager.unregisterSystemAction(GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS)
-                quickstepKeyGestureEventsManager?.unregisterAllAppsKeyGestureEvent() // LC-Note: QuickSwitch compatibility!
-=======
     fun onUserUnlocked() {
         isUserUnlocked = true
         updateSystemAction()
@@ -164,38 +149,26 @@ constructor(
                         ),
                         GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS,
                     )
-                    quickstepKeyGestureEventsManager.registerAllAppsKeyGestureEvent(
+                    quickstepKeyGestureEventsManager?.registerAllAppsKeyGestureEvent(
                         allAppsPendingIntent
                     )
                 } else {
                     accessibilityManager.unregisterSystemAction(
                         GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS
                     )
-                    quickstepKeyGestureEventsManager.unregisterAllAppsKeyGestureEvent()
+                    quickstepKeyGestureEventsManager?.unregisterAllAppsKeyGestureEvent()
                 }
->>>>>>> aosp/android17-release
             }
         }
     }
 
     fun onDestroy() {
-<<<<<<< HEAD
-        isActionRegistered = false
-        context
-            .getSystemService(AccessibilityManager::class.java)
-            ?.unregisterSystemAction(GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS)
-        quickstepKeyGestureEventsManager?.unregisterAllAppsKeyGestureEvent() // LC-Note: QuickSwitch compatibility!
-        SettingsCache.INSTANCE[context].unregister(
-            USER_SETUP_COMPLETE_URI,
-            onSettingsChangeListener,
-        )
-=======
         synchronized(this) {
             isActionRegistered = false
             context
                 .getSystemService(AccessibilityManager::class.java)
                 ?.unregisterSystemAction(GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS)
-            quickstepKeyGestureEventsManager.unregisterAllAppsKeyGestureEvent()
+            quickstepKeyGestureEventsManager?.unregisterAllAppsKeyGestureEvent()
             onSettingsChangeSafeCloseable?.close()
             onSettingsChangeSafeCloseable = null
         }
@@ -209,6 +182,5 @@ constructor(
         pw.println("\tisUserSetupComplete=$isUserSetupComplete")
         pw.println("\tisActionRegistered=$isActionRegistered")
         pw.println("\tisUserUnlocked=$isUserUnlocked")
->>>>>>> aosp/android17-release
     }
 }

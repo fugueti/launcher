@@ -20,13 +20,9 @@ import static android.provider.Settings.Global.DEVELOPMENT_SETTINGS_ENABLED;
 
 import static androidx.preference.PreferenceFragmentCompat.ARG_PREFERENCE_ROOT;
 
-<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.IS_DEBUG_DEVICE;
 import static com.android.launcher3.BuildConfigs.IS_STUDIO_BUILD;
 import static com.android.launcher3.BuildConfigs.NOTIFICATION_DOTS_ENABLED;
-=======
-import static com.android.launcher3.BuildConfig.IS_STUDIO_BUILD;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_MULTI_DISPLAY;
 import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
@@ -184,13 +180,7 @@ public class SettingsActivity extends FragmentActivity
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
-<<<<<<< HEAD
             if (false) {
-=======
-            if (BuildConfig.IS_DEBUG_DEVICE) {
-                // Query DEVELOPMENT_SETTINGS_ENABLED and recreate activity if such setting
-                // has changed.
->>>>>>> aosp/android17-release
                 Uri devUri = Settings.Global.getUriFor(DEVELOPMENT_SETTINGS_ENABLED);
                 SettingsCache settingsCache = SettingsCache.INSTANCE.get(getContext());
                 mDeveloperOptionsEnabled = settingsCache.getValue(devUri);
@@ -312,22 +302,7 @@ public class SettingsActivity extends FragmentActivity
             LauncherDisplayInfo info = DisplayController.INSTANCE.get(getContext()).getInfo();
             switch (preference.getKey()) {
                 case NOTIFICATION_DOTS_PREFERENCE_KEY:
-<<<<<<< HEAD
                     return NOTIFICATION_DOTS_ENABLED;
-                case ALLOW_ROTATION_PREFERENCE_KEY:
-                    if (Flags.oneGridSpecs()) {
-                        return false;
-                    }
-                    if (info.isTablet(info.realBounds)) {
-                        // Launcher supports rotation by default. No need to show this setting.
-                        return false;
-                    }
-                    // Initialize the UI once
-                    preference.setDefaultValue(RotationHelper.getAllowRotationDefaultValue(info));
-                    return true;
-=======
-                    return BuildConfig.NOTIFICATION_DOTS_ENABLED;
->>>>>>> aosp/android17-release
                 case DEVELOPER_OPTIONS_KEY:
                     if (IS_STUDIO_BUILD) {
                         preference.setOrder(0);

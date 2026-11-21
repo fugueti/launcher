@@ -15,13 +15,9 @@
  */
 package com.android.launcher3.graphics;
 
-<<<<<<< HEAD
 import static com.android.launcher3.BuildConfigs.IS_DEBUG_DEVICE;
-=======
-import static com.android.launcher3.BuildConfig.IS_DEBUG_DEVICE;
 import static com.android.launcher3.graphics.ThemeManager.PREF_ICON_SHAPE;
 import static com.android.launcher3.graphics.theme.ThemePreference.MONO_THEME_VALUE;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.preview.PreviewSurfaceRenderer.KEY_BITMAP_GENERATION_DELAY_MS;
 import static com.android.launcher3.preview.PreviewSurfaceRenderer.KEY_VIEW_HEIGHT;
 import static com.android.launcher3.preview.PreviewSurfaceRenderer.KEY_VIEW_WIDTH;
@@ -307,18 +303,6 @@ public class GridCustomizationsProxy implements ProxyProvider {
                 if (match == null) {
                     return UPDATE_SETTING_FAILURE;
                 }
-<<<<<<< HEAD
-                mIdp.setCurrentGrid(mContext, gridName);
-
-                LauncherModel launcherModel = LauncherAppState.getInstance(mContext).getModel();
-                if (Flags.newCustomizationPickerUi() && launcherModel.isActive()) {
-                    try {
-                        // Wait for device profile to be fully reloaded and applied to the launcher
-                        loadModelSync(launcherModel);
-                    } catch (ExecutionException | InterruptedException e) {
-                        Log.e(TAG, "Fail to load model", e);
-                    }
-=======
                 mIdp.setCurrentGrid(gridName);
 
                 LauncherModel launcherModel = LauncherAppState.getInstance(mContext).getModel();
@@ -327,7 +311,6 @@ public class GridCustomizationsProxy implements ProxyProvider {
                     launcherModel.reloadIfActive("KEY_DEFAULT_GRID").toCompletableFuture().get();
                 } catch (ExecutionException | InterruptedException e) {
                     Log.e(TAG, "Fail to load model", e);
->>>>>>> aosp/android17-release
                 }
                 return 1;
             }
@@ -356,26 +339,6 @@ public class GridCustomizationsProxy implements ProxyProvider {
         }
     }
 
-<<<<<<< HEAD
-    /**
-     * Loads the model in memory synchronously
-     */
-    private void loadModelSync(LauncherModel launcherModel) throws ExecutionException,
-            InterruptedException {
-        Preconditions.assertNonUiThread();
-        BgDataModel.Callbacks emptyCallbacks = new BgDataModel.Callbacks() { };
-        MAIN_EXECUTOR.submit(
-                () -> launcherModel.addCallbacksAndLoad(emptyCallbacks)
-        ).get();
-
-        Executors.MODEL_EXECUTOR.submit(() -> { }).get();
-        MAIN_EXECUTOR.submit(
-                () -> launcherModel.removeCallbacks(emptyCallbacks)
-        ).get();
-    }
-
-=======
->>>>>>> aosp/android17-release
     @Override
     public Bundle call(@NonNull String method, String arg, Bundle extras) {
         return switch (method) {
