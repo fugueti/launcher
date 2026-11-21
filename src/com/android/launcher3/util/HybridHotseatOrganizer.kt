@@ -23,6 +23,7 @@ import android.content.ComponentName
 import android.os.UserHandle
 import android.view.View
 import android.view.ViewGroup.OnHierarchyChangeListener
+import com.android.launcher3.CellLayout
 import com.android.launcher3.DragSource
 import com.android.launcher3.DropTarget.DragObject
 import com.android.launcher3.LauncherAnimUtils.getScaleProperty
@@ -55,7 +56,10 @@ class HybridHotseatOrganizer(
     private val hotseat = workspace.hotseat
     private var pauseFlags = 0
 
-    private val outlineDrawings = mutableListOf<PredictedIconOutlineDrawing>()
+    // Lawnchair: the dock can have several pages and rows; outlines live on their page
+    private class OutlineOnPage(val page: CellLayout, val drawing: PredictedIconOutlineDrawing)
+
+    private val outlineDrawings = mutableListOf<OutlineOnPage>()
     private val mUpdateFillIfNotLoading = Runnable { this.updateFillIfNotLoading() }
     private var iconRemoveAnimators: AnimatorSet? = null
 
@@ -66,7 +70,41 @@ class HybridHotseatOrganizer(
         }
 
     init {
-        hotseat.shortcutsAndWidgets.setOnHierarchyChangeListener(this)
+        attachPageListeners()
+        hotseat.pagedView.setOnDockPageChangeListener {
+            if (pauseFlags == 0 && !loadingCheck.invoke()) {
+                fillGapsWithPrediction(true)
+            }
+        }
+    }
+
+    /** Lawnchair: listens to every dock page; call again after the pages change. */
+    fun attachPageListeners() {
+        for (page in hotseat.pageLayouts) {
+            page.shortcutsAndWidgets.setOnHierarchyChangeListener(this)
+        }
+    }
+
+    /** Lawnchair: number of slots on one dock page (columns × rows). */
+    private val slotsPerPage: Int
+        get() =
+            activity.getDeviceProfile().let {
+                it.getHotseatProfile().numShownIcons * it.numHotseatRows
+            }
+
+    private fun getPageForRank(rank: Int): CellLayout? =
+        hotseat.getPageAt(hotseat.getPageFromOrder(rank))
+
+    /** Returns the view at [rank] on its dock page. */
+    fun getChildAtRank(rank: Int): View? =
+        getPageForRank(rank)
+            ?.getChildAt(hotseat.getCellXFromOrder(rank), hotseat.getCellYFromOrder(rank))
+
+    private fun removeFromItsPage(view: View) {
+        // The parent is the page's ShortcutAndWidgetContainer; remove through the CellLayout.
+        val container = view.parent as? android.view.ViewGroup ?: return
+        val cellLayout = container.parent
+        if (cellLayout is CellLayout) cellLayout.removeView(view) else container.removeView(view)
     }
 
     override fun onChildViewAdded(parent: View?, child: View?) {
@@ -126,18 +164,21 @@ class HybridHotseatOrganizer(
             return
         }
 
-        val hotseatCount = activity.getDeviceProfile().getHotseatProfile().numShownIcons
+        // Lawnchair: dock pages can be recreated (grid or page count changes)
+        attachPageListeners()
+        val hotseatCount = slotsPerPage
+        // Lawnchair: predictions only fill the visible dock page
+        val startRank = maxOf(0, hotseat.pagedView.nextPage) * hotseatCount
 
         pauseFlags = pauseFlags or FLAG_FILL_IN_PROGRESS
-        for (rank in 0..<hotseatCount) {
-            val child =
-                hotseat.getChildAt(hotseat.getCellXFromOrder(rank), hotseat.getCellYFromOrder(rank))
+        for (rank in startRank..<(startRank + hotseatCount)) {
+            val child = getChildAtRank(rank)
 
             if (child != null && !isPredictedIcon(child)) continue
 
             if (predictedItems.size <= predictionIndex) {
                 // Remove predicted apps from the past
-                if (isPredictedIcon(child)) hotseat.removeView(child)
+                if (child != null && isPredictedIcon(child)) removeFromItsPage(child)
                 continue
             }
             val predictedItem = predictedItems[predictionIndex++] as WorkspaceItemInfo
@@ -193,27 +234,26 @@ class HybridHotseatOrganizer(
 
     private fun removeOutlineDrawings() {
         if (outlineDrawings.isEmpty()) return
-        for (outlineDrawing in outlineDrawings) {
-            hotseat.removeDelegatedCellDrawing(outlineDrawing)
+        for (outline in outlineDrawings) {
+            outline.page.removeDelegatedCellDrawing(outline.drawing)
+            outline.page.invalidate()
         }
-        hotseat.invalidate()
         outlineDrawings.clear()
     }
 
     fun getPredictedIcons(): List<PredictedAppIcon> = buildList {
-        val vg = hotseat.shortcutsAndWidgets
-        for (i in 0..<vg.childCount) {
-            val child = vg.getChildAt(i)
-            if (isPredictedIcon(child)) {
-                add(child as PredictedAppIcon)
+        for (page in hotseat.pageLayouts) {
+            val vg = page.shortcutsAndWidgets
+            for (i in 0..<vg.childCount) {
+                val child = vg.getChildAt(i)
+                if (isPredictedIcon(child)) {
+                    add(child as PredictedAppIcon)
+                }
             }
         }
     }
 
-    private fun removePredictedApps(
-        outlines: MutableList<PredictedIconOutlineDrawing>,
-        dragObject: DragObject,
-    ) {
+    private fun removePredictedApps(outlines: MutableList<OutlineOnPage>, dragObject: DragObject) {
         iconRemoveAnimators?.end()
         val anim = AnimatorSet()
         removeOutlineDrawings()
@@ -226,11 +266,17 @@ class HybridHotseatOrganizer(
                 continue
             }
             val rank = (icon.tag as WorkspaceItemInfo).rank
+            val page = (icon.parent as? android.view.View)?.parent as? CellLayout
+                ?: getPageForRank(rank)
+                ?: continue
             outlines.add(
-                PredictedIconOutlineDrawing(
-                    hotseat.getCellXFromOrder(rank),
-                    hotseat.getCellYFromOrder(rank),
-                    icon,
+                OutlineOnPage(
+                    page,
+                    PredictedIconOutlineDrawing(
+                        hotseat.getCellXFromOrder(rank),
+                        hotseat.getCellYFromOrder(rank),
+                        icon,
+                    ),
                 )
             )
             icon.isEnabled = false
@@ -256,7 +302,7 @@ class HybridHotseatOrganizer(
      */
     fun removeIconWithoutNotify(icon: PredictedAppIcon) {
         pauseFlags = pauseFlags or FLAG_REMOVING_PREDICTED_ICON
-        hotseat.removeView(icon)
+        removeFromItsPage(icon)
         pauseFlags = pauseFlags and FLAG_REMOVING_PREDICTED_ICON.inv()
     }
 
@@ -266,11 +312,11 @@ class HybridHotseatOrganizer(
         }
         removePredictedApps(outlineDrawings, dragObject)
         if (outlineDrawings.isEmpty()) return
-        for (outlineDrawing in outlineDrawings) {
-            hotseat.addDelegatedCellDrawing(outlineDrawing)
+        for (outline in outlineDrawings) {
+            outline.page.addDelegatedCellDrawing(outline.drawing)
+            outline.page.invalidate()
         }
         pauseFlags = pauseFlags or FLAG_DRAG_IN_PROGRESS
-        hotseat.invalidate()
     }
 
     override fun onDragEnd() {

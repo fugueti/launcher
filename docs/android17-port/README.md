@@ -20,7 +20,7 @@ Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 - [ ] `src/com/android/launcher3/InvariantDeviceProfile.java` (189 lines of ours)
 - [x] `src/com/android/launcher3/BubbleTextView.java` (168 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/util/AsyncClockEventDelegate.java` (164 lines of ours)
-- [ ] `quickstep/src/com/android/launcher3/hybridhotseat/HotseatPredictionController.java` (154 lines of ours)
+- [x] `quickstep/src/com/android/launcher3/hybridhotseat/HotseatPredictionController.java` (154 lines of ours)
 - [x] `quickstep/src/com/android/quickstep/SystemUiProxy.kt` (153 lines of ours)
 - [x] `src/com/android/launcher3/folder/PreviewItemManager.java` (141 lines of ours)
 - [x] `src/com/android/launcher3/folder/PreviewBackground.java` (140 lines of ours)
