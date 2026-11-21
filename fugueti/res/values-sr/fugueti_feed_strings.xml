@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Фид је укључен, али апликација Fugueti Feed није инсталирана. Додирните да је преузмете.</string>
+    <string name="fg_restart_launcher">Рестартуј Fugueti</string>
+    <string name="fg_managed_by_fugueti">Управља Fugueti</string>
+</resources>

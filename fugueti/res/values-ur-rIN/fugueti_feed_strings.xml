@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">فیڈ آن ہے، لیکن Fugueti Feed ایپ انسٹال نہیں ہے۔ ڈاؤن لوڈ کرنے کے لیے تھپتھپائیں۔</string>
+    <string name="fg_restart_launcher">Fugueti کو دوبارہ شروع کریں</string>
+    <string name="fg_managed_by_fugueti">Fugueti کے زیر انتظام</string>
+</resources>

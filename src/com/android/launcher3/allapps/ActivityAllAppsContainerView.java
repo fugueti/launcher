@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright (C) 2022 The Android Open Source Project
  *
@@ -315,6 +316,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         mBottomSheetBackground = findViewById(R.id.bottom_sheet_background);
         mBottomSheetHandleArea = findViewById(R.id.bottom_sheet_handle_area);
         mBottomSheetHandle = findViewById(R.id.bottom_sheet_handle);
+        // Fugueti: no drag handle pill on the app drawer (the handle area still takes the drag)
+        if (mBottomSheetHandle != null) {
+            mBottomSheetHandle.setVisibility(View.GONE);
+        }
         mSearchRecyclerView = findViewById(R.id.search_results_list_view);
         mFastScroller = findViewById(R.id.fast_scroller);
         mFastScroller.setPopupView(findViewById(R.id.fast_scroller_popup));

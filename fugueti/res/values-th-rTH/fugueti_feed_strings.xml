@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">ฟีดเปิดอยู่ แต่ยังไม่ได้ติดตั้งแอป Fugueti Feed แตะเพื่อดาวน์โหลด</string>
+    <string name="fg_restart_launcher">เริ่มต้น Fugueti ใหม่</string>
+    <string name="fg_managed_by_fugueti">จัดการโดย Fugueti</string>
+</resources>

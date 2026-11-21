@@ -1,0 +1,91 @@
+name: Release
+
+# Builds the signed release APK and publishes a GitHub release.
+# Trigger: push a tag like v1.0.1, or run it by hand from the Actions tab.
+# Needs repository secrets: KEYSTORE_BASE64 (base64 of the .jks), STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create/publish (e.g. v0.0.2)'
+        required: true
+      retag:
+        description: 'Delete a leftover tag with this name first (only if it has no release)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install Android SDK packages
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.2" "build-tools;37.0.0" > /dev/null
+
+      - name: Write signing config
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Signing secrets are missing (KEYSTORE_BASE64, STORE_PASSWORD, KEY_ALIAS, KEY_PASSWORD)."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/release.jks"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > keystore.properties
+
+      - name: Unit tests (gesture engine)
+        run: ./gradlew testLawnWithQuickstepGithubDebugUnitTest --tests 'app.fugueti.gestures.*'
+
+      - name: Build release APK
+        run: ./gradlew assembleLawnWithQuickstepGithubRelease
+
+      - name: Remove leftover tag
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.retag == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            echo "::error::Release $TAG exists; delete it first."
+            exit 1
+          fi
+          gh api -X DELETE "repos/$GITHUB_REPOSITORY/git/refs/tags/$TAG" || echo "No tag $TAG to remove"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd build/outputs/apk/lawnWithQuickstepGithub/release
+          sha256sum *.apk > SHA256SUMS.txt
+          # Tags with a suffix (v16.1.0-beta.1) are pre-releases; plain ones (v16.0.1) are stable.
+          PRERELEASE=""
+          case "$TAG" in *-*) PRERELEASE="--prerelease" ;; esac
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" \
+            --title "Fugueti ${TAG#v}" --generate-notes $PRERELEASE \
+            *.apk SHA256SUMS.txt

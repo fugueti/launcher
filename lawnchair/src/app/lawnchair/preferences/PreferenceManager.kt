@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2022, Lawnchair
  *
@@ -95,7 +96,8 @@ class PreferenceManager @Inject constructor(
     val calculatedGridSpec = when {
         // This grid configuration is perfect for Phone, tested against Pixel 7,
         // alternative dense configuration can be 5x5x7
-        isPhone -> LayoutConfig(4, 4, 6)
+        // Fugueti: 7 columns x 12 rows and 7 dock icons by default on phones
+        isPhone -> LayoutConfig(7, 7, 12)
 
         // This grid configuration is perfect for Tablet, tested against Pixel Tablet
         isTablet -> LayoutConfig(6, 6, 5)
@@ -110,7 +112,7 @@ class PreferenceManager @Inject constructor(
         isDesktop -> LayoutConfig(6, 6, 5)
 
         // This grid configuration is the fallback for all devices type, this shouldn't be possible
-        else -> LayoutConfig(4, 4, 7)
+        else -> LayoutConfig(7, 7, 12)
     }
 
     val hotseatColumns = IntPref("pref_hotseatColumns", calculatedGridSpec.hotseatColumns, reloadGrid)

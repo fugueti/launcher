@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2021, Lawnchair
  *

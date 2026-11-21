@@ -13,6 +13,10 @@ val gestureHandlerOptions = listOf(
     GestureHandlerOption.OpenAppSearch,
     GestureHandlerOption.OpenSearch,
     GestureHandlerOption.OpenApp,
+    // Fugueti actions
+    GestureHandlerOption.OpenShortcut,
+    GestureHandlerOption.OpenActivity,
+    GestureHandlerOption.OpenIntent,
     GestureHandlerOption.OpenAssistant,
 )
 

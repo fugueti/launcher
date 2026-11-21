@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning and restart (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Feed aktif, tetapi aplikasi Fugueti Feed belum terpasang. Ketuk untuk mengunduhnya.</string>
+    <string name="fg_restart_launcher">Muat ulang Fugueti</string>
+</resources>

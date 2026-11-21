@@ -1,6 +1,8 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.ui.preferences.components.controls
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Launch
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -51,9 +53,21 @@ fun WarningPreference(
     ),
     iconTint: Color = MaterialTheme.colorScheme.error,
     textColor: Color = MaterialTheme.colorScheme.error,
+    // Fugueti: tappable warning (shows an "open" icon at the end)
+    onClick: (() -> Unit)? = null,
 ) {
     PreferenceTemplate(
         modifier = modifier,
+        onClick = onClick,
+        endWidget = onClick?.let {
+            {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Rounded.Launch,
+                    tint = iconTint,
+                    contentDescription = null,
+                )
+            }
+        },
         title = {
             ProvideDescriptionTextStyle {
                 Text(

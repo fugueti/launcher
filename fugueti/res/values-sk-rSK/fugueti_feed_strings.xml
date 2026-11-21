@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Kanál je zapnutý, ale aplikácia Fugueti Feed nie je nainštalovaná. Klepnutím ju stiahnete.</string>
+    <string name="fg_restart_launcher">Reštartovať Fugueti</string>
+    <string name="fg_managed_by_fugueti">Spravované Fugueti</string>
+</resources>

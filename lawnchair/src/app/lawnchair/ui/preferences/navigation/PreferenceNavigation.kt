@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.ui.preferences.navigation
 
 import android.content.Intent
@@ -198,6 +199,10 @@ fun PreferenceNavigation(
             deepLinks = getDeepLink(Gestures),
         ) { GesturePreferences() }
         composable<GesturesPickApp> { PickAppForGesture() }
+        composable<GesturesPickShortcut> { app.fugueti.gestures.ui.PickShortcutForGesture() }
+        composable<GesturesPickActivity> { app.fugueti.gestures.ui.PickActivityForGesture() }
+        composable<GesturesEnterIntent> { app.fugueti.gestures.ui.EnterIntentForGesture() }
+        composable<GesturesTestPad> { app.fugueti.gestures.ui.GestureTestPadScreen() }
 
         composable<Quickstep>(
             deepLinks = getDeepLink(Quickstep),

@@ -1,4 +1,7 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.backup
+
+import app.fugueti.nova.NovaGestureImporter
 
 import android.content.Context
 import android.content.Intent
@@ -78,6 +81,8 @@ class NovaBackupConverter(
         val hotseatCount: Int?,
         val appCount: Int,
         val widgetCount: Int,
+        // Fugueti: home screen gestures that will be imported from nova.xml
+        val gestureCount: Int = 0,
         val folderCount: Int,
         val shortcutCount: Int,
         val iconPackPackage: String?,
@@ -127,6 +132,7 @@ class NovaBackupConverter(
                 widgetCount = widgets,
                 folderCount = folders,
                 shortcutCount = shortcuts,
+                gestureCount = NovaGestureImporter.parse(xmlFile).size,
                 iconPackPackage = novaConfig.iconPackPackage,
                 iconPackLabel = novaConfig.iconPackPackage?.let { packageName ->
                     resolveIconPackLabel(packageName)
@@ -142,7 +148,13 @@ class NovaBackupConverter(
         tempDir.mkdirs()
 
         try {
-            extractFromZip(uri, tempDir, setOf(NOVA_DB))
+            extractFromZip(uri, tempDir, setOf(NOVA_DB, NOVA_XML))
+
+            // Fugueti: bring Nova's home screen gestures along
+            val novaXmlFile = File(tempDir, NOVA_XML)
+            if (novaXmlFile.exists()) {
+                NovaGestureImporter.apply(context, NovaGestureImporter.parse(novaXmlFile))
+            }
 
             val novaDbFile = File(tempDir, NOVA_DB)
             require(novaDbFile.exists()) { "Missing $NOVA_DB" }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">ஃபீட் இயக்கத்தில் உள்ளது, ஆனால் Fugueti Feed ஆப்ஸ் நிறுவப்படவில்லை. பதிவிறக்க தட்டவும்.</string>
+    <string name="fg_restart_launcher">Fugueti-ஐ மறுதொடக்கு</string>
+    <string name="fg_managed_by_fugueti">Fugueti மூலம் நிர்வகிக்கப்படுகிறது</string>
+</resources>

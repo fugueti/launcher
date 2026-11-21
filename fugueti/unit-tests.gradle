@@ -1,0 +1,15 @@
+// Fugueti: the Refine plugin rewrites every jar on the classpath, which breaks the
+// signature of the signed jars Robolectric loads (Conscrypt, BouncyCastle). Unit tests get the
+// pristine jars instead. Set after evaluation (AGP fills the classpath late) and without task
+// actions, so it also works with the configuration cache.
+def signedJars = project.configurations.detachedConfiguration(
+    project.dependencies.create("org.conscrypt:conscrypt-openjdk-uber:2.5.2"),
+    project.dependencies.create("org.bouncycastle:bcprov-jdk18on:1.81"),
+)
+project.afterEvaluate {
+    project.tasks.withType(Test).configureEach { Test t ->
+        t.classpath = t.classpath.filter {
+            !it.name.startsWith("conscrypt-openjdk-uber") && !it.name.startsWith("bcprov-jdk18on")
+        } + signedJars
+    }
+}

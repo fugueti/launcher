@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): "Managed by Fugueti" label.
 package app.lawnchair.theme.color
 
 import androidx.annotation.StringRes
@@ -9,7 +10,7 @@ enum class ColorMode(
     @StringRes val labelResourceId: Int,
 ) {
     AUTO(
-        labelResourceId = R.string.managed_by_lawnchair,
+        labelResourceId = R.string.fg_managed_by_fugueti,
     ),
     LIGHT(
         labelResourceId = R.string.color_light,

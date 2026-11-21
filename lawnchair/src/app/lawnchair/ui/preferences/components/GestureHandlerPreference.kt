@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.ui.preferences.components
 
 import android.R as AndroidR
@@ -47,6 +48,8 @@ fun GestureHandlerPreference(
     adapter: PreferenceAdapter<GestureHandlerConfig>,
     label: String,
     modifier: Modifier = Modifier,
+    // Fugueti: optional note shown under the current action
+    hint: String? = null,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -69,7 +72,9 @@ fun GestureHandlerPreference(
     PreferenceTemplate(
         title = { Text(text = label) },
         modifier = modifier,
-        description = { Text(text = currentConfig.getLabel(context)) },
+        description = {
+            Text(text = currentConfig.getLabel(context) + if (hint != null) "\n$hint" else "")
+        },
         onClick = {
             mMSDLPlayerWrapper.playToken(MSDLToken.TAP_MEDIUM_EMPHASIS)
             bottomSheetHandler.show {
@@ -89,7 +94,7 @@ fun GestureHandlerPreference(
                             if (index > 0) {
                                 PreferenceDivider(startIndent = 40.dp)
                             }
-                            val selected = currentConfig::class.java == option.configClass
+                            val selected = option.matches(currentConfig)
                             PreferenceTemplate(
                                 title = { Text(option.getLabel(context)) },
                                 onClick = {

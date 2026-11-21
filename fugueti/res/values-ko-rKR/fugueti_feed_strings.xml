@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">피드가 켜져 있지만 Fugueti Feed 앱이 설치되어 있지 않습니다. 탭하여 다운로드하세요.</string>
+    <string name="fg_restart_launcher">Fugueti 다시 시작</string>
+    <string name="fg_managed_by_fugueti">Fugueti에서 관리</string>
+</resources>

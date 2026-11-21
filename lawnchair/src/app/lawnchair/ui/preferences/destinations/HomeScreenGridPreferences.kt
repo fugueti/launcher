@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.ui.preferences.destinations
 
 import android.content.res.Configuration
@@ -84,7 +85,7 @@ fun HomeScreenGridPreferences(
             }
         }
 
-        val maxGridSize = if (increaseMaxGridSize.state.value) 20 else 10
+        val maxGridSize = if (increaseMaxGridSize.state.value) 20 else 12 // Fugueti: 12 fits the 7x12 default
 
         BoxWithConstraints(
             modifier = Modifier

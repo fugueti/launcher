@@ -1,5 +1,7 @@
 package app.lawnchair.qsb
 
+import android.speech.RecognizerIntent
+import android.provider.Settings
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -228,6 +230,12 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             provider: QsbSearchProvider,
             context: Context,
         ): Intent? {
+            // Fugueti: on recent Android versions with Gemini as the assistant, the Google app
+            // ignores ACTION_VOICE_COMMAND (the mic only flashes, upstream issue #7444). Prefer the
+            // device's default assistant, then Google voice search, then the old intent.
+            if (provider == Google) {
+                googleVoiceIntents(context).firstOrNull { resolveIntent(context, it) }?.let { return it }
+            }
             val intent = if (provider.supportVoiceIntent) provider.createVoiceIntent() else null
 
             return if (intent == null || !resolveIntent(context, intent)) {
@@ -235,6 +243,21 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
             } else {
                 intent
             }
+        }
+
+        /** Fugueti: voice intents for the Google provider, most specific first. */
+        private fun googleVoiceIntents(context: Context): List<Intent> {
+            val flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            // Package of the default digital assistant (for example Gemini), when readable.
+            val assistantPackage = runCatching {
+                Settings.Secure.getString(context.contentResolver, "assistant")
+                    ?.let { ComponentName.unflattenFromString(it)?.packageName }
+            }.getOrNull()
+            return listOfNotNull(
+                assistantPackage?.let { Intent(Intent.ACTION_VOICE_ASSIST).setPackage(it).addFlags(flags) },
+                Intent(Intent.ACTION_VOICE_ASSIST).setPackage(Google.packageName).addFlags(flags),
+                Intent(RecognizerIntent.ACTION_WEB_SEARCH).setPackage(Google.packageName).addFlags(flags),
+            )
         }
 
         fun getLensIntent(context: Context): Intent? {

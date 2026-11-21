@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.backup.ui
 
 import android.app.Activity
@@ -130,6 +131,8 @@ private fun BackupInfoGroup(info: NovaBackupInfo) {
         BackupInfoIntPreference(R.string.nova_widget_label, info.widgetCount)
         BackupInfoIntPreference(R.string.nova_folder_label, info.folderCount)
         BackupInfoIntPreference(R.string.nova_shortcut_label, info.shortcutCount)
+        // Fugueti: gestures imported from Nova
+        BackupInfoIntPreference(R.string.fg_nova_gestures_label, info.gestureCount)
         BackupInfoStringPreference(R.string.nova_icon_pack_label, info.iconPackLabel)
     }
 }

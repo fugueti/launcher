@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): "Managed by Fugueti" label.
 package app.lawnchair.theme.color
 
 import android.graphics.Color
@@ -65,7 +66,7 @@ sealed class ColorOption {
 
         override val colorPreferenceEntry = ColorPreferenceEntry<ColorOption>(
             this,
-            { stringResource(id = R.string.managed_by_lawnchair) },
+            { stringResource(id = R.string.fg_managed_by_fugueti) },
             { 0 },
         )
 

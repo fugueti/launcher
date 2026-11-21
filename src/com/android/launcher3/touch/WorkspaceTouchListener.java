@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright (C) 2018 The Android Open Source Project
  *
@@ -101,6 +102,12 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
         int action = ev.getActionMasked();
         if (action == ACTION_DOWN) {
             mDoubleTapPending = false;
+            // Fugueti: tell the gesture engine this touch landed on empty workspace. This must
+            // happen before the GestureDetector call below: it reports a double tap on the second
+            // ACTION_DOWN, and the early return that follows would skip recording that second tap,
+            // so double tap gestures would never see both taps on empty space.
+            ((LawnchairLauncher) mLauncher).getGestureController()
+                    .noteEmptySpaceDown(ev.getEventTime());
         }
 
         mGestureDetector.onTouchEvent(ev);
@@ -259,10 +266,9 @@ public class WorkspaceTouchListener extends GestureDetector.SimpleOnGestureListe
 
     @Override
     public boolean onDoubleTap(MotionEvent event) {
+        // Fugueti: double taps are recognized by GestureTouchController now;
+        // keep swallowing the rest of this touch so it can't turn into a long press.
         mDoubleTapPending = true;
-        Context context = mWorkspace.getContext();
-        LawnchairLauncher launcher = Launcher.fromContext(context);
-        launcher.getGestureController().onDoubleTap();
         return true;
     }
 }

@@ -1,5 +1,6 @@
 package app.lawnchair.ui.preferences.about
 
+import com.android.launcher3.BuildConfig
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.clickable
@@ -178,7 +179,7 @@ private fun CommitItem(
 }
 
 private fun openCommitInBrowser(context: Context, commitSha: String) {
-    val commitUrl = "https://github.com/LawnchairLauncher/lawnchair/commit/$commitSha"
+    val commitUrl = "https://github.com/${BuildConfig.GITHUB_REPO}/commit/$commitSha"
     val intent = Intent(Intent.ACTION_VIEW, commitUrl.toUri())
     context.startActivity(intent)
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Sklaidos kanalas įjungtas, bet programa „Fugueti Feed“ neįdiegta. Palieskite, kad atsisiųstumėte.</string>
+    <string name="fg_restart_launcher">Iš naujo paleisti Fugueti</string>
+    <string name="fg_managed_by_fugueti">Valdoma „Fugueti“</string>
+</resources>

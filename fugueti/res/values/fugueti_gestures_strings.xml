@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings (GPL-3.0-or-later). English is the default; Portuguese lives in values-pt-rBR and values-pt. -->
+<resources>
+    <string name="fg_gesture_double_tap_swipe_up">Double tap and swipe up</string>
+    <string name="fg_gesture_double_tap_swipe_down">Double tap and swipe down</string>
+    <string name="fg_gesture_two_finger_swipe_up">Two finger swipe up</string>
+    <string name="fg_gesture_two_finger_swipe_down">Two finger swipe down</string>
+    <string name="fg_gesture_pinch_in">Pinch in</string>
+    <string name="fg_gesture_pinch_out">Pinch out</string>
+    <string name="fg_gesture_rotate_cw">Rotate clockwise</string>
+    <string name="fg_gesture_rotate_ccw">Rotate counterclockwise</string>
+
+    <string name="fg_group_one_finger">One finger</string>
+    <string name="fg_group_double_tap">Double tap</string>
+    <string name="fg_group_two_fingers">Two fingers</string>
+    <string name="fg_group_buttons">Buttons</string>
+    <string name="fg_group_options">Options</string>
+
+    <string name="fg_hint_swipe_left">Only on the last home screen page</string>
+    <string name="fg_hint_swipe_right">Only on the first home screen page</string>
+
+    <string name="fg_action_open_shortcut_option">Open app shortcut</string>
+    <string name="fg_action_open_activity_option">Open activity</string>
+    <string name="fg_action_open_activity_config">Open %1$s</string>
+    <string name="fg_action_open_intent_option">Launch intent</string>
+    <string name="fg_action_open_intent_config">Intent: %1$s</string>
+
+    <string name="fg_pick_shortcut">Pick shortcut</string>
+    <string name="fg_pick_activity">Pick activity</string>
+    <string name="fg_no_shortcuts">This app has no shortcuts</string>
+    <string name="fg_no_activities">This app has no activities that can be opened</string>
+
+    <string name="fg_intent_title">Launch intent</string>
+    <string name="fg_intent_label">Name</string>
+    <string name="fg_intent_uri">Intent URI</string>
+    <string name="fg_intent_help">Examples: https://example.com, tel:5511999999999, geo:0,0?q=coffee or intent:#Intent;action=android.settings.WIFI_SETTINGS;end</string>
+    <string name="fg_intent_invalid">No installed app can open this intent</string>
+    <string name="fg_intent_try">Try</string>
+    <string name="fg_intent_save">Save</string>
+
+    <string name="fg_haptics_label">Vibrate on gesture</string>
+    <string name="fg_haptics_description">Short vibration when a gesture runs its action</string>
+    <string name="fg_sensitivity_label">Gesture sensitivity</string>
+    <string name="fg_sensitivity_low">Low (needs bigger movements)</string>
+    <string name="fg_sensitivity_medium">Medium</string>
+    <string name="fg_sensitivity_high">High (small movements are enough)</string>
+
+    <string name="fg_test_pad_label">Test gestures</string>
+    <string name="fg_test_pad_description">Try any gesture and see how it is recognized, without running the action</string>
+    <string name="fg_test_pad_hint">Make a gesture anywhere in this area</string>
+    <string name="fg_test_pad_result">%1$s → %2$s</string>
+    <string name="fg_test_pad_none">Not recognized, try a longer or faster movement</string>
+
+    <string name="fg_a11y_run_gesture">Run gesture %1$s: %2$s</string>
+
+    <string name="fg_error_no_activity">No app can handle this action</string>
+    <string name="fg_error_not_allowed">This action is not allowed</string>
+    <string name="fg_error_bad_intent">Invalid intent</string>
+    <string name="fg_error_generic">The gesture action failed</string>
+
+    <!-- Lawnchair texts that named "Lawnchair" or were not translated, rewritten for Fugueti Launcher. -->
+    <string name="fg_debug_build_warning">You are using a debug build, made for development. It may contain bugs and broken features; use the release APK every day.</string>
+    <string name="fg_set_default_launcher_tip">To access shortcuts and additional features, set Fugueti as your default home app</string>
+    <string name="fg_restart_launcher">Restart Fugueti</string>
+    <string name="fg_open_settings">Open settings</string>
+    <string name="fg_dt2s_a11y_hint">To turn the screen off with a gesture, turn on the Fugueti accessibility service. Tap \"Open settings\", select \"Fugueti\" and turn on \"Use Fugueti\".\n\nFugueti uses the accessibility method `performGlobalAction` for this action. It is a sensitive permission that would allow monitoring other apps, but Fugueti is not configured for that and receives no events.</string>
+    <string name="fg_recents_a11y_hint">To open the Recents screen with a gesture, turn on the Fugueti accessibility service. Tap \"Open settings\", select \"Fugueti\" and turn on \"Use Fugueti\".\n\nFugueti uses the accessibility method `performGlobalAction` for this action. It is a sensitive permission that would allow monitoring other apps, but Fugueti is not configured for that and receives no events.</string>
+    <string name="fg_dt2s_admin_hint">To turn the screen off with a gesture, set Fugueti as a device admin app. Tap \"Open settings\", then tap \"Activate this device admin app\".</string>
+    <string name="fg_accessibility_service_description">Fugueti needs accessibility access to run some gesture actions, such as locking the phone or opening the Recents screen, through the performGlobalAction method.\n\nFugueti does not watch any user action, although every accessibility service is granted that privilege. Every event sent by the system is discarded.</string>
+
+    <!-- About screen -->
+    <string name="fg_about_based_on">Based on</string>
+    <string name="fg_about_support_subject">Fugueti %1$s support</string>
+    <string name="fg_about_no_email_app">No email app found</string>
+    <string name="fg_about_donate_title">Donate with crypto</string>
+    <string name="fg_about_donate_description">Send tokens to this address on Ethereum or any EVM compatible network (Base, Polygon, Arbitrum, Optimism…).</string>
+    <string name="fg_about_donate_qr_description">QR code of the donation address</string>
+    <string name="fg_about_donate_address_label">Wallet address</string>
+    <string name="fg_about_copy_address">Copy address</string>
+    <string name="fg_about_address_copied">Address copied</string>
+
+    <!-- Feed -->
+    <string name="fg_feed_bridge_label">Get Fugueti Feed</string>
+    <string name="fg_feed_bridge_description">The Google feed (Discover) needs the small Fugueti Feed app. Tap to download it.</string>
+
+    <!-- Nova backup restore -->
+    <string name="fg_nova_gestures_label">Gestures</string>
+</resources>

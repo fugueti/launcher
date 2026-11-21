@@ -43,8 +43,8 @@ class NightlyBuildsRepository(
                 val nightly = releases.firstOrNull { it.tagName == "nightly" }
                 val asset = nightly?.assets?.firstOrNull()
 
-                val majorVersion = applicationContext.getApkVersionComparison().first[0]
-                val expectedBranch = "$majorVersion-dev"
+                // Fugueti: nightlies are built from this repository's main branch.
+                val expectedBranch = NIGHTLY_BRANCH
 
                 if (nightly != null && nightly.targetCommitish != expectedBranch) {
                     Log.d(TAG, "Skipping update from branch ${nightly.targetCommitish}, expected $expectedBranch")
@@ -151,11 +151,10 @@ class NightlyBuildsRepository(
 
     private suspend fun getCommitsSinceCurrentVersion(): List<GitHubCommit>? {
         return try {
-            val majorVersion = applicationContext.getApkVersionComparison().first[0]
-            val branch = "$majorVersion-dev"
+            val branch = NIGHTLY_BRANCH
 
             // Get the latest commits (last 100)
-            val commits = api.getRepositoryCommits("LawnchairLauncher", "lawnchair", branch)
+            val commits = api.getRepositoryCommits(BuildConfig.GITHUB_REPO.substringBefore("/"), BuildConfig.GITHUB_REPO.substringAfter("/"), branch)
 
             // Find the index of current commit
             val currentIndex = commits.indexOfFirst { it.sha.startsWith(currentCommitHash) }
@@ -259,3 +258,6 @@ private fun Context.isApkMajorVersionNewer(apkFile: File): Boolean {
 }
 
 private const val MAX_FALLBACK_COMMITS = 30
+
+/** Fugueti: branch the nightly builds are made from. */
+private const val NIGHTLY_BRANCH = "main"

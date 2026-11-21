@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Feed bridge: Signature.hashCode() of the release signing certificate
+     (SHA-256 2cbc8a708318133d…). Must match the key the Fugueti Feed app (github.com/victorwalter/fugueti-feed) is signed with. -->
+<resources>
+    <integer name="fugueti_feed_signature_hash">0x20849928</integer>
+</resources>

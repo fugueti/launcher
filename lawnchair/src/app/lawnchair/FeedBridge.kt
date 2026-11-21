@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2021, Lawnchair
  *
@@ -40,13 +41,20 @@ class FeedBridge(private val context: Context) {
     private val prefs by lazy { PreferenceManager.getInstance(context) }
     private val bridgePackages by lazy {
         listOf(
+            // Fugueti: our own bridge app (github.com/victorwalter/fugueti-feed), preferred over the others
+            BridgeInfo(FUGUETI_FEED_PACKAGE, R.integer.fugueti_feed_signature_hash),
             PixelBridgeInfo("com.google.android.apps.nexuslauncher", R.integer.bridge_signature_hash),
             BridgeInfo("app.lawnchair.lawnfeed", R.integer.lawnfeed_signature_hash),
         )
     }
 
+    /**
+     * Fugueti: the "Feed provider" setting is gone, so a provider saved by an older version (for
+     * example the Google app, which refuses release builds) is ignored and the built-in bridges
+     * are used, Fugueti Feed first.
+     */
     @JvmOverloads
-    fun resolveBridge(customPackage: String = prefs.feedProvider.get()): BridgeInfo? {
+    fun resolveBridge(customPackage: String = ""): BridgeInfo? {
         val customBridge = customBridgeOrNull(customPackage)
         val feedProvider = customPackage.toBoolean()
         return when {
@@ -65,7 +73,7 @@ class FeedBridge(private val context: Context) {
         }
     }
 
-    private fun customBridgeAvailable() = customBridgeOrNull()?.isAvailable() == true
+    private fun customBridgeAvailable() = customBridgeOrNull("")?.isAvailable() == true
 
     fun isInstalled(): Boolean {
         return customBridgeAvailable() || !shouldUseFeed || bridgePackages.any { it.isAvailable() }
@@ -157,7 +165,11 @@ class FeedBridge(private val context: Context) {
 
         private val whitelist = mutableMapOf<String, Long?>()
 
+        /** Fugueti: package of the Fugueti Feed bridge app. */
+        const val FUGUETI_FEED_PACKAGE = "app.fugueti.feed"
+
         fun initializeWhitelist(context: Context) {
+            whitelist[FUGUETI_FEED_PACKAGE] = context.resources.getInteger(R.integer.fugueti_feed_signature_hash).toLong()
             whitelist["com.saulhdev.neofeed"] = getSignatureHash(context, "com.saulhdev.neofeed")
             whitelist["com.nyancatlabs.whisper"] = getSignatureHash(context, "com.nyancatlabs.whisper")
             whitelist["ua.itaysonlab.homefeeder"] = 0x887456ed

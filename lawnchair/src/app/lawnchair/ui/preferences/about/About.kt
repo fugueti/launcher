@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import app.fugueti.about.DonateSheet
+import app.fugueti.about.FuguetiAbout
+import app.fugueti.about.FuguetiLinksRow
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.components.NavigationActionPreference
@@ -60,6 +64,7 @@ import app.lawnchair.ui.preferences.components.layout.preferenceGroupItems
 import app.lawnchair.ui.preferences.navigation.AboutLicenses
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
+import java.io.File
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,6 +81,11 @@ fun About(
     val scope = rememberCoroutineScope()
 
     val prefs: PreferenceManager = PreferenceManager.getInstance(context)
+    var showDonateSheet by remember { mutableStateOf(false) }
+
+    if (showDonateSheet) {
+        DonateSheet(onDismiss = { showDonateSheet = false })
+    }
 
     if (openBottomSheet) {
         val updateState = uiState.updateState
@@ -102,173 +112,269 @@ fun About(
         modifier = modifier,
         backArrowVisible = !LocalIsExpandedScreen.current,
     ) {
-        item {
-            Spacer(Modifier.padding(top = 8.dp))
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_home_comp),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(72.dp)
-                        .clip(CircleShape),
-                )
-            }
-        }
-        item {
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-        item {
-            Text(
-                text = stringResource(id = R.string.derived_app_name),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = if (prefs.hideVersionInfo.get()) {
-                        prefs.pseudonymVersion.get() + " (pseudonym)"
-                    } else {
-                        BuildConfig.VERSION_DISPLAY_NAME
-                    },
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .combinedClickable(
-                            onClick = {},
-                            onLongClick = {
-                                val commitUrl =
-                                    "https://github.com/LawnchairLauncher/lawnchair/commit/${BuildConfig.COMMIT_HASH}"
-                                context.startActivity(Intent(Intent.ACTION_VIEW, commitUrl.toUri()))
-                            },
-                        ),
-                )
-            }
-        }
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        item {
-            UpdateSection(
-                updateState = uiState.updateState,
-                onInstall = {
-                    viewModel.installUpdate(it)
-                },
-                onForceInstall = {
-                    viewModel.installUpdate(it, forceInstall = true)
-                },
-                onViewChanges = {
-                    openBottomSheet = true
-                    scope.launch {
-                        sheetState.show()
-                    }
-                },
-                onDismissMajorUpdate = {
-                    viewModel.resetToDownloaded(it)
-                },
-            )
-        }
-        item {
-            Spacer(modifier = Modifier.requiredHeight(16.dp))
-        }
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-            ) {
-                uiState.topLinks.forEach { link ->
-                    LawnchairLink(
-                        iconResId = link.iconResId,
-                        label = stringResource(id = link.labelResId),
-                        modifier = Modifier.weight(weight = 1f),
-                        url = link.url,
-                    )
+        aboutContent(
+            uiState = uiState,
+            fuguetiVersion = if (prefs.hideVersionInfo.get()) {
+                prefs.pseudonymVersion.get() + " (pseudonym)"
+            } else {
+                BuildConfig.FUGUETI_VERSION
+            },
+            lawnchairVersion = if (prefs.hideVersionInfo.get()) {
+                prefs.pseudonymVersion.get() + " (pseudonym)"
+            } else {
+                BuildConfig.VERSION_DISPLAY_NAME
+            },
+            openUrl = { url ->
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                if (intent.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(intent)
                 }
-            }
-        }
-        preferenceGroupItems(
-            items = uiState.coreTeam,
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.product) },
-            key = { _, it -> it.name },
-        ) { _, it ->
-            ContributorRow(
-                member = it,
+            },
+            onDonate = { showDonateSheet = true },
+            onInstall = { viewModel.installUpdate(it) },
+            onForceInstall = { viewModel.installUpdate(it, forceInstall = true) },
+            onViewChanges = {
+                openBottomSheet = true
+                scope.launch {
+                    sheetState.show()
+                }
+            },
+            onDismissMajorUpdate = { viewModel.resetToDownloaded(it) },
+        )
+    }
+}
+
+/**
+ * Items of the About screen: Fugueti Launcher's header first, then Lawnchair's own About.
+ * Kept free of preferences and view models so it can be rendered on its own.
+ */
+internal fun LazyListScope.aboutContent(
+    uiState: AboutUiState,
+    fuguetiVersion: String,
+    lawnchairVersion: String,
+    openUrl: (String) -> Unit,
+    onDonate: () -> Unit,
+    onInstall: (File) -> Unit,
+    onForceInstall: (File) -> Unit,
+    onViewChanges: () -> Unit,
+    onDismissMajorUpdate: (File) -> Unit,
+) {
+    // region Fugueti Launcher
+    item {
+        Spacer(Modifier.padding(top = 8.dp))
+    }
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_home_comp),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape),
             )
         }
-        preferenceGroupItems(
-            items = uiState.supportAndPr,
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.support_and_pr) },
-            key = { _, it -> it.name },
-        ) { _, it ->
-            ContributorRow(
-                member = it,
+    }
+    item {
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+    item {
+        Text(
+            text = stringResource(id = R.string.derived_app_name),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = fuguetiVersion,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .combinedClickable(
+                        onClick = {},
+                        onLongClick = {
+                            val commitUrl =
+                                "https://github.com/${BuildConfig.GITHUB_REPO}/commit/${BuildConfig.COMMIT_HASH}"
+                            openUrl(commitUrl)
+                        },
+                    ),
             )
         }
-        preferenceGroupItems(
-            items = uiState.bottomLinks,
-            isFirstChild = false,
-            heading = { stringResource(id = R.string.community) },
-            key = { _, it -> it.labelResId },
-        ) { _, it ->
-            HorizontalLawnchairLink(
-                iconResId = it.iconResId,
-                label = stringResource(id = it.labelResId),
-                url = it.url,
+    }
+    item {
+        Spacer(modifier = Modifier.height(8.dp))
+    }
+    item {
+        UpdateSection(
+            updateState = uiState.updateState,
+            onInstall = onInstall,
+            onForceInstall = onForceInstall,
+            onViewChanges = onViewChanges,
+            onDismissMajorUpdate = onDismissMajorUpdate,
+        )
+    }
+    item {
+        Spacer(modifier = Modifier.requiredHeight(16.dp))
+    }
+    item {
+        FuguetiLinksRow(onDonate = onDonate)
+    }
+    preferenceGroupItems(
+        items = FuguetiAbout.team,
+        isFirstChild = false,
+        heading = { stringResource(id = R.string.product) },
+        key = { _, it -> "fugueti-" + it.name },
+    ) { _, it ->
+        ContributorRow(
+            member = it,
+        )
+    }
+    // endregion
+
+    // region Lawnchair (upstream About, unchanged)
+    item {
+        Spacer(Modifier.height(32.dp))
+    }
+    item {
+        Text(
+            text = stringResource(id = R.string.fg_about_based_on),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    item {
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_lawnchair_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape),
             )
         }
-        item {
-            PreferenceGroupHeading(
-                stringResource(R.string.legal),
-            )
-        }
-        item {
-            PreferenceGroupItem(
-                cutTop = false,
-                cutBottom = true,
-            ) {
-                NavigationActionPreference(
-                    label = stringResource(id = R.string.acknowledgements),
-                    destination = AboutLicenses,
-                )
-            }
-        }
-        item {
-            Spacer(Modifier.height(3.dp))
-        }
-        item {
-            PreferenceGroupItem(
-                cutTop = true,
-                cutBottom = false,
-            ) {
-                ClickablePreference(
-                    label = stringResource(id = R.string.privacy_policy),
-                    onClick = {
-                        val webpage = PRIVACY_POLICY.toUri()
-                        val intent = Intent(Intent.ACTION_VIEW, webpage)
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent)
-                        }
-                    },
+    }
+    item {
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+    item {
+        Text(
+            text = "Lawnchair",
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    item {
+        Text(
+            text = lawnchairVersion,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+    item {
+        Spacer(modifier = Modifier.requiredHeight(16.dp))
+    }
+    item {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        ) {
+            uiState.topLinks.forEach { link ->
+                LawnchairLink(
+                    iconResId = link.iconResId,
+                    label = stringResource(id = link.labelResId),
+                    modifier = Modifier.weight(weight = 1f),
+                    url = link.url,
                 )
             }
         }
     }
+    preferenceGroupItems(
+        items = uiState.coreTeam,
+        isFirstChild = false,
+        heading = { stringResource(id = R.string.product) },
+        key = { _, it -> it.name },
+    ) { _, it ->
+        ContributorRow(
+            member = it,
+        )
+    }
+    preferenceGroupItems(
+        items = uiState.supportAndPr,
+        isFirstChild = false,
+        heading = { stringResource(id = R.string.support_and_pr) },
+        key = { _, it -> it.name },
+    ) { _, it ->
+        ContributorRow(
+            member = it,
+        )
+    }
+    preferenceGroupItems(
+        items = uiState.bottomLinks,
+        isFirstChild = false,
+        heading = { stringResource(id = R.string.community) },
+        key = { _, it -> it.labelResId },
+    ) { _, it ->
+        HorizontalLawnchairLink(
+            iconResId = it.iconResId,
+            label = stringResource(id = it.labelResId),
+            url = it.url,
+        )
+    }
+    item {
+        PreferenceGroupHeading(
+            stringResource(R.string.legal),
+        )
+    }
+    item {
+        PreferenceGroupItem(
+            cutTop = false,
+            cutBottom = true,
+        ) {
+            NavigationActionPreference(
+                label = stringResource(id = R.string.acknowledgements),
+                destination = AboutLicenses,
+            )
+        }
+    }
+    item {
+        Spacer(Modifier.height(3.dp))
+    }
+    item {
+        PreferenceGroupItem(
+            cutTop = true,
+            cutBottom = false,
+        ) {
+            ClickablePreference(
+                label = stringResource(id = R.string.privacy_policy),
+                onClick = { openUrl(PRIVACY_POLICY) },
+            )
+        }
+    }
+    // endregion
 }
 
 private const val PRIVACY_POLICY = "https://lawnchair.app/privacy_policy"

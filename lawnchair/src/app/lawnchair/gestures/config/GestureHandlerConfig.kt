@@ -1,5 +1,8 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.gestures.config
 
+import androidx.core.graphics.drawable.toBitmap
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.graphics.Canvas
@@ -9,11 +12,13 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.createBitmap
 import app.lawnchair.gestures.handlers.GestureHandler
 import app.lawnchair.gestures.handlers.NoOpGestureHandler
+import app.lawnchair.gestures.handlers.OpenActivityGestureHandler
 import app.lawnchair.gestures.handlers.OpenAppDrawerGestureHandler
 import app.lawnchair.gestures.handlers.OpenAppGestureHandler
 import app.lawnchair.gestures.handlers.OpenAppSearchGestureHandler
 import app.lawnchair.gestures.handlers.OpenAppTarget
 import app.lawnchair.gestures.handlers.OpenAssistantHandler
+import app.lawnchair.gestures.handlers.OpenIntentGestureHandler
 import app.lawnchair.gestures.handlers.OpenNotificationsHandler
 import app.lawnchair.gestures.handlers.OpenQuickSettingsHandler
 import app.lawnchair.gestures.handlers.OpenSearchGestureHandler
@@ -181,6 +186,30 @@ sealed class GestureHandlerConfig {
         override fun getDisplayLabel(context: Context) = appName
         override fun getLabel(context: Context) = context.getString(R.string.gesture_handler_open_app_config, appName)
         override fun createHandler(context: Context) = OpenAppGestureHandler(context, target)
+    }
+
+    // Fugueti: open any exported activity of an installed app.
+    @Serializable
+    @SerialName("fgOpenActivity")
+    data class OpenActivity(val label: String, val packageName: String, val className: String) : GestureHandlerConfig() {
+        override fun getIcon(context: Context): Icon = try {
+            Icon.createWithBitmap(
+                context.packageManager.getActivityIcon(ComponentName(packageName, className)).toBitmap(),
+            )
+        } catch (_: Exception) {
+            Icon.createWithResource(context, iconRes)
+        }
+        override fun getLabel(context: Context) = context.getString(R.string.fg_action_open_activity_config, label)
+        override fun createHandler(context: Context) = OpenActivityGestureHandler(context, packageName, className)
+    }
+
+    // Fugueti: launch an intent written as a URI (https:, tel:, intent:#Intent;...;end).
+    @Serializable
+    @SerialName("fgOpenIntent")
+    data class OpenIntent(val label: String, val uri: String) : GestureHandlerConfig() {
+        override fun getIcon(context: Context): Icon = Icon.createWithResource(context, iconRes)
+        override fun getLabel(context: Context) = context.getString(R.string.fg_action_open_intent_config, label)
+        override fun createHandler(context: Context) = OpenIntentGestureHandler(context, uri)
     }
 
     companion object {

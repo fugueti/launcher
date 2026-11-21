@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">ফিড চালু আছে, কিন্তু Fugueti Feed অ্যাপ ইনস্টল করা নেই। ডাউনলোড করতে ট্যাপ করুন।</string>
+    <string name="fg_restart_launcher">Fugueti পুনরায় চালু করুন</string>
+    <string name="fg_managed_by_fugueti">Fugueti দ্বারা পরিচালিত করা হবে</string>
+</resources>

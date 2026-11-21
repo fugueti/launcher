@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Akış açık, ancak Fugueti Feed uygulaması yüklü değil. İndirmek için dokunun.</string>
+    <string name="fg_restart_launcher">Fugueti\'yi Yeniden Başlat</string>
+    <string name="fg_managed_by_fugueti">Fugueti tarafından yönetilmektedir</string>
+</resources>

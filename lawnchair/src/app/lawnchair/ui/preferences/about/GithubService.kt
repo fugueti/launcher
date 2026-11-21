@@ -1,5 +1,6 @@
 package app.lawnchair.ui.preferences.about
 
+import com.android.launcher3.BuildConfig
 import app.lawnchair.util.kotlinxJson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,7 +21,7 @@ import retrofit2.http.Url
  * It uses Retrofit for making HTTP requests and kotlinx.serialization for JSON parsing.
  */
 interface GitHubService {
-    @GET("repos/LawnchairLauncher/lawnchair/releases")
+    @GET("repos/${BuildConfig.GITHUB_REPO}/releases")
     suspend fun getReleases(): List<GitHubRelease>
 
     @GET("repos/{owner}/{repo}/events")

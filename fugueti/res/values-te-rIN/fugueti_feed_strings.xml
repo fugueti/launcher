@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning and restart (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">ఫీడ్ ఆన్‌లో ఉంది, కానీ Fugueti Feed యాప్ ఇన్‌స్టాల్ కాలేదు. డౌన్‌లోడ్ చేయడానికి నొక్కండి.</string>
+    <string name="fg_restart_launcher">Fuguetiని పునఃప్రారంభించండి</string>
+</resources>

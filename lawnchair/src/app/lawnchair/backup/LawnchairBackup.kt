@@ -1,4 +1,7 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.backup
+
+import app.fugueti.backup.BackupStore
 
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
@@ -27,6 +30,7 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -58,33 +62,70 @@ class LawnchairBackup(
     }
 
     suspend fun restore(selectedContents: Int) {
-        val handlers = mutableMapOf<String, suspend (InputStream) -> Unit>()
         val contents = selectedContents and info.contents
-        if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
-            handlers.putAll(
-                getFiles(context, forRestore = true).mapValues { entry ->
-                    {
-                        val file = entry.value
-                        file.parentFile?.mkdirs()
-                        file.outputStream().use { out -> it.copyTo(out) }
+        // Fugueti: extract first, then apply each part through the running app (see BackupStore).
+        val staging = File(context.cacheDir, "restore_${System.currentTimeMillis()}").apply { mkdirs() }
+        try {
+            readZipEntries { name, input ->
+                when {
+                    name.startsWith(BackupStore.FILES_PREFIX) -> {
+                        if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
+                            BackupStore.restoreExtraFile(context, name, input)
+                        }
                     }
-                },
-            )
+                    name in STAGED_ENTRIES -> File(staging, name).outputStream().use { input.copyTo(it) }
+                }
+            }
+
+            if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
+                // Home screen: staged as restored.db for RestoreDbTask, as upstream does. Only the
+                // launcher's own databases are cleared (not the open settings database).
+                context.getDatabasePath(LAUNCHER_DB_FILE_NAME).parentFile?.listFiles()
+                    ?.filter { it.name.startsWith("launcher") || it.name.startsWith(RESTORED_DB_FILE_NAME) }
+                    ?.forEach { it.delete() }
+                val stagedDb = File(staging, LAUNCHER_DB_FILE_NAME)
+                if (stagedDb.exists()) {
+                    val restoredDb = launcherDbFile(context, forRestore = true)
+                    restoredDb.parentFile?.mkdirs()
+                    stagedDb.copyTo(restoredDb, overwrite = true)
+                }
+                BackupStore.applySharedPrefs(context, File(staging, PREFS_FILE_NAME))
+                BackupStore.applyDataStore(context, File(staging, PREFS_DATASTORE_FILE_NAME))
+                BackupStore.importAppDatabase(context, File(staging, PREFS_DB_FILE_NAME))
+            }
+            if (contents.hasFlag(INCLUDE_WALLPAPER)) {
+                val wallpaperFile = File(staging, WALLPAPER_FILE_NAME)
+                if (wallpaperFile.exists()) {
+                    WallpaperManager.getInstance(context).setBitmap(BitmapFactory.decodeFile(wallpaperFile.path))
+                }
+            }
+            if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
+                // After the preferences: they are now the live values, so this no longer undoes them.
+                DeviceGridState(info.gridState).writeToPrefs(context, true)
+                val dbController = ModelDbController(context)
+                RestoreDbTask.performRestore(context, dbController)
+            }
+        } finally {
+            staging.deleteRecursively()
         }
-        if (contents.hasFlag(INCLUDE_WALLPAPER)) {
-            handlers[WALLPAPER_FILE_NAME] = {
-                val wallpaperManager = WallpaperManager.getInstance(context)
-                wallpaperManager.setBitmap(BitmapFactory.decodeStream(it))
+    }
+
+    /** Fugueti: calls [handler] for every entry of the backup zip. */
+    private suspend fun readZipEntries(handler: suspend (String, InputStream) -> Unit) {
+        withContext(Dispatchers.IO) {
+            val pfd = context.contentResolver.openFileDescriptor(uri, "r")!!
+            pfd.use {
+                FileInputStream(it.fileDescriptor).use { inStream ->
+                    ZipInputStream(inStream).use { zipIs ->
+                        while (true) {
+                            val entry = zipIs.nextEntry ?: break
+                            if (entry.isDirectory || entry.name.contains("..")) continue
+                            handler(entry.name, zipIs)
+                        }
+                    }
+                }
             }
         }
-        context.getDatabasePath(LAUNCHER_DB_FILE_NAME).parentFile?.deleteRecursively()
-        readZip(handlers)
-        // Written after the zip has been extracted: the backed up preferences file is one of
-        // the restored entries, so writing the grid state first would let it be overwritten.
-        DeviceGridState(info.gridState).writeToPrefs(context, true)
-
-        val dbController = ModelDbController(context)
-        RestoreDbTask.performRestore(context, dbController)
     }
 
     private suspend fun readZip(handlers: Map<String, suspend (InputStream) -> Unit>) {
@@ -106,7 +147,8 @@ class LawnchairBackup(
     }
 
     companion object {
-        private const val BACKUP_VERSION = 1
+        // Fugueti: 2 adds custom fonts and saved wallpapers (files/...); 1 is still restorable
+        private const val BACKUP_VERSION = 2
         private const val PREFS_FILE_NAME = "${LauncherFiles.SHARED_PREFERENCES_KEY}.xml"
         private const val PREFS_DB_FILE_NAME = "preferences"
         private const val PREFS_DATASTORE_FILE_NAME = "preferences.preferences_pb"
@@ -116,6 +158,15 @@ class LawnchairBackup(
         const val SCREENSHOT_FILE_NAME = "screenshot.png"
         const val LAUNCHER_DB_FILE_NAME = "launcher.db"
         const val RESTORED_DB_FILE_NAME = "restored.db"
+
+        /** Entries extracted to the staging folder on restore. */
+        private val STAGED_ENTRIES = setOf(
+            LAUNCHER_DB_FILE_NAME,
+            PREFS_FILE_NAME,
+            PREFS_DB_FILE_NAME,
+            PREFS_DATASTORE_FILE_NAME,
+            WALLPAPER_FILE_NAME,
+        )
 
         const val INCLUDE_LAYOUT_AND_SETTINGS = 1 shl 0
         const val INCLUDE_WALLPAPER = 1 shl 1
@@ -129,8 +180,9 @@ class LawnchairBackup(
         )
 
         fun generateBackupFileName(): String {
-            val fileName = "Lawnchair_Backup ${SimpleDateFormat.getDateTimeInstance().format(Date())}"
-            return "$fileName.lawnchairbackup"
+            // Fugueti: YYYY-MM-DD_hh-mm.lawnchairbackup (24 h clock; no ":" so it works on any storage)
+            val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.ROOT).format(Date())
+            return "$timestamp.lawnchairbackup"
         }
 
         fun getFiles(context: Context, forRestore: Boolean): Map<String, File> {
@@ -160,6 +212,9 @@ class LawnchairBackup(
                 .setPreviewDarkText(wallpaperSupportsDarkText)
                 .build()
 
+            // Fugueti: flush preferences and fold database -wal files into the copied files
+            BackupStore.prepareForBackup(context, launcherDbFile(context, forRestore = false))
+
             val pfd = context.contentResolver.openFileDescriptor(fileUri, "w")!!
             withContext(Dispatchers.IO) {
                 pfd.use {
@@ -184,6 +239,13 @@ class LawnchairBackup(
                             if (!it.value.exists()) return@forEach
                             out.putNextEntry(ZipEntry(it.key))
                             it.value.inputStream().use { input -> input.copyTo(out) }
+                        }
+                        if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
+                            // Fugueti: custom fonts and saved wallpapers
+                            BackupStore.extraFiles(context).forEach { (name, file) ->
+                                out.putNextEntry(ZipEntry(name))
+                                file.inputStream().use { input -> input.copyTo(out) }
+                            }
                         }
                     }
                 }

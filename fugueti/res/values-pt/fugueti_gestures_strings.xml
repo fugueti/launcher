@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings, Portuguese translation (GPL-3.0-or-later). English in values/ is the default. -->
+<resources>
+    <string name="fg_gesture_double_tap_swipe_up">Toque duplo e deslizar para cima</string>
+    <string name="fg_gesture_double_tap_swipe_down">Toque duplo e deslizar para baixo</string>
+    <string name="fg_gesture_two_finger_swipe_up">Dois dedos para cima</string>
+    <string name="fg_gesture_two_finger_swipe_down">Dois dedos para baixo</string>
+    <string name="fg_gesture_pinch_in">Pinça para dentro</string>
+    <string name="fg_gesture_pinch_out">Pinça para fora</string>
+    <string name="fg_gesture_rotate_cw">Girar no sentido horário</string>
+    <string name="fg_gesture_rotate_ccw">Girar no sentido anti-horário</string>
+
+    <string name="fg_group_one_finger">Um dedo</string>
+    <string name="fg_group_double_tap">Toque duplo</string>
+    <string name="fg_group_two_fingers">Dois dedos</string>
+    <string name="fg_group_buttons">Botões</string>
+    <string name="fg_group_options">Opções</string>
+
+    <string name="fg_hint_swipe_left">Só na última página da tela inicial</string>
+    <string name="fg_hint_swipe_right">Só na primeira página da tela inicial</string>
+
+    <string name="fg_action_open_shortcut_option">Abrir atalho de app</string>
+    <string name="fg_action_open_activity_option">Abrir activity</string>
+    <string name="fg_action_open_activity_config">Abrir %1$s</string>
+    <string name="fg_action_open_intent_option">Executar intent</string>
+    <string name="fg_action_open_intent_config">Intent: %1$s</string>
+
+    <string name="fg_pick_shortcut">Escolher atalho</string>
+    <string name="fg_pick_activity">Escolher activity</string>
+    <string name="fg_no_shortcuts">Este app não tem atalhos</string>
+    <string name="fg_no_activities">Este app não tem activities que possam ser abertas</string>
+
+    <string name="fg_intent_title">Executar intent</string>
+    <string name="fg_intent_label">Nome</string>
+    <string name="fg_intent_uri">URI da intent</string>
+    <string name="fg_intent_help">Exemplos: https://exemplo.com.br, tel:5511999999999, geo:0,0?q=café ou intent:#Intent;action=android.settings.WIFI_SETTINGS;end</string>
+    <string name="fg_intent_invalid">Nenhum app instalado abre esta intent</string>
+    <string name="fg_intent_try">Testar</string>
+    <string name="fg_intent_save">Salvar</string>
+
+    <string name="fg_haptics_label">Vibrar ao reconhecer</string>
+    <string name="fg_haptics_description">Vibração curta quando um gesto executa a ação</string>
+    <string name="fg_sensitivity_label">Sensibilidade dos gestos</string>
+    <string name="fg_sensitivity_low">Baixa (exige movimentos maiores)</string>
+    <string name="fg_sensitivity_medium">Média</string>
+    <string name="fg_sensitivity_high">Alta (movimentos curtos bastam)</string>
+
+    <string name="fg_test_pad_label">Testar gestos</string>
+    <string name="fg_test_pad_description">Faça qualquer gesto e veja como ele é reconhecido, sem executar a ação</string>
+    <string name="fg_test_pad_hint">Faça um gesto em qualquer ponto desta área</string>
+    <string name="fg_test_pad_result">%1$s → %2$s</string>
+    <string name="fg_test_pad_none">Não reconhecido, tente um movimento maior ou mais rápido</string>
+
+    <string name="fg_a11y_run_gesture">Executar gesto %1$s: %2$s</string>
+
+    <string name="fg_error_no_activity">Nenhum app consegue executar esta ação</string>
+    <string name="fg_error_not_allowed">Esta ação não é permitida</string>
+    <string name="fg_error_bad_intent">Intent inválida</string>
+    <string name="fg_error_generic">A ação do gesto falhou</string>
+
+    <!-- Lawnchair texts that named "Lawnchair" or were not translated, rewritten for Fugueti Launcher. -->
+    <string name="fg_debug_build_warning">Esta é uma versão de depuração (debug), feita para desenvolvimento. Pode ter erros e funções quebradas; no dia a dia, use o APK release.</string>
+    <string name="fg_set_default_launcher_tip">Para acessar atalhos e recursos adicionais, defina o Fugueti como app de início padrão</string>
+    <string name="fg_restart_launcher">Reiniciar o Fugueti</string>
+    <string name="fg_open_settings">Abrir configurações</string>
+    <string name="fg_dt2s_a11y_hint">Para desligar a tela com um gesto, ative o serviço de acessibilidade do Fugueti. Toque em \"Abrir configurações\", escolha \"Fugueti\" e ative \"Usar Fugueti\".\n\nO Fugueti usa o método de acessibilidade `performGlobalAction` para esta ação. É uma permissão sensível, que permitiria monitorar outros apps, mas o Fugueti não está configurado para isso e não recebe nenhum evento.</string>
+    <string name="fg_recents_a11y_hint">Para abrir a tela de apps recentes com um gesto, ative o serviço de acessibilidade do Fugueti. Toque em \"Abrir configurações\", escolha \"Fugueti\" e ative \"Usar Fugueti\".\n\nO Fugueti usa o método de acessibilidade `performGlobalAction` para esta ação. É uma permissão sensível, que permitiria monitorar outros apps, mas o Fugueti não está configurado para isso e não recebe nenhum evento.</string>
+    <string name="fg_dt2s_admin_hint">Para desligar a tela com um gesto, defina o Fugueti como app administrador do dispositivo. Toque em \"Abrir configurações\" e depois em \"Ativar este app de administrador do dispositivo\".</string>
+    <string name="fg_accessibility_service_description">O Fugueti precisa do acesso de acessibilidade para executar algumas ações de gesto, como bloquear o telefone ou abrir os apps recentes, pelo método performGlobalAction.\n\nO Fugueti não acompanha nenhuma ação do usuário, embora todo serviço de acessibilidade receba esse privilégio. Todo evento enviado pelo sistema é descartado.</string>
+
+    <!-- Tela Sobre -->
+    <string name="fg_about_based_on">Baseado em</string>
+    <string name="fg_about_support_subject">Suporte Fugueti %1$s</string>
+    <string name="fg_about_no_email_app">Nenhum app de e-mail encontrado</string>
+    <string name="fg_about_donate_title">Doe com cripto</string>
+    <string name="fg_about_donate_description">Envie tokens para este endereço na Ethereum ou em qualquer rede compatível com EVM (Base, Polygon, Arbitrum, Optimism…).</string>
+    <string name="fg_about_donate_qr_description">QR code do endereço de doação</string>
+    <string name="fg_about_donate_address_label">Endereço da carteira</string>
+    <string name="fg_about_copy_address">Copiar endereço</string>
+    <string name="fg_about_address_copied">Endereço copiado</string>
+
+    <!-- Feed -->
+    <string name="fg_feed_bridge_label">Baixar o Fugueti Feed</string>
+    <string name="fg_feed_bridge_description">O feed do Google (Discover) precisa do pequeno app Fugueti Feed. Toque para baixar.</string>
+
+    <!-- Nova backup restore -->
+    <string name="fg_nova_gestures_label">Gestos</string>
+</resources>

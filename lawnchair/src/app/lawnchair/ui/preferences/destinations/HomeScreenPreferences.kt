@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2022, Lawnchair
  *
@@ -16,6 +17,9 @@
 
 package app.lawnchair.ui.preferences.destinations
 
+import app.lawnchair.util.isPackageInstalledAndEnabled
+import app.fugueti.about.FuguetiAbout
+import app.lawnchair.FeedBridge
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -35,7 +39,6 @@ import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.theme.color.ColorMode
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
-import app.lawnchair.ui.preferences.components.FeedPreference
 import app.lawnchair.ui.preferences.components.GestureHandlerPreference
 import app.lawnchair.ui.preferences.components.HomeLayoutSettings
 import app.lawnchair.ui.preferences.components.NavigationActionPreference
@@ -153,8 +156,19 @@ fun HomeScreenPreferences(
                 description = if (feedAvailable) null else stringResource(id = R.string.minus_one_unavailable),
                 enabled = feedAvailable,
             )
-            ExpandAndShrink(visible = feedAvailable && enableFeedAdapter.state.value) {
-                FeedPreference()
+            // Fugueti: no "Feed provider" choice (the Google app refuses direct connections from
+            // release builds); the feed always goes through the Fugueti Feed bridge app, and this
+            // link shows up while it is missing.
+            val feedBridgeInstalled =
+                context.packageManager.isPackageInstalledAndEnabled(FeedBridge.FUGUETI_FEED_PACKAGE)
+            ExpandAndShrink(visible = enableFeedAdapter.state.value && !feedBridgeInstalled) {
+                ClickablePreference(
+                    label = stringResource(id = R.string.fg_feed_bridge_label),
+                    subtitle = stringResource(id = R.string.fg_feed_bridge_description),
+                    onClick = {
+                        FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL)
+                    },
+                )
             }
         }
         PreferenceGroup(heading = stringResource(R.string.style)) {

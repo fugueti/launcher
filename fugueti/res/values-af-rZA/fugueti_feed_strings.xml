@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning and restart (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Die voer is aan, maar die Fugueti Feed-toep is nie geïnstalleer nie. Tik om dit af te laai.</string>
+    <string name="fg_restart_launcher">Herbegin Fugueti</string>
+</resources>

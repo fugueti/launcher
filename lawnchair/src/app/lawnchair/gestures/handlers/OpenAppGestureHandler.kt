@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.gestures.handlers
 
 import android.content.Context
@@ -30,7 +31,19 @@ class OpenAppGestureHandler(
                 )
             }
 
-            is OpenAppTarget.Shortcut -> Unit
+            // Fugueti: upstream left shortcuts unimplemented.
+            is OpenAppTarget.Shortcut -> {
+                val shortcut: OpenAppTarget.Shortcut = target
+                runCatching {
+                    launcher.getSystemService<LauncherApps>()?.startShortcut(
+                        shortcut.packageName,
+                        shortcut.id,
+                        null,
+                        null,
+                        shortcut.user,
+                    )
+                }.onFailure { app.fugueti.gestures.actions.ActionErrors.report(launcher, it) }
+            }
         }
     }
 }

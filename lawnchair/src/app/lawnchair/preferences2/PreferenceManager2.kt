@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2022, Lawnchair
  *
@@ -882,6 +883,52 @@ class PreferenceManager2 @Inject constructor(
             false
         },
     )
+
+    // region Fugueti: extra home screen gestures
+
+    private fun extraGesturePreference(key: String) = serializablePreference<GestureHandlerConfig>(
+        key = stringPreferencesKey(key),
+        defaultValue = GestureHandlerConfig.NoOp,
+    )
+
+    val swipeLeftGestureHandler = extraGesturePreference("fg_swipe_left")
+    val swipeRightGestureHandler = extraGesturePreference("fg_swipe_right")
+    val doubleTapSwipeUpGestureHandler = extraGesturePreference("fg_double_tap_swipe_up")
+    val doubleTapSwipeDownGestureHandler = extraGesturePreference("fg_double_tap_swipe_down")
+    // Two finger swipes reuse Lawnchair's own preferences (twoFingerSwipe*GestureHandler above).
+    val pinchInGestureHandler = extraGesturePreference("fg_pinch_in")
+    val pinchOutGestureHandler = extraGesturePreference("fg_pinch_out")
+    val rotateCwGestureHandler = extraGesturePreference("fg_rotate_cw")
+    val rotateCcwGestureHandler = extraGesturePreference("fg_rotate_ccw")
+
+    val gestureHaptics = preference(
+        key = booleanPreferencesKey(name = "fg_gesture_haptics"),
+        defaultValue = true,
+    )
+
+    val gestureSensitivity = preference(
+        key = stringPreferencesKey(name = "fg_gesture_sensitivity"),
+        defaultValue = app.fugueti.gestures.engine.Sensitivity.MEDIUM.name,
+    )
+
+    /** The preference that stores the action of [kind]. */
+    fun gestureHandler(kind: app.fugueti.gestures.engine.GestureKind) = when (kind) {
+        app.fugueti.gestures.engine.GestureKind.SWIPE_UP -> swipeUpGestureHandler
+        app.fugueti.gestures.engine.GestureKind.SWIPE_DOWN -> swipeDownGestureHandler
+        app.fugueti.gestures.engine.GestureKind.SWIPE_LEFT -> swipeLeftGestureHandler
+        app.fugueti.gestures.engine.GestureKind.SWIPE_RIGHT -> swipeRightGestureHandler
+        app.fugueti.gestures.engine.GestureKind.DOUBLE_TAP -> doubleTapGestureHandler
+        app.fugueti.gestures.engine.GestureKind.DOUBLE_TAP_SWIPE_UP -> doubleTapSwipeUpGestureHandler
+        app.fugueti.gestures.engine.GestureKind.DOUBLE_TAP_SWIPE_DOWN -> doubleTapSwipeDownGestureHandler
+        app.fugueti.gestures.engine.GestureKind.TWO_FINGER_SWIPE_UP -> twoFingerSwipeUpGestureHandler
+        app.fugueti.gestures.engine.GestureKind.TWO_FINGER_SWIPE_DOWN -> twoFingerSwipeDownGestureHandler
+        app.fugueti.gestures.engine.GestureKind.PINCH_IN -> pinchInGestureHandler
+        app.fugueti.gestures.engine.GestureKind.PINCH_OUT -> pinchOutGestureHandler
+        app.fugueti.gestures.engine.GestureKind.ROTATE_CW -> rotateCwGestureHandler
+        app.fugueti.gestures.engine.GestureKind.ROTATE_CCW -> rotateCcwGestureHandler
+    }
+
+    // endregion
 
     private inline fun <reified T> serializablePreference(
         key: Preferences.Key<String>,

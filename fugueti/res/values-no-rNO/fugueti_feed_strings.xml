@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Feeden er på, men appen Fugueti Feed er ikke installert. Trykk for å laste den ned.</string>
+    <string name="fg_restart_launcher">Omstart av Fugueti</string>
+    <string name="fg_managed_by_fugueti">Styrt av Fugueti</string>
+</resources>

@@ -20,3 +20,6 @@ __pycache__
 .vscode
 .fleet
 lawnWithQuickstep/release
+
+# Fugueti: release keystore and delivery files never go to git
+entrega/

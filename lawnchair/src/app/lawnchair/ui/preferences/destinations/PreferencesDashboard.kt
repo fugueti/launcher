@@ -16,6 +16,9 @@
 
 package app.lawnchair.ui.preferences.destinations
 
+import app.lawnchair.util.isPackageInstalledAndEnabled
+import app.fugueti.about.FuguetiAbout
+import app.lawnchair.FeedBridge
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
@@ -107,7 +110,7 @@ fun PreferencesDashboard(
     val aboutDescrption = if (prefs.hideVersionInfo.get()) {
         prefs.pseudonymVersion.get()
     } else {
-        "${context.getString(R.string.derived_app_name)} ${BuildConfig.MAJOR_VERSION}"
+        "${context.getString(R.string.derived_app_name)} ${BuildConfig.FUGUETI_VERSION}"
     }
 
     PreferenceLayout(
@@ -121,6 +124,22 @@ fun PreferencesDashboard(
 
         if (BuildConfig.APPLICATION_ID.contains("nightly") || BuildConfig.DEBUG) {
             PreferencesDebugWarning()
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+        // Fugueti: the feed is on but the Fugueti Feed bridge app is missing
+        if (prefs2.enableFeed.getAdapter().state.value &&
+            !context.packageManager.isPackageInstalledAndEnabled(FeedBridge.FUGUETI_FEED_PACKAGE)
+        ) {
+            WarningPreference(
+                text = stringResource(id = R.string.fg_feed_bridge_missing_warning),
+                modifier = Modifier.padding(horizontal = 16.dp),
+                standalone = true,
+                colors = ListItemDefaults.segmentedColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                ),
+                onClick = { FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL) },
+            )
             Spacer(modifier = Modifier.height(8.dp))
         }
 
@@ -297,7 +316,7 @@ fun RowScope.PreferencesOverflowMenu(
                     hideMenu()
                 },
                 text = {
-                    Text(text = stringResource(id = R.string.debug_restart_launcher))
+                    Text(text = stringResource(id = R.string.fg_restart_launcher))
                 },
             )
             DropdownMenuItem(
@@ -360,7 +379,7 @@ fun PreferencesSetDefaultLauncherWarning(
             title = {
                 ProvideDescriptionTextStyle {
                     Text(
-                        text = stringResource(id = R.string.set_default_launcher_tip),
+                        text = stringResource(id = R.string.fg_set_default_launcher_tip),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }

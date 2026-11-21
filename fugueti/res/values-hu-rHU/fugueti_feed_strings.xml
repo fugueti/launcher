@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">A hírfolyam be van kapcsolva, de a Fugueti Feed alkalmazás nincs telepítve. Koppintson a letöltéshez.</string>
+    <string name="fg_restart_launcher">A Fugueti újraindítása</string>
+    <string name="fg_managed_by_fugueti">A Fugueti által kezelve</string>
+</resources>

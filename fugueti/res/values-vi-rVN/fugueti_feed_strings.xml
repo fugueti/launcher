@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Nguồn cấp dữ liệu đang bật nhưng chưa cài ứng dụng Fugueti Feed. Nhấn để tải xuống.</string>
+    <string name="fg_restart_launcher">Khởi chạy lại Fugueti</string>
+    <string name="fg_managed_by_fugueti">Quản lí bởi Fugueti</string>
+</resources>

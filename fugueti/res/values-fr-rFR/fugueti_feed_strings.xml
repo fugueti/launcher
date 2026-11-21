@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Le flux est activé, mais l\'application Fugueti Feed n\'est pas installée. Appuyez pour la télécharger.</string>
+    <string name="fg_restart_launcher">Redémarrer Fugueti</string>
+    <string name="fg_managed_by_fugueti">Gérée par Fugueti</string>
+</resources>

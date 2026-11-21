@@ -50,6 +50,8 @@ fun LawnchairLink(
     label: String,
     url: String,
     modifier: Modifier = Modifier,
+    // Fugueti: custom action (e-mail, donation sheet) instead of opening [url]
+    onClick: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
@@ -60,6 +62,10 @@ fun LawnchairLink(
             .height(64.dp)
             .clip(MaterialTheme.shapes.medium)
             .clickable {
+                if (onClick != null) {
+                    onClick()
+                    return@clickable
+                }
                 val webpage = url.toUri()
                 val intent = Intent(Intent.ACTION_VIEW, webpage)
                 if (intent.resolveActivity(context.packageManager) != null) {

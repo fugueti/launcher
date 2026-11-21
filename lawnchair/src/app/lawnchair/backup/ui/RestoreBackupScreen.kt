@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.backup.ui
 
 import android.app.Activity
@@ -227,8 +228,10 @@ fun restoreBackupOpener(): () -> Unit {
     return {
         Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
-            .setType(LawnchairBackup.MIME_TYPE)
-            .putExtra(Intent.EXTRA_MIME_TYPES, LawnchairBackup.EXTRA_MIME_TYPES)
+            // Fugueti: accept any file. A .lawnchairbackup copied through another app (Drive,
+            // messengers, downloads) often gets a MIME type other than zip, and the picker then shows
+            // it greyed out. Invalid files are rejected after picking ("invalid backup file").
+            .setType("*/*")
             .let { request.launch(it) }
     }
 }

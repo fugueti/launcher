@@ -16,7 +16,10 @@
 
 package com.android.launcher3.qsb;
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewDebug;
@@ -25,6 +28,7 @@ import android.widget.RemoteViews;
 
 import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
+import com.android.launcher3.Utilities;
 import com.android.launcher3.widget.NavigableAppWidgetHostView;
 
 /**
@@ -39,6 +43,18 @@ public class QsbWidgetHostView extends NavigableAppWidgetHostView {
         super(context);
         setFocusable(true);
         setBackgroundResource(R.drawable.qsb_host_view_focus_bg);
+        // Fugueti: the search bar's own buttons (mic, Lens/QR) are PendingIntents of the Google
+        // app. Without an interaction handler the default launch options don't opt in to
+        // background activity starts, so Android 14+ silently blocks them. Opt in, as the
+        // regular widget host (QuickstepInteractionHandler) does.
+        setInteractionHandler((view, pendingIntent, response) -> {
+            Pair<Intent, ActivityOptions> options = response.getLaunchOptions(view);
+            ActivityOptions activityOptions = options.second != null
+                    ? options.second : ActivityOptions.makeBasic();
+            Utilities.allowBGLaunch(activityOptions);
+            return RemoteViews.startPendingIntent(view, pendingIntent,
+                    Pair.create(options.first, activityOptions));
+        });
     }
 
     @Override

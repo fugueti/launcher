@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 /*
  * Copyright 2022, Lawnchair
  *
@@ -31,12 +32,12 @@ import android.window.SplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import app.fugueti.gestures.GestureTouchController
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
 import app.lawnchair.data.wallpaper.service.WallpaperService
 import app.lawnchair.gestures.GestureController
-import app.lawnchair.gestures.VerticalSwipeTouchController
 import app.lawnchair.gestures.config.GestureHandlerConfig
 import app.lawnchair.gestures.ui.LawnchairShortcutActivity
 import app.lawnchair.nexuslauncher.OverlayCallbackImpl
@@ -309,8 +310,9 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun createTouchControllers(): Array<TouchController> {
-        val verticalSwipeController = VerticalSwipeTouchController(this, gestureController)
-        return arrayOf<TouchController>(verticalSwipeController) + super.createTouchControllers()
+        // Fugueti: the gesture engine replaces upstream's VerticalSwipeTouchController.
+        val gestureTouchController = GestureTouchController(this, gestureController)
+        return arrayOf<TouchController>(gestureTouchController) + super.createTouchControllers()
     }
 
     override fun handleHomeTap() {

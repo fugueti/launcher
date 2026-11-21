@@ -1,3 +1,4 @@
+// Modified by Fugueti Launcher contributors (2026): see the "Fugueti" comments below.
 package app.lawnchair.ui.preferences.navigation
 
 import app.lawnchair.ui.preferences.components.search.SearchProviderId
@@ -191,6 +192,19 @@ data object SmartspaceWidget : PreferenceRoute
 // Gestures section routes
 @Serializable
 data object GesturesPickApp : PreferenceRoute
+
+// Fugueti routes
+@Serializable
+data object GesturesPickShortcut : PreferenceRoute
+
+@Serializable
+data object GesturesPickActivity : PreferenceRoute
+
+@Serializable
+data object GesturesEnterIntent : PreferenceRoute
+
+@Serializable
+data object GesturesTestPad : PreferenceRoute
 
 // About section routes
 @Serializable

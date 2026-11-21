@@ -1,112 +1,107 @@
-# Lawnchair 16
+# Fugueti
 
-[![Build debug APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/ci.yml)
-[![Build release APK](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml/badge.svg)](https://github.com/LawnchairLauncher/lawnchair/actions/workflows/release_update.yml)
-[![Crowdin](https://badges.crowdin.net/e/188ba69d884418987f0b7f1dd55e3a4e/localized.svg)](https://lawnchair.crowdin.com/lawnchair)
-[![OpenCollective](https://img.shields.io/opencollective/all/lawnchair?label=financial%20contributors&logo=open-collective)](https://opencollective.com/lawnchair)
-[![Telegram](https://img.shields.io/endpoint?url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Flccommunity)](https://t.me/lccommunity)
-[![Discord](https://img.shields.io/discord/803299970169700402?label=server&logo=discord)](https://discord.gg/3x8qNWxgGZ)
-[![GitHub Downloads](https://img.shields.io/github/downloads/LawnchairLauncher/lawnchair/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/LawnchairLauncher/lawnchair/releases)
-[![Play Store Installs](https://img.shields.io/endpoint?color=green&logo=googleplay&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dapp.lawnchair.play%26l%3DPlay%2520Store%2520Installs%26m%3D%24shortinstalls)](https://play.google.com/store/apps/details?id=app.lawnchair.play)
+[![Release](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml/badge.svg)](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
+<!-- Release and download count badges: shields.io cannot read private repositories,
+     so they show "repo not found" until the repository is public. Uncomment them then.
+[![Latest release](https://img.shields.io/github/v/release/victorwalter/fugueti-launcher?include_prereleases&label=release&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases/latest)
+[![GitHub Downloads](https://img.shields.io/github/downloads/victorwalter/fugueti-launcher/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases)
+-->
 
-<picture>
-    <!-- Avoid image being clickable with slight workaround -->
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/device-frame-dark.webp" width="250px">
-    <img alt="Smartphone home screen shown in day and night themes, featuring Android Material You dynamic color styling across the wallpaper, clock widget, and app icons." src="docs/assets/device-frame-light.webp" width="250px">
-</picture>
+<img alt="Fugueti home screen" src="docs/assets/screenshot-home.webp" width="270px">
 
-Lawnchair is a free, open-source home app for Android. Taking Launcher3—Android’s default home app—as a starting point, it ports Pixel Launcher features and introduces rich customization options.
+Fugueti is an Android home app (launcher) based on
+[Lawnchair 16](https://github.com/LawnchairLauncher/lawnchair/tree/16-dev), itself built on AOSP
+Launcher3. It keeps everything Lawnchair does and adds 13 configurable home screen gestures, the
+Google feed without third party bridges, and more reliable backups.
 
-This branch houses the codebase of Lawnchair 16, which is currently in development and is based on Launcher3 from Android 16. For Lawnchair 9 to 15, see the branches with the `9-` to `15-` prefixes, respectively.
+> The repository is private for now and will be open-sourced later, following Lawnchair's model.
 
 ## Features
 
-- Material 3 Expressive theming that follows your wallpaper and system colors.
-- At a Glance widget support, with integration for [Smartspacer](https://github.com/KieronQuinn/Smartspacer).
-- QuickSwitch support for Android Recents integration on Android 15-16 (root required).
-- Global search for apps, contacts, and web results from the home screen.
-- Customization options for icon packs, fonts, and color settings.
+- **Everything from Lawnchair 16:** icon packs, customizable app drawer and dock, Quickstep (Recents
+  and system navigation integration), Material You, smartspace, global search…
+- **13 home screen gestures:** swipe up/down/left/right, double tap, double tap + swipe up/down,
+  two finger swipe up/down, pinch in/out, rotate clockwise/counterclockwise, with haptics,
+  sensitivity and a gesture test pad. Extra actions: open app shortcut, open activity, launch
+  intent. Details: [docs/gestures/README.md](docs/gestures/README.md).
+- **Google feed (Discover)** on the page left of the home screen, through the small
+  [Fugueti Feed](https://github.com/victorwalter/fugueti-feed) app (see below).
+- **Backup and restore** that brings everything back (settings, gestures, fonts, saved wallpapers),
+  restores Lawnchair backups and imports Nova Launcher backups, including Nova's gestures.
+- **Search bar fixes:** the microphone opens your assistant (Gemini) and the "Google" dock search
+  bar shows up with working mic and Lens buttons.
+- Own package (`app.fugueti.launcher`), so it installs next to the official Lawnchair.
 
 ## Download
 
 <p align="left">
-  <a href="https://play.google.com/store/apps/details?id=app.lawnchair.play">
+  <a href="https://github.com/victorwalter/fugueti-launcher/releases/latest">
     <picture>
       <!-- Avoid image being clickable with slight workaround -->
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-google-play.webp" height="60">
-      <img alt="Get it on Google Play" src="docs/assets/badge-google-play.webp" height="60">
-    </picture>
-  </a>
-  <a href="https://apt.izzysoft.de/fdroid/index/apk/app.lawnchair">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-izzyondroid.webp" height="60">
-      <img alt="Get it on IzzyOnDroid" src="docs/assets/badge-izzyondroid.webp" height="60">
-    </picture>
-  </a>
-  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/LawnchairLauncher/lawnchair/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-obtainium.webp" height="60">
-      <img alt="Get it on Obtainium" src="docs/assets/badge-obtainium.webp" height="60">
-    </picture>
-  </a>
-    <a href="https://github.com/LawnchairLauncher/lawnchair/releases">
-    <picture>
       <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-github.webp" height="60">
       <img alt="Get it on GitHub" src="docs/assets/badge-github.webp" height="60">
     </picture>
   </a>
 </p>
 
-Lawnchair on Play Store will install as a different app compared to other sources. Features may be restricted to comply with Google Play’s publishing rules.
+1. Open the [latest release](https://github.com/victorwalter/fugueti-launcher/releases/latest) and
+   download `FuguetiLauncher-<version>.github.release.apk`.
+2. Install it (allow installs from your browser or file manager when Android asks).
+3. Make Fugueti your home app: *Android Settings → Apps → Default apps → Home app → Fugueti*.
 
-You can also [verify your installation](https://docs.lawnchair.app/getting-started/install-and-setup/verify) to check if you have installed an official build.
+`SHA256SUMS.txt` in each release lets you check the download.
 
-### Development builds
+## Google feed (Discover)
 
-Interested in keeping yourself up-to-date with every Lawnchair development? Try our development builds!
+<img alt="Google feed in Fugueti" src="docs/assets/screenshot-feed.webp" width="270px">
 
-These builds offer the latest features and bug fixes at a cost of performance and additional issues. Make backups before installing.
+The Google app only connects its feed to development builds or system apps, so regular builds of
+any launcher need a small bridge app. Fugueti's is **Fugueti Feed**, signed with the same key:
 
-Download: [Obtainium][Obtainium link] • [GitHub][GitHub link] • [nightly.link][Nightly link]
+1. Download `FuguetiFeed-<version>.release.apk` from the
+   [Fugueti Feed releases](https://github.com/victorwalter/fugueti-feed/releases/latest) and
+   install it. It has no permissions and only talks to Fugueti.
+2. In Fugueti: long press the home screen → *Home settings* → *Home screen* → turn on
+   **Show feed**.
 
-## Sponsors
+   <img alt="Show feed setting" src="docs/assets/screenshot-feed-settings.webp" width="270px">
 
-<p align="left">
-  <a href="https://coderabbit.link/lawnchair">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/assets/sponsor-coderabbit-dark.svg" width="300">
-      <img alt="CodeRabbit" src="docs/assets/sponsor-coderabbit-light.svg" width="300">
-    </picture>
-  </a>
-</p>
+3. Swipe right on the first home screen page to open the feed.
 
-[CodeRabbit](https://coderabbit.link/lawnchair) is an AI-powered code review platform that integrates directly into pull-request workflows and IDEs, examining code changes in context and suggesting improvements.
+While the feed is on and Fugueti Feed is missing, Fugueti shows a red warning at the top of its
+settings with a link to the download.
 
-## Support Lawnchair
+## Upstream base
 
-If you love what we do, consider [supporting us on Open Collective](https://opencollective.com/lawnchair)! Your contributions help keep Lawnchair independent and enable us to develop faster.
+| Component | Base |
+|---|---|
+| Lawnchair | `16-dev` (Launcher3 from Android 16, compiled against API 37) |
+| AOSP Launcher3 | Android 16 (through Lawnchair). Moving to Launcher3 from Android 17 will follow Lawnchair's own rebase. |
 
-A huge thank you to our Core Backers ($5+):
-*(These backers directly fund our Project Velocity Fund)*
+## Building
 
-[![Core Backers](https://opencollective.com/lawnchair/tiers/backer.svg?avatarHeight=64&width=890&button=false)](https://opencollective.com/lawnchair)
+Requirements: JDK 21 or newer, Android SDK with `platforms;android-37.2` and `build-tools;37.0.0`.
 
-[Become a supporter](https://opencollective.com/lawnchair) to help us cover our operational costs, or become a Core Backer to be featured here!
+```bash
+git clone --recurse-submodules https://github.com/victorwalter/fugueti-launcher
+cd fugueti-launcher
+./gradlew assembleLawnWithQuickstepGithubRelease
+```
 
-## Contribute
+The APK lands in `build/outputs/apk/lawnWithQuickstepGithub/release/`.
+Release signing reads `keystore.properties` (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`),
+which is git-ignored; without it the build is signed with the debug key.
 
-Visit the [Lawnchair contributing guidelines](CONTRIBUTING.md) for information and tips on contributing to Lawnchair.
+Gesture engine unit tests:
 
-## Quick links
+```bash
+./gradlew testLawnWithQuickstepGithubDebugUnitTest --tests 'app.fugueti.gestures.*'
+```
 
-- [Website](https://lawnchair.app)
-- [Documentation](https://docs.lawnchair.app/)
-- [News on Telegram](https://t.me/lawnchairci)
-- [Discord](https://discord.com/invite/3x8qNWxgGZ)
-- [X (formerly Twitter)](https://x.com/lawnchairapp)
-- [_XDA_ thread](https://xdaforums.com/t/lawnchair-customizable-pixel-launcher.3627137/)
+## License
 
-<!-- Download links -->
-[Nightly link]: https://nightly.link/LawnchairLauncher/lawnchair/workflows/ci/16-dev
-[Obtainium link]: https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22app.lawnchair.nightly%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Flawnchairlauncher%2Flawnchair%22%2C%22author%22%3A%22Lawnchair%20Launcher%22%2C%22name%22%3A%22Lawnchair%20(Debug)%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Atrue%2C%5C%22fallbackToOlderReleases%5C%22%3Afalse%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22Lawnchair%20Nightly%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22dontSortReleasesList%5C%22%3Afalse%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Afalse%2C%5C%22releaseDateAsVersion%5C%22%3Atrue%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22Lawnchair%20is%20a%20free%2C%20open-source%20home%20app%20for%20Android.%20(NOTE%3A%20This%20is%20the%20debug%20version%20of%20Lawnchair%2C%20for%20the%20beta%2Fstable%20versions%20see%20%5C%5C%5C%22Lawnchair%5C%5C%5C%22)%5C%22%7D%22%7D
-[GitHub link]: https://github.com/LawnchairLauncher/lawnchair/releases/tag/nightly
+Lawnchair and Launcher3 code is under the Apache License 2.0 ([LICENSE.txt](LICENSE.txt)).
+Fugueti code (`fugueti/` and the files marked "Modified by Fugueti Launcher contributors")
+is under GPL-3.0-or-later ([COPYING](COPYING)), which makes the combined app GPL-3.0-or-later.
+See also [README-LAWNCHAIR.md](README-LAWNCHAIR.md).

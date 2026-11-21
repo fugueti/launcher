@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">فید روشن است، اما برنامه Fugueti Feed نصب نشده است. برای دانلود آن ضربه بزنید.</string>
+    <string name="fg_restart_launcher">راه‌اندازی مجدد Fugueti</string>
+    <string name="fg_managed_by_fugueti">مدیریت شده توسط Fugueti</string>
+</resources>

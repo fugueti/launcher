@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: feed bridge warning, restart and theme labels (GPL-3.0-or-later). -->
+<resources>
+    <string name="fg_feed_bridge_missing_warning">Kanał jest włączony, ale aplikacja Fugueti Feed nie jest zainstalowana. Kliknij, aby ją pobrać.</string>
+    <string name="fg_restart_launcher">Zrestartuj Fugueti</string>
+    <string name="fg_managed_by_fugueti">Zarządzane przez Fugueti</string>
+</resources>
