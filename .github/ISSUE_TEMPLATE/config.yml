@@ -1,5 +1,8 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: Original Lawnchair issues
-    url: https://github.com/LawnchairLauncher/lawnchair/issues
-    about: Problems unrelated to Fugueti's gestures that also happen in Lawnchair.
+  - name: E-mail support
+    url: mailto:victor.walter+fugueti@gmail.com
+    about: Questions or anything that is not a bug report or a feature idea.
+  - name: Security vulnerability
+    url: https://github.com/victorwalter/fugueti-launcher/security/advisories/new
+    about: Please report security problems privately.

@@ -85,4 +85,11 @@
 
     <!-- Nova backup restore -->
     <string name="fg_nova_gestures_label">Gestos</string>
+
+    <!-- Janela de suporte -->
+    <string name="fg_support_title">Como podemos ajudar?</string>
+    <string name="fg_support_description">Relatos e ideias vão para o GitHub, já preenchidos com a versão do app e o aparelho. É preciso ter uma conta no GitHub.</string>
+    <string name="fg_support_report_bug">Relatar um bug</string>
+    <string name="fg_support_suggest_feature">Sugerir um recurso</string>
+    <string name="fg_support_email">Prefiro mandar um e-mail</string>
 </resources>

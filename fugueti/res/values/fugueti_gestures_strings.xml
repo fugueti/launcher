@@ -85,4 +85,11 @@
 
     <!-- Nova backup restore -->
     <string name="fg_nova_gestures_label">Gestures</string>
+
+    <!-- Support sheet -->
+    <string name="fg_support_title">How can we help?</string>
+    <string name="fg_support_description">Reports and ideas go to GitHub, already filled in with your app version and device. A GitHub account is needed.</string>
+    <string name="fg_support_report_bug">Report a bug</string>
+    <string name="fg_support_suggest_feature">Suggest a feature</string>
+    <string name="fg_support_email">Send an e-mail instead</string>
 </resources>

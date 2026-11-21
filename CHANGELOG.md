@@ -2,6 +2,9 @@
 
 ## 16.0.2 (unreleased)
 
+* **Support** in *Settings → About* opens a sheet to report a bug or suggest a feature on GitHub
+  (issue forms titled `[BUG]` / `[FEATURE]`, with app version, device and Android version filled
+  in) or to send an e-mail.
 * Development builds: every change merged into `main` publishes a signed **nightly** build
   (`app.fugueti.launcher.nightly`, installs next to the release app) as the `nightly` release.
 
