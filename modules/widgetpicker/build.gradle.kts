@@ -44,7 +44,6 @@ android {
                     "tests/multivalentTestsForDevice/src",
                 )
             )
-<<<<<<< HEAD
             kotlin.directories.addAll(
                 listOf(
                     "tests/multivalentScreenshotTests/src",
@@ -52,13 +51,6 @@ android {
                 )
             )
             manifest.srcFile("tests/AndroidManifest.xml")
-=======
-            res.setSrcDirs(listOf(
-                "$widgetPickerDir/tests/multivalentScreenshotTests/res",
-                "$widgetPickerDir/res"
-            ))
-            manifest.srcFile("$widgetPickerDir/tests/AndroidManifest.xml")
->>>>>>> aosp/android17-release
         }
         named("test") {
             java.directories.add("tests/multivalentTests/src")
@@ -81,15 +73,8 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.dagger)
-<<<<<<< HEAD
     ksp(libs.dagger.compiler)
     ksp(libs.dagger.android.processor)
-=======
-    kapt(libs.dagger.compiler)
-    kapt(libs.dagger.android.processor)
-    kaptAndroidTest(libs.dagger.compiler)
-    kaptAndroidTest(libs.dagger.android.processor)
->>>>>>> aosp/android17-release
 
     // Compose UI dependencies
     implementation(libs.compose.ui)

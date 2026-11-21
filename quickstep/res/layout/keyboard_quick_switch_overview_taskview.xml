@@ -31,11 +31,7 @@
         android:layout_height="@dimen/keyboard_quick_switch_taskview_height"
         android:minWidth="@dimen/keyboard_quick_switch_text_button_width"
         android:background="@drawable/keyboard_quick_switch_text_button_background"
-<<<<<<< HEAD
-        android:backgroundTint="@color/materialColorSurfaceBright"
-=======
         android:backgroundTint="@color/materialColorPrimaryContainer"
->>>>>>> aosp/android17-release
         android:clipToOutline="true"
         android:paddingHorizontal="@dimen/keyboard_quick_switch_text_button_horizontal_padding"
 

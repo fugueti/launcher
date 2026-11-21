@@ -152,11 +152,7 @@
         android:layout_marginTop="20dp"
         android:paddingVertical="12dp"
         android:text="@string/taskbar_edu_done"
-<<<<<<< HEAD
         android:textColor="?attr/textColorOnAccent"
-=======
-        android:textColor="@color/materialColorOnPrimary"
->>>>>>> aosp/android17-release
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

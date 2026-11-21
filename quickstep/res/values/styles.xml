@@ -384,7 +384,6 @@
     </style>
 
     <style name="AllAppsBlurStyle">
-<<<<<<< HEAD
         <item name="allAppsScrimColor">@color/shade_panel_scrim_color</item>
         <item name="groupHighlight">@color/surface_effect_1</item>
         <item name="focusHighlight">@color/surface_effect_2</item>
@@ -394,17 +393,6 @@
         <item name="allappsHeaderProtectionColor">@color/surface_effect_1</item>
         <item name="privateSpaceSettingsColor">@color/surface_effect_2</item>
         <item name="privateSpaceDividerColor">@color/surface_effect_3</item>
-=======
-        <item name="allAppsScrimColor">@androidprv:color/shade_panel_scrim_color</item>
-        <item name="groupHighlight">@color/customColorSurfaceEffect1</item>
-        <item name="focusHighlight">@color/customColorSurfaceEffect2</item>
-        <item name="allAppsSurfaceLow">@color/customColorSurfaceEffect0</item>
-        <item name="allAppsSurfaceHighest">@color/customColorSurfaceEffect2</item>
-        <item name="allAppsUnselectedTab">@color/customColorSurfaceEffect2</item>
-        <item name="allappsHeaderProtectionColor">@color/customColorSurfaceEffect1</item>
-        <item name="privateSpaceSettingsColor">@color/customColorSurfaceEffect2</item>
-        <item name="privateSpaceDividerColor">@color/customColorSurfaceEffect3</item>
->>>>>>> aosp/android17-release
         <item name="bottomSheetDragHandleColor">@color/materialColorOnSurface</item>
     </style>
 
