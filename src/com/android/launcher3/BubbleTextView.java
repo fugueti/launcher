@@ -189,22 +189,20 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
     };
 
-<<<<<<< HEAD
     public static final FloatProperty<BubbleTextView> TEXT_ALPHA_PROPERTY
             = new FloatProperty<BubbleTextView>("textAlpha") {
+        // Lawnchair: animates the transition channel of the text alpha (used by folder animations)
         @Override
         public Float get(BubbleTextView bubbleTextView) {
-            return bubbleTextView.mTextAlpha;
+            return bubbleTextView.getFloatingViewTextAlpha().getValue();
         }
 
         @Override
         public void setValue(BubbleTextView bubbleTextView, float alpha) {
-            bubbleTextView.setTextAlpha(alpha);
+            bubbleTextView.getFloatingViewTextAlpha().setValue(alpha);
         }
     };
 
-=======
->>>>>>> aosp/android17-release
     private final MultiTranslateDelegate mTranslateDelegate = new MultiTranslateDelegate(this);
     protected final ActivityContext mActivity;
     private FastBitmapDrawable mIcon;
@@ -234,7 +232,8 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     private ColorStateList mTextColorStateList;
     @ViewDebug.ExportedProperty(category = "launcher")
     private DotInfo mDotInfo;
-    private final DotRenderer mDotRenderer;
+    // Lawnchair: replaced by the DeviceProfile renderers (notification count) when available
+    private DotRenderer mDotRenderer;
     @ViewDebug.ExportedProperty(category = "launcher", deepExport = true)
     protected final DotRenderer.DrawParams mDotParams;
     private Animator mDotScaleAnim;
@@ -427,6 +426,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         // listener is set. Additionally, it utilizes `shouldIgnoreTouchDown` to filter out
         // touch events in non-interactive padding areas, preventing unintended interactions.
         mCustomEventsTouchHandler = new CustomEventsTouchHandler(this, (event) -> {
+            // Lawnchair: Icon swipe gesture feature
+            if (handleIconSwipeTouchEvent(event)) {
+                return true;
+            }
             if (isLongClickable()) {
                 super.onTouchEvent(event);
                 mLongPressHelper.onTouchEvent(event);
@@ -679,8 +682,10 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     }
 
     private void setStandardIcon(ItemInfoWithIcon info) {
-        FastBitmapDrawable iconDrawable =
-                info.newIcon(getContext(), getIconCreationFlagsForInfo(info));
+        // LC-Note: Open drawer-folder children must use the same preference as their preview.
+        FastBitmapDrawable iconDrawable = mDisplay == DISPLAY_DRAWER_FOLDER
+                ? info.newIcon(getContext(), getIconCreationFlagsForInfo(info), shouldUseTheme())
+                : info.newIcon(getContext(), getIconCreationFlagsForInfo(info));
         if (mIsShowingMinimalPopup) {
             iconDrawable.setAnimationEnabled(false);
         }
@@ -730,20 +735,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         if (mSkipUserBadge) {
             flags |= FLAG_SKIP_USER_BADGE;
         }
-<<<<<<< HEAD
-        // LC-Note: Open drawer-folder children must use the same preference as their preview.
-        FastBitmapDrawable iconDrawable = mDisplay == DISPLAY_DRAWER_FOLDER
-                ? info.newIcon(getContext(), flags, shouldUseTheme())
-                : info.newIcon(getContext(), flags);
-        mDotParams.appColor = iconDrawable.getIconColor();
-        mDotParams.dotColor = Themes.getAttrColor(getContext(), R.attr.notificationDotColor);
-        if (isPrivateSpaceIcon) {
-            iconDrawable.setAnimationEnabled(false);
-        }
-        setIcon(iconDrawable);
-=======
         return flags;
->>>>>>> aosp/android17-release
     }
 
     public boolean shouldUseTheme() {
@@ -874,27 +866,7 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-<<<<<<< HEAD
-        // ignore events if they happen in padding area
-        if (event.getAction() == MotionEvent.ACTION_DOWN
-                && shouldIgnoreTouchDown(event.getX(), event.getY())) {
-            return false;
-        }
-        // Lawnchair: Icon swipe gesture feature
-        if (handleIconSwipeTouchEvent(event)) {
-            return true;
-        }
-        if (isLongClickable()) {
-            super.onTouchEvent(event);
-            mLongPressHelper.onTouchEvent(event);
-            // Keep receiving the rest of the events
-            return true;
-        } else {
-            return super.onTouchEvent(event);
-        }
-=======
         return onDelegateTouchEvent(event);
->>>>>>> aosp/android17-release
     }
 
     /**
@@ -1384,15 +1356,6 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
     }
 
-<<<<<<< HEAD
-    public boolean shouldTextBeVisible() {
-        // Text should be visible everywhere but the hotseat.
-        Object tag = getParent() instanceof FolderIcon ? ((View) getParent()).getTag() : getTag();
-        ItemInfo info = tag instanceof ItemInfo ? (ItemInfo) tag : null;
-        return info == null || info.container != LauncherSettings.Favorites.CONTAINER_HOTSEAT
-                && info.container != LauncherSettings.Favorites.CONTAINER_HOTSEAT_PREDICTION
-                || PreferenceCacheExtensionsKt.firstCached(pref2.getEnableLabelInDock());
-=======
     @Override
     public int getIconHeight() {
         if (mIcon == null) {
@@ -1400,7 +1363,6 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         }
 
         return mIcon.getBounds().height();
->>>>>>> aosp/android17-release
     }
 
     /**
@@ -1535,14 +1497,14 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
             mDotInfo = mActivity.getDotInfoForItem(itemInfo);
             boolean isDotted = mDotInfo != null;
             float newDotScale = isDotted ? 1f : 0;
-<<<<<<< HEAD
-            if (mDisplay == DISPLAY_ALL_APPS || mDisplay == DISPLAY_PREDICTION_ROW) {
-                mDotRenderer = mActivity.getDeviceProfile().mDotRendererAllApps;
-            } else {
-                mDotRenderer = mActivity.getDeviceProfile().mDotRendererWorkSpace;
+            // Lawnchair: DeviceProfile renderers draw the notification count
+            DotRenderer profileDotRenderer =
+                    mDisplay == DISPLAY_ALL_APPS || mDisplay == DISPLAY_PREDICTION_ROW
+                            ? mActivity.getDeviceProfile().mDotRendererAllApps
+                            : mActivity.getDeviceProfile().mDotRendererWorkSpace;
+            if (profileDotRenderer != null) {
+                mDotRenderer = profileDotRenderer;
             }
-=======
->>>>>>> aosp/android17-release
             if (wasDotted || isDotted) {
                 // Animate when a dot is first added or when it is removed.
                 if (animate && (wasDotted ^ isDotted) && isShown()) {

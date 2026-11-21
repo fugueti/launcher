@@ -100,11 +100,6 @@ public class StatusBarTouchController implements TouchController {
 
     private void dispatchTouchEvent(MotionEvent ev) {
         if (mSystemUiProxy.isActive()) {
-<<<<<<< HEAD
-            // LC-Note: If a proxy is active, pass the motion over to the proxy
-            mLastAction = ev.getActionMasked();
-=======
->>>>>>> aosp/android17-release
             mSystemUiProxy.onStatusBarTouchEvent(ev);
         } else if (!mExpanded) {
             // LC-Note: If not, call the notification panel via reflection (no animations)
@@ -153,37 +148,17 @@ public class StatusBarTouchController implements TouchController {
             if (!mCanIntercept) {
                 return false;
             }
-<<<<<<< HEAD
-            mDownEvents.clear();
+            mDownEvent.set(ev.getX(), ev.getY());
             mExpanded = false;
             mVibrated = false;
-            mDownEvents.put(pid, new PointF(ev.getX(), ev.getY()));
-        } else if (ev.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
-            // Check!! should only set it only when threshold is not entered.
-            mDownEvents.put(pid, new PointF(ev.getX(idx), ev.getY(idx)));
-=======
-            mDownEvent.set(ev.getX(), ev.getY());
->>>>>>> aosp/android17-release
         }
         if (!mCanIntercept) {
             cleanupAfterGesture();
             return false;
         }
-<<<<<<< HEAD
         if (!Utilities.ATLEAST_R) {
             return false;
         }
-        if (action == ACTION_MOVE && mDownEvents.contains(pid)) {
-            float dy = ev.getY(idx) - mDownEvents.get(pid).y;
-            float dx = ev.getX(idx) - mDownEvents.get(pid).x;
-            // Currently input dispatcher will not do touch transfer if there are more than
-            // one touch pointer. Hence, even if slope passed, only set the slippery flag
-            // when there is single touch event. (context: InputDispatcher.cpp line 1445)
-            if (dy > mTouchSlop && dy > Math.abs(dx) && ev.getPointerCount() == 1) {
-                ev.setAction(ACTION_DOWN);
-                dispatchTouchEvent(ev);
-                setWindowSlippery(true);
-=======
 
         mEventDispatcher.dispatchEvent(ev);
 
@@ -194,7 +169,6 @@ public class StatusBarTouchController implements TouchController {
                 if (!mEventDispatcher.hasConsumer()) {
                     mEventDispatcher.setConsumer(this::dispatchTouchEvent);
                 }
->>>>>>> aosp/android17-release
                 return true;
             }
             if (Math.abs(dx) > mTouchSlop) {
@@ -213,14 +187,7 @@ public class StatusBarTouchController implements TouchController {
         if (action == ACTION_UP || action == ACTION_CANCEL) {
             mLauncher.getStatsLogManager().logger()
                     .log(LAUNCHER_SWIPE_DOWN_WORKSPACE_NOTISHADE_OPEN);
-<<<<<<< HEAD
-            setWindowSlippery(false);
-            return true;
-        } else if (CompatibilityKt.isOnePlusStock() && action == ACTION_MOVE) {
-            dispatchTouchEvent(ev);
-=======
             cleanupAfterGesture();
->>>>>>> aosp/android17-release
         }
         return true;
     }
@@ -230,7 +197,6 @@ public class StatusBarTouchController implements TouchController {
     }
 
     private boolean canInterceptTouch(MotionEvent ev) {
-<<<<<<< HEAD
         // Lawnchair: Icon Swipe Gestures (For vertical down gestures)
         if (mLauncher instanceof Launcher launcher) {
             if (launcher.getWorkspace() != null && launcher.getDragLayer() != null) {
@@ -242,22 +208,10 @@ public class StatusBarTouchController implements TouchController {
                 }
             }
         }
-        if (isTrackpadScroll(ev) || !mIsEnabledCheck.get()
-                || AbstractFloatingView.getTopOpenViewWithType(mLauncher,
-                AbstractFloatingView.TYPE_STATUS_BAR_SWIPE_DOWN_DISALLOW) != null || (
-                shouldEnableMouseInteractionChanges(mLauncher.asContext())
-                        && ev.getSource() == InputDevice.SOURCE_MOUSE)) {
-=======
         if (isTrackpadMultiFingerSwipe(ev)) {
             // Trackpad events are handled separately, see e.g. TrackpadStatusBarInputConsumer.
->>>>>>> aosp/android17-release
             return false;
         }
-<<<<<<< HEAD
-        return true;
-        // LC-Ignored: Always intercept downward swipes on all devices regardless if a proxy is active or not.
-        // return SystemUiProxy.INSTANCE.get(mLauncher).isActive();
-=======
         if (!mIsEnabledCheck.get()) {
             return false;
         }
@@ -274,7 +228,9 @@ public class StatusBarTouchController implements TouchController {
         if (ev.getY() > (mLauncher.getDragLayer().getHeight() - dp.getInsets().bottom)) {
             return false;
         }
-        return mSystemUiProxy.isActive();
->>>>>>> aosp/android17-release
+        // LC-Ignored: Always intercept downward swipes on all devices regardless if a proxy is
+        // active or not (without a proxy the panel is opened through the gesture handler).
+        // return mSystemUiProxy.isActive();
+        return true;
     }
 }
