@@ -18,13 +18,8 @@ package com.android.launcher3.folder;
 
 import static android.text.TextUtils.isEmpty;
 
-<<<<<<< HEAD
-import static com.android.launcher3.Flags.enableLauncherVisualRefresh;
-import static com.android.launcher3.LauncherAnimUtils.SCALE_PROPERTY;
-=======
 import static com.android.launcher3.Flags.blurOnMoreSurfaces;
 import static com.android.launcher3.Flags.enableWorkspaceSelection;
->>>>>>> aosp/android17-release
 import static com.android.launcher3.LauncherAnimUtils.SPRING_LOADED_EXIT_DELAY;
 import static com.android.launcher3.LauncherState.EDIT_MODE;
 import static com.android.launcher3.LauncherState.NORMAL;
@@ -300,17 +295,14 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
     @Nullable
     private KeyboardInsetAnimationCallback mKeyboardInsetAnimationCallback;
 
-<<<<<<< HEAD
+    // Lawnchair: replaced by the themed folder drawable in the constructor
     private @NonNull GradientDrawable mBackground;
-
-    PreferenceManager2 preferenceManager2;
-=======
-    private final @NonNull GradientDrawable mBackground;
     private final BoxSelectionHelper mBoxSelectionHelper;
     private final BlurBackgroundHelper mBlurBackgroundHelper;
 
     private CustomEventsTouchHandler mCustomEventsTouchHandler;
->>>>>>> aosp/android17-release
+
+    PreferenceManager2 preferenceManager2;
 
     /**
      * Used to inflate the Workspace from XML.
@@ -337,9 +329,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
                 ResourcesCompat.getDrawable(getResources(),
                         R.drawable.round_rect_folder, getContext().getTheme()));
         mBackground.setCallback(this);
-<<<<<<< HEAD
         preferenceManager2 = PreferenceManager2.INSTANCE.get(context);
-=======
         mBoxSelectionHelper = enableWorkspaceSelection()
                 ? new BoxSelectionHelper(mActivityContext, this)
                 : null;
@@ -352,7 +342,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
         mBlurBackgroundHelper =
                 mActivityContext.getActivityComponent().getBlurBackgroundHelper();
->>>>>>> aosp/android17-release
     }
 
     @Override
@@ -396,7 +385,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
                 | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mFolderName.forceDisableSuggestions(true);
 
-<<<<<<< HEAD
         @ColorInt
         int accentColor = Themes.getColorAccent(mFolderName.getContext());
         EditTextExtensions.setCursorColor(mFolderName, accentColor);
@@ -410,28 +398,13 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
             mKeyboardInsetAnimationCallback = new KeyboardInsetAnimationCallback(this);
             setWindowInsetsAnimationCallback(mKeyboardInsetAnimationCallback);
         }
-        
-        if (enableLauncherVisualRefresh()) {
-            mLeftArrow = findViewById(R.id.left_indicator_arrow);
-            mRightArrow = findViewById(R.id.right_indicator_arrow);
-            
-            if (mRightArrow != null) {
-                mRightArrow.setOnClickListener(v -> mContent.snapToPage(
-                        mContent.getCurrentPage() + 1));
-            }
-            if (mLeftArrow != null) {
-                mLeftArrow.setOnClickListener(v -> mContent.snapToPage(
-                        mContent.getCurrentPage() - 1));
-            }
-        }
-=======
+
         mLeftArrow = findViewById(R.id.left_indicator_arrow);
         mRightArrow = findViewById(R.id.right_indicator_arrow);
         mRightArrow.setOnClickListener(
                 v -> mContent.snapToPage(mContent.getCurrentPage() + 1));
         mLeftArrow.setOnClickListener(
                 v -> mContent.snapToPage(mContent.getCurrentPage() - 1));
->>>>>>> aosp/android17-release
     }
 
     /**
@@ -445,15 +418,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         if (mPageIndicator.getVisibility() == View.VISIBLE) {
             ((MarginLayoutParams) mFolderName.getLayoutParams()).setMarginEnd(
                     getResources().getDimensionPixelSize(R.dimen.folder_footer_horiz_padding));
-<<<<<<< HEAD
-            Context ctx = getContext(); // done here to avoid getting context on bg thread
-            Executors.UI_HELPER_EXECUTOR.execute(() -> {
-                // Only show arrows if a mouse or touchpad is connected to the device
-                int arrowVisibility = isPointerEnabled(ctx) ? View.VISIBLE : View.GONE;
-                if (mLeftArrow != null) mLeftArrow.setVisibility(arrowVisibility);
-                if (mRightArrow != null) mRightArrow.setVisibility(arrowVisibility);
-=======
->>>>>>> aosp/android17-release
 
             // If the arrows are visible, then their touch box will slightly overlap with the
             // footer's padding by 8dp. Update it for proper alignment. PaddingEnd was always
@@ -469,11 +433,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
             );
         } else {
             ((MarginLayoutParams) mFolderName.getLayoutParams()).setMarginEnd(0);
-<<<<<<< HEAD
-            if (mLeftArrow != null) mLeftArrow.setVisibility(View.GONE);
-            if (mRightArrow != null) mRightArrow.setVisibility(View.GONE);
-=======
->>>>>>> aosp/android17-release
         }
     }
 
@@ -482,18 +441,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
      * one end or the other.
      */
     public void updateArrowAlphas() {
-<<<<<<< HEAD
-        if (enableLauncherVisualRefresh()) {
-            if (mLeftArrow != null) {
-                mLeftArrow.setAlpha(
-                        0 == mContent.getCurrentPage() ? DISABLED_ARROW_OPACITY : FULLY_OPAQUE);
-            }
-            if (mRightArrow != null) {
-                mRightArrow.setAlpha(mContent.getPageCount() == mContent.getCurrentPage() + 1
-                        ? DISABLED_ARROW_OPACITY : FULLY_OPAQUE);
-            }
-        }
-=======
         mLeftArrow.setAlpha(
                 0 == mContent.getCurrentPage() ? DISABLED_ARROW_OPACITY : FULLY_OPAQUE);
         mRightArrow.setAlpha(mContent.getPageCount() == mContent.getCurrentPage() + 1
@@ -503,7 +450,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         return onDelegateTouchEvent(ev);
->>>>>>> aosp/android17-release
     }
 
     public boolean onLongClick(View v) {
@@ -561,16 +507,13 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         if (dragObject.dragSource != this) {
             return;
         }
-<<<<<<< HEAD
         if (isInAppDrawer()) {
             close(true);
             // LC-Note: Do not remove item
             return;
         }
-        
-=======
+
         mIsDragInProgress = true;
->>>>>>> aosp/android17-release
         mContent.removeItem(mCurrentDragView);
         mItemsInvalidated = true;
 
@@ -1065,10 +1008,6 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
     @Override
     protected void handleClose(boolean animate) {
-<<<<<<< HEAD
-        mContent.setCanAnnouncePageDescriptionForFolder(false);
-=======
->>>>>>> aosp/android17-release
         if (!animate && mCurrentAnimator != null && mCurrentAnimator.isRunning()) {
             mCurrentAnimator.cancel();
         }
@@ -1124,16 +1063,12 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-<<<<<<< HEAD
-                if (Utilities.ATLEAST_R) {
-                    setWindowInsetsAnimationCallback(null);
-                }
-=======
                 if (Flags.enableExpressiveFolderExpansion()) {
                     Trace.beginSection("FolderSpringAnimationClose");
                 }
-                setWindowInsetsAnimationCallback(null);
->>>>>>> aosp/android17-release
+                if (Utilities.ATLEAST_R) {
+                    setWindowInsetsAnimationCallback(null);
+                }
                 mIsAnimatingClosed = true;
             }
 
@@ -1170,10 +1105,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
 
     private void closeComplete(boolean wasAnimated) {
         mIsOpen = false;
-<<<<<<< HEAD
-=======
         mBlurBackgroundHelper.folderCloseComplete();
->>>>>>> aosp/android17-release
 
         // TODO: Clear all active animations.
         BaseDragLayer parent = (BaseDragLayer) getParent();
@@ -2128,14 +2060,10 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
             // clipPath is non-null while clip reveal animation is playing
             int count = canvas.save();
             canvas.clipPath(mClipPath.getPath());
-<<<<<<< HEAD
-            mBackground.draw(canvas);
-=======
 
             mBlurBackgroundHelper.drawFolderBlur(canvas, mClipPath, this);
             mBackground.draw(canvas);
 
->>>>>>> aosp/android17-release
             if (!mIsAnimatingClosed) {
                 // If animating open, clip the content to the clip path to keep in bounds.
                 super.dispatchDraw(canvas);
