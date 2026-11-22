@@ -2,11 +2,8 @@
 
 [![Release](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml/badge.svg)](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
-<!-- Release and download count badges: shields.io cannot read private repositories,
-     so they show "repo not found" until the repository is public. Uncomment them then.
 [![Latest release](https://img.shields.io/github/v/release/victorwalter/fugueti-launcher?include_prereleases&label=release&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases/latest)
 [![GitHub Downloads](https://img.shields.io/github/downloads/victorwalter/fugueti-launcher/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases)
--->
 
 <img alt="Fugueti home screen" src="docs/assets/screenshot-home.webp" width="270px">
 
@@ -14,8 +11,6 @@ Fugueti is an Android home app (launcher) based on
 [Lawnchair 16](https://github.com/LawnchairLauncher/lawnchair/tree/16-dev), itself built on AOSP
 Launcher3. It keeps everything Lawnchair does and adds 13 configurable home screen gestures, the
 Google feed without third party bridges, and more reliable backups.
-
-> The repository is private for now and will be open-sourced later, following Lawnchair's model.
 
 ## Features
 
@@ -52,13 +47,21 @@ Google feed without third party bridges, and more reliable backups.
 
 `SHA256SUMS.txt` in each release lets you check the download.
 
-### Development builds (nightly)
+### Release channels
 
-Every change merged into `main` publishes a signed nightly build as the
-[`nightly` release](https://github.com/victorwalter/fugueti-launcher/releases/tag/nightly). It is
-a separate app (`app.fugueti.launcher.nightly`, dark icon) that installs next to the release one
-and can update itself from *Settings → About*. Nightlies have the newest changes and the newest
-bugs: make a backup first.
+| Channel | Branch | Base | How it is published |
+|---|---|---|---|
+| **Stable** | `main` | Launcher3 from Android 16 | A version tag (`v16.0.x`) builds the signed APK as a [GitHub release](https://github.com/victorwalter/fugueti-launcher/releases/latest) |
+| **Nightly** | `17-dev` | Launcher3 from Android 17 | Every push to `17-dev` builds it, replacing the [`nightly` release](https://github.com/victorwalter/fugueti-launcher/releases/tag/nightly) |
+
+Stable releases are the version to use day to day: `main` only takes fixes for the Android 16
+line and nothing is published until a version is tagged.
+
+The nightly is the next major version, Fugueti on Launcher3 from Android 17. It is a separate app
+(`app.fugueti.launcher.nightly`, dark icon) that installs next to the stable one and updates
+itself from *Settings → About*. Nightlies have the newest changes and the newest bugs: make a
+backup first. Nightlies built from `main` before the move to `17-dev` do not update to it on
+their own; install the current nightly once by hand.
 
 ## Google feed (Discover)
 
@@ -93,8 +96,8 @@ settings with a link to the download.
 | `art/` | Icon sources; `docs/`: README images and gesture docs |
 
 Fugueti started from Lawnchair 16 (`16-dev`, Launcher3 from Android 16, compiled against API 37)
-and is now maintained independently; moving to Launcher3 from Android 17 is done in this
-repository.
+and is now maintained independently. `main` holds the Android 16 line; the move to Launcher3 from
+Android 17 happens on `17-dev` and becomes the next stable version when it is ready.
 
 ## Building
 
