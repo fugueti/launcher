@@ -52,7 +52,10 @@ Check these when the tree compiles.
   Lawnchair's drawer colour/opacity cache now feeds AOSP's `getBackgroundColor()`. The
   non-sheet header opacity path (`getAppDrawerSearchBarBackground` + drawer opacity) was dropped
   with AOSP's branch: check the search header still looks right with the drawer opacity setting.
-  `LawnchairAlphabeticalAppsList` dropped its `<T>` (AOSP `AlphabeticalAppsList` is no longer
+  Drawer side padding on phones leaves out the cell layout padding, as Android 16 effectively
+  did (it computed the padding before setting the cell layout padding); the "App drawer indent"
+  preference is calibrated on that (10% = 10px), so with the padding included the drawer was
+  ~170px narrower on each side. `LawnchairAlphabeticalAppsList` dropped its `<T>` (AOSP `AlphabeticalAppsList` is no longer
   generic); drawer folders inflate through a typed helper in `BaseAllAppsAdapter`.
 - **DeviceProfile**: rebuilt from AOSP 17 (sizing lives in the Kotlin profile factories).
   Lawnchair's preference-driven layout is ported through `deviceprofile/LawnchairLayoutFactors.kt`

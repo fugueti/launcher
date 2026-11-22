@@ -191,14 +191,14 @@ data class AllAppsProfile(
             var leftAndRight =
                 allAppsStyle.getDimensionPixelSize(R.styleable.AllAppsStyle_horizontalPadding, 0)
             if (!deviceProperties.isLargeScreen) {
-                val cellLayoutHorizontalPadding: Int =
-                    (workspaceProfile.cellLayoutPaddingPx.left +
-                        workspaceProfile.cellLayoutPaddingPx.right) / 2
+                // Lawnchair: leave out the cell layout padding. Android 16 computed this before
+                // the cell layout padding was set, and the "App drawer indent" preference
+                // (withLawnchairDrawer multiplies this value) is calibrated on that result.
                 leftAndRight =
                     max(
                         0,
-                        workspaceProfile.desiredWorkspaceHorizontalMarginPx +
-                            cellLayoutHorizontalPadding - (borderSpacePx.x / 2),
+                        workspaceProfile.desiredWorkspaceHorizontalMarginPx -
+                            (borderSpacePx.x / 2),
                     )
             }
             allAppsStyle.recycle()
