@@ -850,4 +850,6 @@ Essa nova versão é atualização Major e pode ser menos estável\".</string>
     <string name="lawnchair_actions">Ações</string>
     <string name="lawnchair_action_failed">Não foi possível realizar a ação</string>
     <string name="please_wait">Por favor, aguarde…</string>
+    <string name="action_hide_app">Ocultar</string>
+    <string name="app_hidden_from_drawer">App ocultado da gaveta de aplicativos</string>
 </resources>
