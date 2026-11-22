@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Android Open Source Project
+ * Copyright (C) 2021 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package com.android.wm.shell.shared;
+package com.android.wm.shell.onehanded;
 
 /**
- * Listener interface that to get focus-related transition callbacks.
+ * Interface that is exposed to remote callers to manipulate the OneHanded feature.
  */
-oneway interface IFocusTransitionListener2 {
+interface IOneHanded {
 
     /**
-     * Called when a transition changes the top, focused display.
+     * Enters one handed mode.
      */
-    void onFocusedDisplayChanged(int displayId);
+    oneway void startOneHanded() = 1;
+
+    /**
+     * Exits one handed mode.
+     */
+    oneway void stopOneHanded() = 2;
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.google.ksp)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -13,7 +14,7 @@ android {
         main {
             java.srcDirs = ['shared/src']
             kotlin.directories.add('shared/src')
-            aidl.srcDirs = ['shared/src']
+            aidl.srcDirs = ['shared/src', 'aidl-api']
             manifest.srcFile 'AndroidManifest.xml'
             res.srcDirs = ['shared', 'shared/res']
         }
@@ -37,4 +38,22 @@ dependencies {
 
 ksp {
     arg("dagger.hilt.disableModulesHaveInstallInCheck", "true")
+}
+
+// Fugueti: aidl-api/ holds AOSP 17 WM Shell AIDL interfaces plus stubs of hidden platform
+// interfaces they import (android/app/IApplicationThread.aidl, ...). The Java generated for the
+// platform stubs is deleted so the real classes from framework.jar are used.
+def platformAidlStubs = [
+        'android/app/IApplicationThread.java',
+        'android/view/IRemoteAnimationFinishedCallback.java',
+        'android/view/IRemoteAnimationRunner.java',
+        'android/window/IOnBackInvokedCallback.java',
+        'com/android/internal/os/IResultReceiver.java',
+]
+tasks.withType(com.android.build.gradle.tasks.AidlCompile).configureEach { t ->
+    t.doLast {
+        platformAidlStubs.each { stub ->
+            t.sourceOutputDir.get().asFile.toPath().resolve(stub).toFile().delete()
+        }
+    }
 }

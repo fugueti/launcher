@@ -10,8 +10,9 @@ android {
     }
     sourceSets {
         main {
-            java.srcDirs = ['src']
+            java.srcDirs = ['src', 'annotations/src']
             kotlin.directories.add('src')
+            kotlin.directories.add('annotations/src')
             aidl.srcDirs = ['src']
             manifest.srcFile 'AndroidManifest.xml'
         }

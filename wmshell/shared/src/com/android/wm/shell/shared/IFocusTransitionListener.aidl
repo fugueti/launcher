@@ -16,24 +16,21 @@
 
 package com.android.wm.shell.shared;
 
-import android.window.RemoteTransition;
-import android.window.TransitionFilter;
-import android.view.InsetsState;
+import android.app.ActivityManager.RunningTaskInfo;
 
 /**
- * Listener interface that Launcher attaches to SystemUI to get home activity transition callbacks
- * on the default display.
+ * Listener interface that to get focus-related transition callbacks.
  */
-oneway interface IHomeTransitionListener2 {
+oneway interface IFocusTransitionListener {
 
     /**
-     * Called when a transition changes the visibility of the home activity on the default display.
+     * Called when a transition changes the top, focused display.
      */
-    void onHomeVisibilityChanged(in boolean isVisible);
+    void onFocusedDisplayChanged(int displayId);
 
     /**
-     * Called when the insets at display-level change.
+     * Called when the per-app or system-wide focus state has changed for a task.
      */
-    void onDisplayInsetsChanged(in InsetsState insets);
+    void onFocusedTaskChanged(in RunningTaskInfo taskInfo, boolean isFocusedOnDisplay,
+        boolean isFocusedGlobally);
 }
-

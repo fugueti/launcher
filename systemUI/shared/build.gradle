@@ -28,6 +28,7 @@ addFrameworkJar('framework-17.jar')
 compileOnlyCommonJars()
 
 dependencies {
+    implementation projects.tracinglib
     compileOnly projects.hiddenApi
     compileOnly projects.unfold
     compileOnly projects.plugin
