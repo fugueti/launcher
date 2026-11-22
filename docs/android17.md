@@ -40,7 +40,7 @@ The JAR used for the local builds so far came from the **Google APIs** emulator 
 the Android SDK License, so that JAR is not committed (it is kept out of git through
 `.git/info/exclude`).
 
-What goes into the repository instead, so anyone (and CI later) can build the 17 line:
+Done (2026-11-22): `prebuilts/libs/framework-17.jar` is committed, made as follows.
 
 1. **Source**: the AOSP-only emulator image (`system-images;android-37.0;default;x86_64`, no
    Google apps). The framework there is built from AOSP sources (Apache 2.0).

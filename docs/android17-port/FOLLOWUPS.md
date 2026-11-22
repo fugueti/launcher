@@ -65,7 +65,7 @@ Check these when the tree compiles.
     QSB-on-top cases, hidden dock (`isHotseatEnabled`)
   - drawer: top padding factor, left/right margin factor, all apps scale 1.0
   - responsive grids: icon size scaled by the home icon size factor
-- **Build tooling**: framework-17.jar is post-processed (class version 52, InnerClasses entries added by ~/.cache/fugueti-android17/tools/FixInnerClasses.java); it is kept out of git (local only, see .git/info/exclude). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).
+- **Build tooling**: framework-17.jar is a stub JAR made from the AOSP-only emulator image by `prebuilts/tools/make-framework-jar.sh` (provenance and checksums in `prebuilts/libs/README.md`). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).
 - **Turned off for now (restore once 17 runs)**: Ambient Cue (`quickstep/.../cuebar`, Pixel
   personal-context pill): `CueBarController` is a no-op stub and the `cuebar` package plus
   `CueBarInsightRendererService` are removed; restore them from `aosp/android17-release`.
