@@ -20,7 +20,7 @@ import static com.android.launcher3.AbstractFloatingView.getTopOpenViewWithType;
 import static com.android.launcher3.LauncherState.ALL_APPS;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.LauncherState.OVERVIEW;
-import static com.android.window.flags.Flags.betterDeskDeactivationInRecentsTransition;
+import static com.android.window.flags2.Flags.betterDeskDeactivationInRecentsTransition;
 
 import android.view.MotionEvent;
 

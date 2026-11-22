@@ -17,7 +17,7 @@ package com.android.launcher3.secondarydisplay;
 
 import static androidx.lifecycle.Lifecycle.State.RESUMED;
 import static com.android.launcher3.util.OnboardingPrefs.ALL_APPS_VISITED_COUNT;
-import static com.android.window.flags.Flags.useInputReportedFocusForAccessibility;
+import static com.android.window.flags2.Flags.useInputReportedFocusForAccessibility;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;

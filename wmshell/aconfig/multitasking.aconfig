@@ -5,19 +5,18 @@
 package: "com.android.wm.shell"
 container: "system"
 
-
-flag {
-    name: "enable_taskbar_navbar_unification"
-    namespace: "multitasking"
-    description: "Enables taskbar / navbar unification"
-    bug: "309671494"
-}
-
 flag {
     name: "enable_pip2"
     namespace: "multitasking"
     description: "Enables the new implementation of PiP (PiP2)"
     bug: "311462191"
+}
+
+flag {
+    name: "enable_pip2_on_tv"
+    namespace: "multitasking"
+    description: "Enables the new implementation of PiP (PiP2) on TV"
+    bug: "403347147"
 }
 
 flag {
@@ -42,10 +41,10 @@ flag {
 }
 
 flag {
-    name: "enable_bubbles_long_press_nav_handle"
+    name: "enable_bubble_transition_planner"
     namespace: "multitasking"
-    description: "Enables long-press action for nav handle when a bubble is expanded"
-    bug: "324910035"
+    description: "Enables BubbleTransitionsPlanner to handle bubble transitions"
+    bug: "473881387"
 }
 
 flag {
@@ -53,13 +52,6 @@ flag {
     namespace: "multitasking"
     description: "Hides the bubble overflow if there aren't any overflowed bubbles"
     bug: "334175587"
-}
-
-flag {
-    name: "enable_retrievable_bubbles"
-    namespace: "multitasking"
-    description: "Allow opening bubbles overflow UI without bubbles being visible"
-    bug: "340337839"
 }
 
 flag {
@@ -91,26 +83,6 @@ flag {
 }
 
 flag {
-    name: "only_reuse_bubbled_task_when_launched_from_bubble"
-    namespace: "multitasking"
-    description: "Allow reusing bubbled tasks for new activities only when launching from bubbles"
-    bug: "328229865"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
-}
-
-flag {
-    name: "enable_bubble_app_compat_fixes"
-    namespace: "multitasking"
-    description: "Enable fixes for app compat (e.g. insets and layout issues) for bubbles"
-    bug: "384610402"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
-}
-
-flag {
     name: "enable_taskbar_on_phones"
     namespace: "multitasking"
     description: "Enables taskbar on phones"
@@ -124,16 +96,6 @@ flag {
     name: "enable_shell_top_task_tracking"
     namespace: "multitasking"
     description: "Enables tracking top tasks from the shell"
-    bug: "346588978"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
-}
-
-flag {
-    name: "enable_recents_bookend_transition"
-    namespace: "multitasking"
-    description: "Use a finish-transition to clean up recents instead of the finish-WCT"
     bug: "346588978"
     metadata {
         purpose: PURPOSE_BUGFIX
@@ -162,23 +124,6 @@ flag {
 }
 
 flag {
-    name: "task_view_repository"
-    namespace: "multitasking"
-    description: "Factor task-view state tracking out of taskviewtransitions"
-    bug: "384976265"
-}
-
-flag {
-    name: "fix_missing_user_change_callbacks"
-    namespace: "multitasking"
-    description: "Fix a race condition that could make Shell miss a user change callback."
-    bug: "404251029"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
-}
-
-flag {
     name: "enable_bubble_bar_on_phones"
     namespace: "multitasking"
     description: "Try out bubble bar on phones"
@@ -186,13 +131,10 @@ flag {
 }
 
 flag {
-    name: "enable_bubble_task_view_listener"
+    name: "enable_shell_modes"
     namespace: "multitasking"
-    description: "Use the same taskview listener for bubble bar and floating"
-    bug: "272102927"
-    metadata {
-        purpose: PURPOSE_BUGFIX
-    }
+    description: "Shell hierarchy and modes infrastructure"
+    bug: "463244845"
 }
 
 flag {
@@ -213,13 +155,6 @@ flag {
 }
 
 flag {
-    name: "enable_dynamic_insets_for_app_launch"
-    namespace: "multitasking"
-    description: "Enables dynamic insets for app launch so the window is properly cropped"
-    bug: "336511494"
-}
-
-flag {
     name: "task_view_transitions_refactor"
     namespace: "windowing_frontend"
     description: "Refactor TaskViewTransitions.startAnimation"
@@ -227,30 +162,369 @@ flag {
 }
 
 flag {
-    name: "enable_pip_box_shadows"
+    name: "enable_pip_box_shadows_v2"
     namespace: "multitasking"
     description: "Enables box shadows for PiP"
     bug: "367464660"
+}
+
+flag {
+     name: "enable_2x1_split"
+     namespace: "multitasking"
+     description: "Enables the 2x1 split implementation"
+     bug: "439992109"
+}
+
+flag {
+    name: "bug_dont_remove_task_bubble"
+    namespace: "multitasking"
+    description: "Fixes a bug where tasks are being destroyed when a bubble is overflowed."
+    bug: "427302529"
     metadata {
         purpose: PURPOSE_BUGFIX
     }
 }
 
 flag {
-    name: "enable_bubble_swipe_up_cleanup"
+    name: "add_one_off_handler_leashes"
     namespace: "multitasking"
-    description: "Enable clean up of bubbles swipe gesture handling"
-    bug: "391909607"
+    description: "Add one-off leashes to non-Shell handlers (Remote, Recents, etc.) when starting or taking over an animation."
+    bug: "403529740"
+}
+
+flag {
+    name: "fix_bubble_swipe_up_dismiss_bubble_bar"
+    namespace: "multitasking"
+    description: "Allows you to swipe up to dismiss a bubble in bubble bar"
+    bug: "399910368"
     metadata {
         purpose: PURPOSE_BUGFIX
     }
 }
 
 flag {
-    name: "enable_enter_split_remove_bubble"
+    name: "resolve_trampoline_destination_packages"
     namespace: "multitasking"
-    description: "Enable removing a task from bubbles when it is entering split screen"
-    bug: "396315875"
+    description: "Fixes a bug where resolving package name for task trampoline."
+    bug: "370653710"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_ime_clipping"
+    namespace: "multitasking"
+    description: "Fix a bug where the ime clipped all of bubbles view when it shouldn't"
+    bug: "459673299"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_mark_task_as_trimmable"
+    namespace: "multitasking"
+    description: "Fixes a bug where tasks were not marked as trimmable when removed from a bubble"
+    bug: "474169292"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+
+flag {
+    name: "disable_bubble_scrim_large_screens"
+    namespace: "multitasking"
+    description: "Disable the transparent scrim when a bubble is expanded on large screen devices that are eligible for Desktop Windowing."
+    bug: "463292965"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "disable_bubble_anything_desktop_windowing"
+    namespace: "multitasking"
+    description: "Disable Bubble Anything on large screen devices that are eligible for Desktop Windowing."
+    bug: "469240263"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "launch_bubble_on_main_display"
+    namespace: "multitasking"
+    description: "Ensure bubble task is created on the main display if triggered from a connected display."
+    bug: "457889029"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "enable_bubble_pinning"
+    namespace: "multitasking"
+    description: "Enables pinning bubbles on laptops and tablets"
+    bug: "493912543"
+}
+
+flag {
+    name: "consolidate_split_keyboard_shortcut_controllers"
+    namespace: "multitasking"
+    description: "Consolidate split desktop keyboard shortcuts handling on shell and launcher side"
+    bug: "438790317"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "use_bubble_icon_from_activity_info"
+    namespace: "multitasking"
+    description: "Load Bubble app icon from specific ActivityInfo rather than just the ApplicationInfo."
+    bug: "462281202"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "update_bubble_bar_taskbar_intersection"
+    namespace: "multitasking"
+    description: "Update the logic to determine if the expanded  bubble bar will intersect the persistent taskbar"
+    bug: "478462570"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "bbev_square_corners_fix"
+    namespace: "multitasking"
+    description: "Fixes square corners when expanding Bubbles from PiP"
+    bug: "475068406"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "update_bubble_bounds_during_rotation"
+    namespace: "multitasking"
+    description: "Update the bounds of the expanded bubble task as part of the rotation transition"
+    bug: "471756214"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_adjust_accessibility_actions_for_stack_view_state"
+    namespace: "multitasking"
+    description: "Adjust accessibility actions for stack view expanded state"
+    bug: "469259914"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "bubble_dismiss_magnetize_collision_prevention"
+    namespace: "multitasking"
+    description: "Move the dismiss view higher so it`s magnetize zone does not collide with the bubble bar"
+    bug: "481701224"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_reduce_shadow_alpha"
+    namespace: "multitasking"
+    description: "Reduce floating bubbles scrim view alpha to make navigation buttons visible"
+    bug: "450646947"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_flicker_when_app_bubble_from_overflow"
+    namespace: "multitasking"
+    description: "Fixes a flicker issue that happens when promoting an app bubble from overflow"
+    bug: "472080053"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_bar_not_collapsed_if_animating_bubble"
+    namespace: "multitasking"
+    description: "Fixes bubble bar collapse failure when setExpandedFromSysui() is called while a bubble is animating."
+    bug: "487678424"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_notification_showing_in_lock_screen"
+    namespace: "multitasking"
+    description: "Fixes a bug where bubble notification persist on lock screen"
+    bug: "466186520"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_bar_flick_on_pinning_animation"
+    namespace: "multitasking"
+    description: "Fixes bubble flickering issue on the taskbar pinning animation completion"
+    bug: "484396747"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_bar_stashing_with_hardware_keyboard"
+    namespace: "multitasking"
+    description: "Fixes a bug where bubble bar stashes incorrectly when a hardware keyboard is connected"
+    bug: "461660471"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_swipe_up_notification_shade_with_bubble_bar"
+    namespace: "multitasking"
+    description: "Fixes an issue where swiping from the bottom of the notification shade while bubbles were expanded below wouldn't work"
+    bug: "483561405"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_verify_bubble_task_id_on_removal"
+    namespace: "multitasking"
+    description: "Fixes a bug where we remove a bubble based on package name after the bubble task has changed"
+    bug: "482877474"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_taskbar_scrim_view_on_home"
+    namespace: "multitasking"
+    description: "Fixes taskbar scrim view when bubbles are expanded on Launcher home screen"
+    bug: "492048302"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubbles_stashing_on_home"
+    namespace: "multitasking"
+    description: "Fixes a bug where bubbles could be stashed on launcher home"
+    bug: "487360955"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubbled_task_height"
+    namespace: "multitasking"
+    description: "Fixes bubbled task being short after device is folded"
+    bug: "487855787"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "bubbles_fix_issues_with_repeated_fold_unfold"
+    namespace: "multitasking"
+    description: "Fixes bubble issues when transitioning between modes due to repeated folding and unfolding"
+    bug: "450107220"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubbles_handle_user_education"
+    namespace: "multitasking"
+    description: "Fixes an issue where user education didn't dismiss"
+    bug: "490187640"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_dismiss_flyout_persistent_taskbar"
+    namespace: "multitasking"
+    description: "Fixes a bug where bubble bar flyout is not hidden on persistent taskbars"
+    bug: "493963961"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubbles_stack_visible_in_immersive"
+    namespace: "multitasking"
+    description: "Fixes a bug where the floating stack is visible in immersive mode"
+    bug: "494514819"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubbles_stash_incorrect_progress"
+    namespace: "multitasking"
+    description: "Fixes a bug where persistent bubble stash progress is incorrect after transition from home."
+    bug: "487826634"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_insets_when_invisible"
+    namespace: "multitasking"
+    description: "Fixes a bug where bubbles would still be in the insets even when invisible"
+    bug: "494114931"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_bubble_bar_visibility_update_dropped"
+    namespace: "multitasking"
+    description: "Fixes bubble bar visibility update being dropped when animations are interrupted"
+    bug: "474032293"
+    metadata {
+        purpose: PURPOSE_BUGFIX
+    }
+}
+
+flag {
+    name: "fix_pip_to_bubble_relaunch"
+    namespace: "multitasking"
+    description: "Fixes a bug where relaunching an app that was bubble'd after being PIP'd didn't work"
+    bug: "496911676"
     metadata {
         purpose: PURPOSE_BUGFIX
     }

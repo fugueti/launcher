@@ -73,7 +73,7 @@ import com.android.quickstep.views.RecentsView.TAG
 import com.android.quickstep.views.RecentsView.TASK_THUMBNAIL_SPLASH_ALPHA
 import com.android.systemui.shared.recents.model.Task
 import com.android.systemui.shared.recents.model.ThumbnailData
-import com.android.window.flags.Flags.betterDeskDeactivationInRecentsTransition
+import com.android.window.flags2.Flags.betterDeskDeactivationInRecentsTransition
 import com.android.wm.shell.shared.GroupedTaskInfo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

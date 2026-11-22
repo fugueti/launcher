@@ -16,11 +16,14 @@
 
 package com.android.wm.shell.bubbles
 
+import android.app.ActivityManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.pm.LauncherApps
 import android.graphics.Insets
 import android.graphics.Rect
 import android.os.Handler
+import android.os.UserHandle
 import android.os.UserManager
 import android.platform.test.annotations.EnableFlags
 import android.platform.test.flag.junit.SetFlagsRule
@@ -30,13 +33,19 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import com.android.internal.logging.InstanceIdSequence
 import com.android.internal.logging.testing.UiEventLoggerFake
 import com.android.internal.protolog.ProtoLog
 import com.android.internal.statusbar.IStatusBarService
 import com.android.wm.shell.Flags
 import com.android.wm.shell.ShellTaskOrganizer
 import com.android.wm.shell.bubbles.Bubbles.SysuiProxy
+import com.android.wm.shell.bubbles.logging.BubbleLogger
+import com.android.wm.shell.bubbles.logging.BubbleSessionTracker
+import com.android.wm.shell.bubbles.logging.BubbleSessionTrackerImpl
 import com.android.wm.shell.bubbles.storage.BubblePersistentRepository
+import com.android.wm.shell.bubbles.transitions.BubbleTransitions
+import com.android.wm.shell.bubbles.user.data.FakeBubbleUserResolver
 import com.android.wm.shell.common.DisplayController
 import com.android.wm.shell.common.DisplayImeController
 import com.android.wm.shell.common.DisplayInsetsController
@@ -50,6 +59,7 @@ import com.android.wm.shell.shared.TransactionPool
 import com.android.wm.shell.shared.bubbles.BubbleBarLocation
 import com.android.wm.shell.shared.bubbles.BubbleBarUpdate
 import com.android.wm.shell.shared.bubbles.DeviceConfig
+import com.android.wm.shell.shared.bubbles.FakeBubbleFeatureConfig
 import com.android.wm.shell.sysui.ShellCommandHandler
 import com.android.wm.shell.sysui.ShellController
 import com.android.wm.shell.sysui.ShellInit
@@ -57,14 +67,17 @@ import com.android.wm.shell.taskview.TaskViewTransitions
 import com.android.wm.shell.transition.Transitions
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
+import java.util.Optional
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.Optional
 
 /** Tests for [BubbleController] when using bubble bar */
 @SmallTest
@@ -80,6 +93,7 @@ class BubbleControllerBubbleBarTest {
     @get:Rule val setFlagsRule = SetFlagsRule()
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
+    private val bubbleTransitions = mock<BubbleTransitions>()
 
     private lateinit var bubbleController: BubbleController
     private lateinit var uiEventLoggerFake: UiEventLoggerFake
@@ -87,6 +101,8 @@ class BubbleControllerBubbleBarTest {
     private lateinit var bubbleData: BubbleData
     private lateinit var mainExecutor: TestShellExecutor
     private lateinit var bgExecutor: TestShellExecutor
+    private lateinit var sessionTracker: BubbleSessionTracker
+    private lateinit var bubbleViewInfoTaskFactory: BubbleViewInfoTask.Factory
 
     @Before
     fun setUp() {
@@ -98,6 +114,9 @@ class BubbleControllerBubbleBarTest {
 
         uiEventLoggerFake = UiEventLoggerFake()
         val bubbleLogger = BubbleLogger(uiEventLoggerFake)
+
+        val instanceIdSequence = InstanceIdSequence(/* instanceIdMax= */ 10)
+        sessionTracker = BubbleSessionTrackerImpl(instanceIdSequence, bubbleLogger)
 
         val deviceConfig =
             DeviceConfig(
@@ -118,11 +137,20 @@ class BubbleControllerBubbleBarTest {
                 bubbleLogger,
                 bubblePositioner,
                 BubbleEducationController(context),
+                FakeBubbleAppInfoProvider(),
                 mainExecutor,
                 bgExecutor,
             )
 
         val shellInit = ShellInit(mainExecutor)
+        bubbleViewInfoTaskFactory =
+            FakeBubbleViewInfoTaskFactory(
+                bubblePositioner,
+                FakeBubbleAppInfoProvider(),
+                mainExecutor,
+                bgExecutor,
+                FakeBubbleUserResolver(),
+            )
 
         bubbleController =
             createBubbleController(
@@ -134,6 +162,7 @@ class BubbleControllerBubbleBarTest {
                 bgExecutor,
             )
         bubbleController.asBubbles().setSysuiProxy(mock<SysuiProxy>())
+        bubbleController.setInflateSynchronously(true)
 
         shellInit.init()
 
@@ -256,11 +285,15 @@ class BubbleControllerBubbleBarTest {
         }
         // Log bubble dismissed via drag and there's a switch event
         assertThat(bubbleData.selectedBubbleKey).isEqualTo("key1")
-        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(2)
-        assertThat(uiEventLoggerFake.eventId(0))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_BUBBLE_DISMISSED_DRAG_BUBBLE.id)
-        assertThat(uiEventLoggerFake.eventId(1))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_BUBBLE_SWITCHED.id)
+        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(4)
+        assertThat(uiEventLoggerFake.logs.map { it.eventId })
+            .containsExactly(
+                BubbleLogger.Event.BUBBLE_BAR_BUBBLE_DISMISSED_DRAG_BUBBLE.id,
+                BubbleLogger.Event.BUBBLE_BAR_BUBBLE_SWITCHED.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_SWITCHED_FROM.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_SWITCHED_TO.id,
+            )
+            .inOrder()
     }
 
     @Test
@@ -335,28 +368,39 @@ class BubbleControllerBubbleBarTest {
 
         expandAndSelectBubble("key")
 
-        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(1)
-        assertThat(uiEventLoggerFake.eventId(0))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_EXPANDED.id)
+        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(2)
+        assertThat(uiEventLoggerFake.logs.map { it.eventId })
+            .containsExactly(
+                BubbleLogger.Event.BUBBLE_BAR_EXPANDED.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_STARTED.id,
+            )
+            .inOrder()
         uiEventLoggerFake.logs.clear()
 
-        getInstrumentation().runOnMainSync {
-            bubbleController.collapseStack()
-        }
+        getInstrumentation().runOnMainSync { bubbleController.collapseStack() }
 
-        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(1)
-        assertThat(uiEventLoggerFake.eventId(0))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_COLLAPSED.id)
+        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(2)
+        assertThat(uiEventLoggerFake.logs.map { it.eventId })
+            .containsExactly(
+                BubbleLogger.Event.BUBBLE_BAR_COLLAPSED.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_ENDED.id,
+            )
+            .inOrder()
     }
 
     @Test
     fun testEventLogging_bubbleBar_autoExpandingBubble() {
         addBubble("key", autoExpand = true)
 
-        // 2 events: add bubble + expand
-        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(2)
-        assertThat(uiEventLoggerFake.eventId(1))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_EXPANDED.id)
+        // 3 events: add bubble + expand + session started
+        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(3)
+        assertThat(uiEventLoggerFake.logs.map { it.eventId })
+            .containsExactly(
+                BubbleLogger.Event.BUBBLE_BAR_BUBBLE_POSTED.id,
+                BubbleLogger.Event.BUBBLE_BAR_EXPANDED.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_STARTED.id,
+            )
+            .inOrder()
     }
 
     @Test
@@ -370,9 +414,14 @@ class BubbleControllerBubbleBarTest {
         // Select the next bubble
         expandAndSelectBubble("key1")
 
-        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(1)
-        assertThat(uiEventLoggerFake.eventId(0))
-            .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_BUBBLE_SWITCHED.id)
+        assertThat(uiEventLoggerFake.numLogs()).isEqualTo(3)
+        assertThat(uiEventLoggerFake.logs.map { it.eventId })
+            .containsExactly(
+                BubbleLogger.Event.BUBBLE_BAR_BUBBLE_SWITCHED.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_SWITCHED_FROM.id,
+                BubbleLogger.Event.BUBBLE_BAR_SESSION_SWITCHED_TO.id,
+            )
+            .inOrder()
     }
 
     @Test
@@ -406,6 +455,35 @@ class BubbleControllerBubbleBarTest {
             .isEqualTo(BubbleLogger.Event.BUBBLE_BAR_OVERFLOW_REMOVE_BACK_TO_BAR.id)
     }
 
+    @EnableFlags(Flags.FLAG_ENABLE_BUBBLE_BAR, Flags.FLAG_ENABLE_CREATE_ANY_BUBBLE)
+    @Test
+    fun promoteBubbleFromOverflow_shouldStartNewTransition() {
+        addBubble()
+        val bubble = addAppBubble()
+
+        assertThat(bubbleData.hasAnyBubbleWithKey(bubble.key)).isTrue()
+
+        // Dismiss the bubble so it's in the overflow
+        bubbleController.removeBubble(bubble.key, Bubbles.DISMISS_USER_GESTURE)
+        val overflowBubble = bubbleData.getOverflowBubbleWithKey(bubble.key)
+        assertThat(overflowBubble).isNotNull()
+
+        bubbleController.promoteBubbleFromOverflow(overflowBubble)
+
+        verify(bubbleTransitions)
+            .startLaunchIntoOrConvertToBubble(
+                any(),
+                any(),
+                any(),
+                any(),
+                eq(null),
+                any(),
+                any(),
+                eq(true),
+                eq(null),
+            )
+    }
+
     private fun expandAndSelectBubble(key: String) {
         getInstrumentation().runOnMainSync {
             bubbleController.expandStackAndSelectBubbleFromLauncher(key, 0)
@@ -416,7 +494,25 @@ class BubbleControllerBubbleBarTest {
         val bubble = FakeBubbleFactory.createChatBubble(context, key)
         bubble.setInflateSynchronously(true)
         bubble.setShouldAutoExpand(autoExpand)
-        bubbleController.inflateAndAdd(bubble,
+        bubbleController.inflateAndAdd(
+            bubble,
+            /* suppressFlyout= */ true,
+            /* showInShade= */ true,
+            /* bubbleBarLocation = */ null,
+        )
+        return bubble
+    }
+
+    private fun addAppBubble(): Bubble {
+        val taskInfo =
+            ActivityManager.RunningTaskInfo().apply {
+                taskId = 123
+                baseActivity = ComponentName("com.example.app", "com.example.app.MainActivity")
+            }
+        val bubble = Bubble.createTaskBubble(taskInfo, UserHandle.of(0), null)
+        bubble.setInflateSynchronously(true)
+        bubbleController.inflateAndAdd(
+            bubble,
             /* suppressFlyout= */ true,
             /* showInShade= */ true,
             /* bubbleBarLocation = */ null,
@@ -464,7 +560,7 @@ class BubbleControllerBubbleBarTest {
             surfaceSynchronizer,
             FloatingContentCoordinator(),
             bubbleDataRepository,
-            mock<BubbleTransitions>(),
+            bubbleTransitions,
             mock<IStatusBarService>(),
             mock<WindowManager>(),
             mock<DisplayInsetsController>(),
@@ -487,8 +583,13 @@ class BubbleControllerBubbleBarTest {
             mock<IWindowManager>(),
             BubbleResizabilityChecker(),
             HomeIntentProvider(context),
-            FakeBubbleAppInfoProvider(),
             { Optional.empty() },
+            Optional.empty(),
+            { false },
+            sessionTracker,
+            bubbleViewInfoTaskFactory,
+            mock<BubbleHelper>(),
+            FakeBubbleFeatureConfig(),
         )
     }
 
@@ -497,6 +598,6 @@ class BubbleControllerBubbleBarTest {
 
         override fun animateBubbleBarLocation(location: BubbleBarLocation?) {}
 
-        override fun showBubbleBarPillowAt(location: BubbleBarLocation?) {}
+        override fun showBubbleBarDropTargetAt(location: BubbleBarLocation?) {}
     }
 }

@@ -453,7 +453,7 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
                 .getRemoteTransition(appLaunchRemoteTransition,
                         mLauncher.getIApplicationThread(), "QuickstepLaunch");
 
-        if (com.android.window.flags.Flags.crossDisplayTransitionV2()) {
+        if (com.android.window.flags2.Flags.crossDisplayTransitionV2()) {
             TransitionFilter filter = new TransitionFilter();
             filter.mRequirements = new TransitionFilter.Requirement[]{
                     new TransitionFilter.Requirement()};
@@ -542,8 +542,8 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
             Runnable onEndCallback
     ) {
         IRemoteTransition defaultAppLaunchTransition = defaultAppLaunchRunner.toRemoteTransition();
-        if (!com.android.window.flags.Flags.enableCrossDisplaysAppLaunchTransition()
-                || com.android.window.flags.Flags.crossDisplayTransitionV2()) {
+        if (!com.android.window.flags2.Flags.enableCrossDisplaysAppLaunchTransition()
+                || com.android.window.flags2.Flags.crossDisplayTransitionV2()) {
             return defaultAppLaunchTransition;
         }
 
@@ -1511,8 +1511,8 @@ public class QuickstepTransitionManager implements OnDeviceProfileChangeListener
          * launch happens via a different means (e.g. desktop mode), we also need to handle the
          * cross-display move via a remote transition.
          */
-        if (com.android.window.flags.Flags.enableCrossDisplaysAppLaunchTransition()
-                && !com.android.window.flags.Flags.crossDisplayTransitionV2()) {
+        if (com.android.window.flags2.Flags.enableCrossDisplaysAppLaunchTransition()
+                && !com.android.window.flags2.Flags.crossDisplayTransitionV2()) {
             mMoveDisplayTransition = new RemoteTransition(new MoveDisplayChangeRunner(this),
                     mLauncher.getIApplicationThread(), "QuickstepDisplayMove");
             TransitionFilter changeCheck = new TransitionFilter();

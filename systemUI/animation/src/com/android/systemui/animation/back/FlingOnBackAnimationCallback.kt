@@ -29,7 +29,6 @@ import com.android.app.animation.Interpolators
 import com.android.internal.dynamicanimation.animation.DynamicAnimation
 import com.android.internal.dynamicanimation.animation.FlingAnimation
 import com.android.internal.dynamicanimation.animation.FloatValueHolder
-import com.android.window.flags2.Flags.predictiveBackTimestampApi
 
 private const val FLING_FRICTION = 6f
 private const val SCALE_FACTOR = 100f
@@ -87,7 +86,7 @@ abstract class FlingOnBackAnimationCallback(
             onBackInvokedCompat()
         }
         reset()
-        if (predictiveBackTimestampApi() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             downTime = backEvent.frameTimeMillis
         }
         onBackStartedCompat(backEvent)
@@ -95,7 +94,7 @@ abstract class FlingOnBackAnimationCallback(
 
     final override fun onBackProgressed(backEvent: BackEvent) {
         val interpolatedProgress = progressInterpolator.getInterpolation(backEvent.progress)
-        if (predictiveBackTimestampApi() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             downTime?.let { downTime ->
                 velocityTracker.addMovement(
                     MotionEvent.obtain(
@@ -129,7 +128,7 @@ abstract class FlingOnBackAnimationCallback(
     }
 
     final override fun onBackInvoked() {
-        if (predictiveBackTimestampApi() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && lastBackEvent != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && lastBackEvent != null) {
             velocityTracker.computeCurrentVelocity(1000)
             backInvokedFlingAnim =
                 FlingAnimation(FloatValueHolder())

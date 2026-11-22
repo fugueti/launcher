@@ -17,6 +17,7 @@
 package com.android.systemui.shared.recents.model;
 
 import static android.app.WindowConfiguration.ACTIVITY_TYPE_UNDEFINED;
+import app.lawnchair.compat.LawnchairQuickstepCompat;
 import static android.view.Display.DEFAULT_DISPLAY;
 
 import static com.android.wm.shell.shared.split.SplitScreenConstants.CONTROLLED_ACTIVITY_TYPES;
@@ -25,6 +26,7 @@ import static com.android.wm.shell.shared.split.SplitScreenConstants.CONTROLLED_
 import android.app.ActivityManager;
 import android.app.ActivityManager.TaskDescription;
 import android.app.TaskInfo;
+import android.app.WindowConfiguration;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Point;
@@ -38,8 +40,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.internal.util.ArrayUtils;
-
-import app.lawnchair.compat.LawnchairQuickstepCompat;
 
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -92,6 +92,15 @@ public class Task {
          * Whether fillsParent() is false for every activity in the tasks stack.
          */
         public boolean isActivityStackTransparent;
+        /**
+         * The type of the top most activity.
+         */
+        public @WindowConfiguration.ActivityType int topActivityType;
+        /**
+         * Whether the top activity fillsParent() is false. This is used to determine if the
+         * activity is translucent.
+         */
+        public boolean isTopActivityTransparent;
 
         // The source component name which started this task
         public final ComponentName sourceComponent;
@@ -99,6 +108,9 @@ public class Task {
         private int mHashCode;
 
         public TaskKey(TaskInfo t) {
+            this(t, t.displayId);
+        }
+        public TaskKey(TaskInfo t, int displayIdOverride) {
             ComponentName sourceComponent = t.origActivity != null
                     // Activity alias if there is one
                     ? t.origActivity
@@ -110,12 +122,19 @@ public class Task {
             this.sourceComponent = sourceComponent;
             this.userId = t.userId;
             this.lastActiveTime = t.lastActiveTime;
-            this.displayId = t.displayId;
+            this.displayId = displayIdOverride;
             this.baseActivity = t.baseActivity;
             this.numActivities = t.numActivities;
-            if (LawnchairQuickstepCompat.ATLEAST_BAKLAVA) { // LC-Note: QuickSwitch compatibility!
+            // LC-Note: QuickSwitch compatibility! Fields are missing on older platforms.
+            if (LawnchairQuickstepCompat.ATLEAST_BAKLAVA) {
                 this.isTopActivityNoDisplay = t.isTopActivityNoDisplay;
                 this.isActivityStackTransparent = t.isActivityStackTransparent;
+            }
+            try {
+                this.topActivityType = t.topActivityType;
+                this.isTopActivityTransparent = t.isTopActivityTransparent;
+            } catch (NoSuchFieldError ignored) {
+                // Android 17 fields
             }
             updateHashCode();
         }
@@ -135,7 +154,9 @@ public class Task {
         public TaskKey(int id, int windowingMode, @NonNull Intent intent,
                 ComponentName sourceComponent, int userId, long lastActiveTime, int displayId,
                 @Nullable ComponentName baseActivity, int numActivities,
-                boolean isTopActivityNoDisplay, boolean isActivityStackTransparent) {
+                boolean isTopActivityNoDisplay, boolean isActivityStackTransparent,
+                @WindowConfiguration.ActivityType int topActivityType,
+                boolean isTopActivityTransparent) {
             this.id = id;
             this.windowingMode = windowingMode;
             this.baseIntent = intent;
@@ -147,6 +168,8 @@ public class Task {
             this.numActivities = numActivities;
             this.isTopActivityNoDisplay = isTopActivityNoDisplay;
             this.isActivityStackTransparent = isActivityStackTransparent;
+            this.topActivityType = topActivityType;
+            this.isTopActivityTransparent = isTopActivityTransparent;
             updateHashCode();
         }
 
@@ -222,6 +245,8 @@ public class Task {
             parcel.writeInt(numActivities);
             parcel.writeBoolean(isTopActivityNoDisplay);
             parcel.writeBoolean(isActivityStackTransparent);
+            parcel.writeInt(topActivityType);
+            parcel.writeBoolean(isTopActivityTransparent);
         }
 
         private static TaskKey readFromParcel(Parcel parcel) {
@@ -236,10 +261,11 @@ public class Task {
             int numActivities = parcel.readInt();
             boolean isTopActivityNoDisplay = parcel.readBoolean();
             boolean isActivityStackTransparent = parcel.readBoolean();
-
+            int topActivityType = parcel.readInt();
+            boolean isTopActivityTransparent = parcel.readBoolean();
             return new TaskKey(id, windowingMode, baseIntent, sourceComponent, userId,
                     lastActiveTime, displayId, baseActivity, numActivities, isTopActivityNoDisplay,
-                    isActivityStackTransparent);
+                    isActivityStackTransparent, topActivityType, isTopActivityTransparent);
         }
 
         @Override
@@ -281,6 +307,11 @@ public class Task {
     @ViewDebug.ExportedProperty(category="recents")
     public boolean isLocked;
 
+    // TODO(b/464299436): Consider using the App Lock locked state instead of the App Lock enabled
+    //  state for recents.
+    @ViewDebug.ExportedProperty(category = "recents")
+    public boolean isAppLockEnabled;
+
     public Point positionInParent;
 
     public Rect appBounds;
@@ -302,15 +333,18 @@ public class Task {
         ActivityManager.TaskDescription td = taskInfo.taskDescription;
         // Also consider undefined activity type to include tasks in overview right after rebooting
         // the device.
-        final boolean isDockable = taskInfo.supportsMultiWindow
+        final boolean isDockable = taskInfo.supportsMultiWindowWithoutConstraints
                 && ArrayUtils.contains(
                         CONTROLLED_WINDOWING_MODES_WHEN_ACTIVE, taskInfo.getWindowingMode())
                 && (taskInfo.getActivityType() == ACTIVITY_TYPE_UNDEFINED
                 || ArrayUtils.contains(CONTROLLED_ACTIVITY_TYPES, taskInfo.getActivityType()));
-        return new Task(taskKey,
+        Task result = new Task(taskKey,
                 td != null ? td.getPrimaryColor() : 0,
                 td != null ? td.getBackgroundColor() : 0, isDockable , isLocked, td,
                 taskInfo.topActivity);
+        result.appBounds = taskInfo.configuration.windowConfiguration.getAppBounds();
+        result.isAppLockEnabled = taskInfo.isRealActivityAppLockEnabled;
+        return result;
     }
 
     /**
@@ -332,6 +366,7 @@ public class Task {
         appBounds = other.appBounds;
         isVisible = other.isVisible;
         isMinimized = other.isMinimized;
+        isAppLockEnabled = other.isAppLockEnabled;
     }
 
     /**
@@ -395,6 +430,9 @@ public class Task {
         }
         if (isLocked) {
             writer.print(" locked=Y");
+        }
+        if (isAppLockEnabled) {
+            writer.print(" appLockEnabled=Y");
         }
         writer.print(" "); writer.print(title);
         writer.println();

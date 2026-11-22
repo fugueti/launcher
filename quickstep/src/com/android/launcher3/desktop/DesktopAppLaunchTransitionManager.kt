@@ -29,7 +29,7 @@ import com.android.launcher3.desktop.DesktopAppLaunchTransition.AppLaunchType
 import com.android.launcher3.display.DisplayController
 import com.android.launcher3.util.Executors.MAIN_EXECUTOR
 import com.android.quickstep.SystemUiProxy
-import com.android.window.flags.Flags
+import com.android.window.flags2.Flags
 import com.android.wm.shell.shared.desktopmode.DesktopModeStatus
 
 /** Manages transitions related to app launches in Desktop Mode. */

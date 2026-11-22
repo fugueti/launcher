@@ -20,6 +20,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.platform.test.annotations.EnableFlags
+import android.platform.test.flag.junit.SetFlagsRule
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -29,6 +31,8 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import androidx.core.graphics.toColorInt
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import com.android.wm.shell.Flags.FLAG_ENABLE_BUBBLE_TO_FULLSCREEN
+import com.android.wm.shell.Flags.FLAG_ENABLE_CREATE_ANY_BUBBLE
 import com.android.wm.shell.shared.bubbles.DragZoneFactory.BubbleBarPropertiesProvider
 import com.android.wm.shell.shared.bubbles.DragZoneFactory.DesktopWindowModeChecker
 import com.android.wm.shell.shared.bubbles.DragZoneFactory.SplitScreenModeChecker
@@ -45,6 +49,7 @@ import platform.test.screenshot.ViewScreenshotTestRule
 import platform.test.screenshot.ViewScreenshotTestRule.Mode
 import platform.test.screenshot.getEmulatedDevicePathConfig
 
+@EnableFlags(FLAG_ENABLE_BUBBLE_TO_FULLSCREEN, FLAG_ENABLE_CREATE_ANY_BUBBLE)
 @RunWith(ParameterizedAndroidJunit4::class)
 class DragZoneFactoryScreenshotTest(private val param: Param) {
     companion object {
@@ -84,7 +89,7 @@ class DragZoneFactoryScreenshotTest(private val param: Param) {
     class Param(
         val emulationSpec: DeviceEmulationSpec,
         val draggedObject: DraggedObject,
-        val splitScreenMode: SplitScreenMode
+        val splitScreenMode: SplitScreenMode,
     ) {
         private val draggedObjectName =
             when (draggedObject) {
@@ -108,11 +113,13 @@ class DragZoneFactoryScreenshotTest(private val param: Param) {
         override fun toString() = "${emulationSpec}_$testName"
     }
 
+    @get:Rule val flagsRule = SetFlagsRule()
+
     @get:Rule
     val screenshotRule =
         ViewScreenshotTestRule(
             param.emulationSpec,
-            WMShellGoldenPathManager(getEmulatedDevicePathConfig(param.emulationSpec))
+            WMShellGoldenPathManager(getEmulatedDevicePathConfig(param.emulationSpec)),
         )
 
     private val context = getApplicationContext<Context>()
@@ -135,11 +142,14 @@ class DragZoneFactoryScreenshotTest(private val param: Param) {
             DeviceConfig.create(context, context.getSystemService(WindowManager::class.java)!!)
         val splitScreenModeChecker = SplitScreenModeChecker { param.splitScreenMode }
         val desktopWindowModeChecker = DesktopWindowModeChecker { true }
-        val bubbleBarPropertiesProvider = object : BubbleBarPropertiesProvider {
-            override fun getHeight() = 80
-            override fun getWidth() = 100
-            override fun getBottomPadding() = 40
-        }
+        val bubbleBarPropertiesProvider =
+            object : BubbleBarPropertiesProvider {
+                override fun getHeight() = 80
+
+                override fun getWidth() = 100
+
+                override fun getBottomPadding() = 40
+            }
         return DragZoneFactory(
             context,
             deviceConfig,
@@ -161,8 +171,7 @@ class DragZoneFactoryScreenshotTest(private val param: Param) {
                 view.y = bounds.rect.top.toFloat()
             }
             is DragZone.Bounds.CircleZone -> {
-                view.layoutParams =
-                    FrameLayout.LayoutParams(bounds.radius * 2, bounds.radius * 2)
+                view.layoutParams = FrameLayout.LayoutParams(bounds.radius * 2, bounds.radius * 2)
                 view.background = createZoneDrawable(zone.color, GradientDrawable.OVAL)
                 view.x = (bounds.x - bounds.radius).toFloat()
                 view.y = (bounds.y - bounds.radius).toFloat()

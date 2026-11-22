@@ -18,12 +18,10 @@ package com.android.wm.shell.shared.desktopmode;
 
 import static android.hardware.display.DisplayManager.DISPLAY_CATEGORY_ALL_INCLUDING_DISABLED;
 
-import static com.android.wm.shell.shared.bubbles.BubbleAnythingFlagHelper.enableBubbleToFullscreen;
+import static com.android.wm.shell.shared.bubbles.BubbleFlagHelper.enableBubbleToFullscreen;
 
-import android.content.res.Resources.NotFoundException;
-import android.os.Build;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.content.Context;
 import android.hardware.display.DisplayManager;
 import android.os.SystemProperties;
@@ -58,7 +56,8 @@ public class DesktopModeStatus {
     /**
      * Flag to indicate whether to restrict desktop mode to supported devices.
      */
-    private static final boolean ENFORCE_DEVICE_RESTRICTIONS = SystemProperties.getBoolean(
+    // Non-final: field is overwritten in DesktopModeStatusTest.
+    private static boolean ENFORCE_DEVICE_RESTRICTIONS = SystemProperties.getBoolean(
             "persist.wm.debug.desktop_mode_enforce_device_restrictions", true);
 
     /**
@@ -90,33 +89,21 @@ public class DesktopModeStatus {
      * Return {@code true} if the current device supports desktop mode.
      */
     private static boolean isDesktopModeSupported(@NonNull Context context) {
-        try {
-            return context.getResources().getBoolean(R.bool.config_isDesktopModeSupported);
-        } catch (NotFoundException e) {
-            return false;
-        }
+        return context.getResources().getBoolean(R.bool.config_isDesktopModeSupported);
     }
 
     /**
      * Return {@code true} if the current device supports the developer option for desktop mode.
      */
     private static boolean isDesktopModeDevOptionSupported(@NonNull Context context) {
-        try {
-            return context.getResources().getBoolean(R.bool.config_isDesktopModeDevOptionSupported);
-        } catch (NotFoundException e) {
-            return false;
-        }
+        return context.getResources().getBoolean(R.bool.config_isDesktopModeDevOptionSupported);
     }
 
     /**
      * Return {@code true} if the current device can host desktop sessions on its internal display.
      */
     private static boolean canInternalDisplayHostDesktops(@NonNull Context context) {
-        try {
-            return context.getResources().getBoolean(R.bool.config_canInternalDisplayHostDesktops);
-        } catch (NotFoundException e) {
-            return false;
-        }
+        return context.getResources().getBoolean(R.bool.config_canInternalDisplayHostDesktops);
     }
 
 
@@ -146,26 +133,11 @@ public class DesktopModeStatus {
      * Return {@code true} if desktop mode is enabled and can be entered on the current device.
      */
     public static boolean canEnterDesktopMode(@NonNull Context context) {
-        boolean ENABLED_PROJECTED_DISPLAY_DESKTOP_MODE;
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            ENABLED_PROJECTED_DISPLAY_DESKTOP_MODE = DesktopExperienceFlags.ENABLE_PROJECTED_DISPLAY_DESKTOP_MODE.isTrue();
-        } else {
-            ENABLED_PROJECTED_DISPLAY_DESKTOP_MODE = false;
-        }
         boolean isEligibleForDesktopMode = isDeviceEligibleForDesktopMode(context) && (
-            ENABLED_PROJECTED_DISPLAY_DESKTOP_MODE
+                DesktopExperienceFlags.ENABLE_PROJECTED_DISPLAY_DESKTOP_MODE.isTrue()
                         || canInternalDisplayHostDesktops(context));
-        
-        boolean ENABLE_DESKTOP_WINDOWING_MODE;
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            ENABLE_DESKTOP_WINDOWING_MODE = DesktopModeFlags.ENABLE_DESKTOP_WINDOWING_MODE.isTrue();
-        } else {
-            ENABLE_DESKTOP_WINDOWING_MODE = false;
-        }
         boolean desktopModeEnabled =
-                isEligibleForDesktopMode && ENABLE_DESKTOP_WINDOWING_MODE;
+                isEligibleForDesktopMode && DesktopModeFlags.ENABLE_DESKTOP_WINDOWING_MODE.isTrue();
         return desktopModeEnabled || isDesktopModeEnabledByDevOption(context);
     }
 
@@ -173,14 +145,7 @@ public class DesktopModeStatus {
      * Check if Desktop mode should be enabled because the dev option is shown and enabled.
      */
     private static boolean isDesktopModeEnabledByDevOption(@NonNull Context context) {
-        boolean isDesktopModeForcedEnabled;
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            isDesktopModeForcedEnabled = DesktopModeFlags.isDesktopModeForcedEnabled();
-        } else {
-            isDesktopModeForcedEnabled = false;
-        }
-        return isDesktopModeForcedEnabled
+        return DesktopModeFlags.isDesktopModeForcedEnabled()
                 && canShowDesktopModeDevOption(context);
     }
 
@@ -198,66 +163,13 @@ public class DesktopModeStatus {
         if (display.getType() == Display.TYPE_INTERNAL) {
             return canInternalDisplayHostDesktops(context);
         }
-        
-        boolean ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT;
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT = DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue();
-        } else {
-            ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT = false;
-        }
 
         // TODO (b/395014779): Change this to use WM API
-        if (!ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT) {
+        if (!DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()) {
             return false;
         }
         final WindowManager wm = context.getSystemService(WindowManager.class);
         return wm != null && wm.isEligibleForDesktopMode(display.getDisplayId());
-    }
-
-    /**
-     * Returns true if the multi-desks frontend should be enabled on the display.
-     */
-    public static boolean isMultipleDesktopFrontendEnabledOnDisplay(@NonNull Context context,
-            Display display) {
-        
-        boolean ENABLE_MULTIPLE_DESKTOPS_FRONTEND;
-        boolean ENABLE_MULTIPLE_DESKTOPS_BACKEND;
-
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            ENABLE_MULTIPLE_DESKTOPS_FRONTEND = DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_FRONTEND.isTrue();
-            ENABLE_MULTIPLE_DESKTOPS_BACKEND = DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_BACKEND.isTrue();
-        } else {
-            ENABLE_MULTIPLE_DESKTOPS_FRONTEND = false;
-            ENABLE_MULTIPLE_DESKTOPS_BACKEND = false;
-        }
-        
-        return ENABLE_MULTIPLE_DESKTOPS_FRONTEND
-                && ENABLE_MULTIPLE_DESKTOPS_BACKEND
-                && isDesktopModeSupportedOnDisplay(context, display);
-    }
-
-    /**
-     * Returns whether the multiple desktops feature is enabled for this device (both backend and
-     * frontend implementations).
-     */
-    public static boolean enableMultipleDesktops(@NonNull Context context) {
-        boolean ENABLE_MULTIPLE_DESKTOPS_FRONTEND;
-        boolean ENABLE_MULTIPLE_DESKTOPS_BACKEND;
-
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            ENABLE_MULTIPLE_DESKTOPS_FRONTEND = DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_FRONTEND.isTrue();
-            ENABLE_MULTIPLE_DESKTOPS_BACKEND = DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_BACKEND.isTrue();
-        } else {
-            ENABLE_MULTIPLE_DESKTOPS_FRONTEND = false;
-            ENABLE_MULTIPLE_DESKTOPS_BACKEND = false;
-        }
-        
-        return ENABLE_MULTIPLE_DESKTOPS_BACKEND
-                && ENABLE_MULTIPLE_DESKTOPS_FRONTEND
-                && canEnterDesktopMode(context);
     }
 
     /**
@@ -284,15 +196,8 @@ public class DesktopModeStatus {
         if (!enforceDeviceRestrictions()) {
             return true;
         }
-        final boolean enableDesktopModeThroughDevOption;
-        if (false) {
-            // LC-Ignored: Intentional, all Android desktop flags are disabled
-            enableDesktopModeThroughDevOption = Flags.enableDesktopModeThroughDevOption();
-        } else {
-            enableDesktopModeThroughDevOption = false;
-        }
         final boolean desktopModeSupportedByDevOptions =
-            enableDesktopModeThroughDevOption
+                Flags.enableDesktopModeThroughDevOption()
                     && isDesktopModeDevOptionSupported(context);
         return isDesktopModeSupported(context) || desktopModeSupportedByDevOptions;
     }
@@ -328,16 +233,14 @@ public class DesktopModeStatus {
      * @return {@code true} if this device has an internal large screen
      */
     private static boolean deviceHasLargeScreen(@NonNull Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            if (sIsLargeScreenDevice == null) {
-                sIsLargeScreenDevice = Arrays.stream(
-                    context.getSystemService(DisplayManager.class)
-                            .getDisplays(DISPLAY_CATEGORY_ALL_INCLUDING_DISABLED))
-                    .filter(display -> display.getType() == Display.TYPE_INTERNAL)
-                    .anyMatch(display -> display.getMinSizeDimensionDp()
-                            >= WindowManager.LARGE_SCREEN_SMALLEST_SCREEN_WIDTH_DP);
-            }
-        } else sIsLargeScreenDevice = false; // pE-TODO(QPR1, QPR2): Should make it better
+        if (sIsLargeScreenDevice == null) {
+            sIsLargeScreenDevice = Arrays.stream(
+                context.getSystemService(DisplayManager.class)
+                        .getDisplays(DISPLAY_CATEGORY_ALL_INCLUDING_DISABLED))
+                .filter(display -> display.getType() == Display.TYPE_INTERNAL)
+                .anyMatch(display -> display.getMinSizeDimensionDp()
+                        >= WindowManager.LARGE_SCREEN_SMALLEST_SCREEN_WIDTH_DP);
+        }
         return sIsLargeScreenDevice;
     }
 
@@ -348,9 +251,6 @@ public class DesktopModeStatus {
     public static boolean enterDesktopByDefaultOnFreeformDisplay(@NonNull Context context) {
         if (DesktopExperienceFlags.ENABLE_DESKTOP_FIRST_BASED_DEFAULT_TO_DESKTOP_BUGFIX.isTrue()) {
             return true;
-        }
-        if (!DesktopExperienceFlags.ENTER_DESKTOP_BY_DEFAULT_ON_FREEFORM_DISPLAYS.isTrue()) {
-            return false;
         }
         return SystemProperties.getBoolean(ENTER_DESKTOP_BY_DEFAULT_ON_FREEFORM_DISPLAY_SYS_PROP,
                 context.getResources().getBoolean(

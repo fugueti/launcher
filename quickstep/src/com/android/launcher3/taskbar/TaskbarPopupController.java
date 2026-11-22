@@ -23,7 +23,7 @@ import static com.android.launcher3.model.data.AppInfo.COMPONENT_KEY_COMPARATOR;
 import static com.android.launcher3.model.data.AppInfo.PACKAGE_KEY_COMPARATOR;
 import static com.android.launcher3.popup.PopupEventLoggerKt.logEvent;
 import static com.android.launcher3.util.SplitConfigurationOptions.getLogEventForPosition;
-import static com.android.window.flags.Flags.enableOverflowButtonForTaskbarPinnedItems;
+import static com.android.window.flags2.Flags.enableOverflowButtonForTaskbarPinnedItems;
 
 import android.content.Intent;
 import android.content.pm.LauncherApps;

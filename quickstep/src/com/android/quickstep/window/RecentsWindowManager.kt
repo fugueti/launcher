@@ -138,7 +138,7 @@ import com.android.quickstep.views.RecentsViewContainer
 import com.android.quickstep.views.TaskView
 import com.android.systemui.animation.back.FlingOnBackAnimationCallback
 import com.android.systemui.shared.recents.model.ThumbnailData
-import com.android.window.flags.Flags.useInputReportedFocusForAccessibility
+import com.android.window.flags2.Flags.useInputReportedFocusForAccessibility
 import com.android.wm.shell.shared.IOverviewOverlayLeashInvalidationCallback
 import com.android.wm.shell.shared.desktopmode.DesktopState
 import javax.inject.Inject

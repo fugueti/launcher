@@ -21,7 +21,7 @@ import static com.android.launcher3.LauncherState.HINT_STATE_TWO_BUTTON;
 import static com.android.launcher3.LauncherState.NORMAL;
 import static com.android.launcher3.LauncherState.OVERVIEW;
 import static com.android.launcher3.Utilities.EDGE_NAV_BAR;
-import static com.android.window.flags.Flags.betterDeskDeactivationInRecentsTransition;
+import static com.android.window.flags2.Flags.betterDeskDeactivationInRecentsTransition;
 
 import android.animation.ValueAnimator;
 import android.os.SystemClock;

@@ -47,7 +47,7 @@ import com.android.quickstep.input.QuickstepKeyGestureEventsManager.OverviewGest
 import com.android.window.flags2.Flags
 import com.android.quickstep.OverviewCommandHelper
 import com.android.quickstep.sysuiconnection.SysUIConnectionTracker
-import com.android.window.flags.Flags
+import com.android.window.flags2.Flags
 import javax.inject.Inject
 
 /**
