@@ -35,6 +35,7 @@ import com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDL
 import com.android.launcher3.testing.shared.ResourceUtils.pxFromDp
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 @Deprecated(
     "Non responsive grids are deprecated, please refer to responsive grid for a " +
@@ -101,6 +102,15 @@ object WorkspaceProfileNonResponsiveFactory {
                         workspaceBottomPadding +
                         (workspacePageIndicatorHeight - workspacePageIndicatorOverlapWorkspace),
                 )
+
+            // Lawnchair: scale the vertical padding by the user factor. The dock reservation in
+            // the bottom padding is preserved, otherwise a smaller factor pulls the last row into
+            // the dock and clips it.
+            val vertical = LawnchairLayoutFactors.get().workspacePaddingVertical
+            val bottomHotseatReserve = min(max(0, hotseatBarSizePx - insets.bottom), padding.bottom)
+            padding.top = (padding.top * vertical).roundToInt()
+            padding.bottom =
+                bottomHotseatReserve + ((padding.bottom - bottomHotseatReserve) * vertical).roundToInt()
 
             // In fixed Landscape we don't need padding on the side next to the cutout because
             // the cutout is already adding padding to all of Launcher, we only need on the other
@@ -177,10 +187,14 @@ object WorkspaceProfileNonResponsiveFactory {
                 cellLayoutPadding = Rect(0, 0, 0, 0),
                 totalWorkspacePadding = Point(0, 0),
             )
+        // Lawnchair: scale the side margin at the source so the cell width uses it too
         val desiredWorkspaceHorizontalMarginOriginalPx =
             when {
                 isVerticalLayout -> 0
-                else -> res.getDimensionPixelSize(R.dimen.dynamic_grid_left_right_margin)
+                else ->
+                    (res.getDimensionPixelSize(R.dimen.dynamic_grid_left_right_margin) *
+                            LawnchairLayoutFactors.get().workspacePaddingHorizontal)
+                        .roundToInt()
             }
         var iconDrawablePaddingPx =
             (getNormalizedIconDrawablePadding(iconSizePx, iconDrawablePaddingOriginalPx) *
@@ -205,8 +219,11 @@ object WorkspaceProfileNonResponsiveFactory {
         }
         val edgeMarginPx = res.getDimensionPixelSize(R.dimen.dynamic_grid_edge_margin)
         val desiredWorkspaceHorizontalMarginPx = desiredWorkspaceHorizontalMarginOriginalPx
+        // Lawnchair: page indicator height preference
         val workspacePageIndicatorHeight =
-            res.getDimensionPixelSize(R.dimen.workspace_page_indicator_height)
+            (res.getDimensionPixelSize(R.dimen.workspace_page_indicator_height) *
+                    LawnchairLayoutFactors.get().pageIndicatorHeight)
+                .toInt()
         val workspacePageIndicatorOverlapWorkspace =
             res.getDimensionPixelSize(R.dimen.workspace_page_indicator_overlap_workspace)
         val noInsetWorkspacePadding =
@@ -332,10 +349,14 @@ object WorkspaceProfileNonResponsiveFactory {
                 pxFromDp(inv.borderSpaces[typeIndex].y, metrics, scale),
             )
 
+        // Lawnchair: scale the side margin at the source so the cell width uses it too
         val desiredWorkspaceHorizontalMarginOriginalPx =
             when {
                 isVerticalLayout -> 0
-                else -> pxFromDp(inv.horizontalMargin[typeIndex], metrics)
+                else ->
+                    (pxFromDp(inv.horizontalMargin[typeIndex], metrics) *
+                            LawnchairLayoutFactors.get().workspacePaddingHorizontal)
+                        .roundToInt()
             }
         var iconTextSizePx = iconTextSizePxParam
         var iconSizePx = iconSizePxParam
@@ -402,8 +423,11 @@ object WorkspaceProfileNonResponsiveFactory {
         val edgeMarginPx = res.getDimensionPixelSize(R.dimen.dynamic_grid_edge_margin)
         val desiredWorkspaceHorizontalMarginPx =
             (desiredWorkspaceHorizontalMarginOriginalPx * scale).toInt()
+        // Lawnchair: page indicator height preference
         val workspacePageIndicatorHeight =
-            res.getDimensionPixelSize(R.dimen.workspace_page_indicator_height)
+            (res.getDimensionPixelSize(R.dimen.workspace_page_indicator_height) *
+                    LawnchairLayoutFactors.get().pageIndicatorHeight)
+                .toInt()
         val workspacePageIndicatorOverlapWorkspace =
             res.getDimensionPixelSize(R.dimen.workspace_page_indicator_overlap_workspace)
         val noInsetWorkspacePadding =
@@ -523,7 +547,11 @@ object WorkspaceProfileNonResponsiveFactory {
         // Icon scale should never exceed 1, otherwise pixellation may occur.
         val iconScale = min(1f, scale)
         val cellScaleToFit = scale
-        val iconTextSizePx = pxFromSp(inv.iconTextSize[typeIndex], metrics)
+        // Lawnchair: label size preference (0 when labels are hidden)
+        val iconTextSizePx =
+            (pxFromSp(inv.iconTextSize[typeIndex], metrics) *
+                    LawnchairLayoutFactors.get().iconTextSize)
+                .toInt()
 
         val cellStyle: TypedArray =
             when {
@@ -666,15 +694,39 @@ object WorkspaceProfileNonResponsiveFactory {
 
         // We also need to update WorkspacePadding and CellLayoutPadding, keeping it in a
         // different method to make it easier to keep track
-        return workspaceProfile.recalculateWorkspacePadding(
-            isVerticalLayout,
-            isSeascape,
-            InvariantDeviceProfile.isFixedLandscape,
-            isScalableGrid,
-            hotseatProfile,
-            deviceProperties,
-            res,
-            inv,
-        )
+        return workspaceProfile
+            .recalculateWorkspacePadding(
+                isVerticalLayout,
+                isSeascape,
+                InvariantDeviceProfile.isFixedLandscape,
+                isScalableGrid,
+                hotseatProfile,
+                deviceProperties,
+                res,
+                inv,
+            )
+            .let { withLawnchairWidgetPadding(it, metrics) }
+    }
+
+    /**
+     * Lawnchair: widget padding for non-responsive grids, as Android 16 computed it for every
+     * grid (AOSP 17 only sets it for responsive grids), scaled by the widget padding preference.
+     */
+    private fun withLawnchairWidgetPadding(
+        workspaceProfile: WorkspaceProfile,
+        metrics: DisplayMetrics,
+    ): WorkspaceProfile {
+        val minSpacing = pxFromDp(WorkspaceProfile.MIN_WIDGET_PADDING_DP, metrics).toFloat()
+        val border = workspaceProfile.cellLayoutBorderSpacePx
+        val factor = LawnchairLayoutFactors.get().widgetPadding
+        val horizontal = (max(0f, minSpacing - border.x) * factor).roundToInt()
+        val vertical = (max(0f, minSpacing - border.y) * factor).roundToInt()
+        val widgetPadding =
+            if (border.x < minSpacing || border.y < minSpacing) {
+                android.graphics.Rect(horizontal, vertical, horizontal, vertical)
+            } else {
+                android.graphics.Rect()
+            }
+        return workspaceProfile.copy(widgetPadding = widgetPadding)
     }
 }

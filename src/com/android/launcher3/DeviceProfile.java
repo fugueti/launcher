@@ -18,6 +18,7 @@ package com.android.launcher3;
 
 import static com.android.launcher3.InvariantDeviceProfile.createDisplayOptionSpec;
 import static com.android.launcher3.Utilities.dpiFromPx;
+import static com.android.launcher3.Utilities.pxFromSp;
 import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
 import static com.android.launcher3.testing.shared.ResourceUtils.INVALID_RESOURCE_HANDLE;
 import static com.android.launcher3.testing.shared.ResourceUtils.pxFromDp;
@@ -50,6 +51,8 @@ import com.android.launcher3.deviceprofile.DropTargetProfile;
 import com.android.launcher3.deviceprofile.FolderProfile;
 import com.android.launcher3.deviceprofile.HotseatProfile;
 import com.android.launcher3.deviceprofile.HotseatProfileInitialValues;
+import com.android.launcher3.deviceprofile.LawnchairDock;
+import com.android.launcher3.deviceprofile.LawnchairLayoutFactors;
 import com.android.launcher3.deviceprofile.OverviewProfile;
 import com.android.launcher3.deviceprofile.SysuiProfile;
 import com.android.launcher3.deviceprofile.TaskbarConfiguration;
@@ -299,6 +302,18 @@ public class DeviceProfile {
         int qsbHeight = hotseatMode.getLayoutResourceId() != R.layout.empty_view
                 ? res.getDimensionPixelSize(R.dimen.qsb_widget_height) : 0;
 
+        // Lawnchair: dock sizing preferences (labels, rows, bottom space, hidden dock)
+        LawnchairLayoutFactors lawnchairFactors = LawnchairLayoutFactors.from(context);
+        float dockLabelTextSizePx = mResponsiveWorkspaceCellSpec != null
+                ? mResponsiveWorkspaceCellSpec.getIconTextSize()
+                : pxFromSp(inv.iconTextSize[mTypeIndex], mMetrics)
+                        * lawnchairFactors.getIconTextSize();
+        LawnchairDock lawnchairDock = LawnchairDock.create(
+                lawnchairFactors,
+                Utilities.calculateTextHeight(dockLabelTextSizePx),
+                isQsbOnTop(),
+                pxFromDp(48, mMetrics));
+
         HotseatProfileInitialValues hotseatProfileInitialValues =
                 HotseatProfileInitialValues.Factory.createHotseatProfileInitialValues(
                         /*deviceProperties*/ getDeviceProperties(),
@@ -313,7 +328,8 @@ public class DeviceProfile {
                                 R.dimen.workspace_page_indicator_height
                         ),
                         /*responsiveWorkspaceCellSpec*/ mResponsiveWorkspaceCellSpec,
-                        qsbHeight
+                        qsbHeight,
+                        lawnchairDock
                 );
 
         int allAppsTopPadding = mDeviceProperties.getInsets().top;
@@ -923,7 +939,7 @@ public class DeviceProfile {
                             + mWorkspaceProfile.getWorkspacePadding().left
                             + mWorkspaceProfile.getCellLayoutPaddingPx().left,
                     mHotseatProfile.getBarSizePx() - hotseatBarBottomPadding
-                            - mHotseatProfile.getCellHeightPx(),
+                            - mHotseatProfile.getCellHeightPx() * numHotseatRows,
                     remainingSpaceOnSide
                             + mDeviceProperties.getInsets().right
                             + mWorkspaceProfile.getWorkspacePadding().right
@@ -935,13 +951,13 @@ public class DeviceProfile {
             } else {
                 hotseatBarPadding.left += qsbWidth;
             }
-        } else if (mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent()) {
-            // Center the QSB vertically with hotseat
+        } else if (isQsbOnTop() || mHotseatProfile.isQsbInline()) {
+            // Lawnchair: keep the dock icons in the lower section so the QSB can sit above them
             int hotseatBarBottomPadding = getHotseatBarBottomPadding();
             int hotseatBarTopPadding =
                     mHotseatProfile.getBarSizePx()
                             - hotseatBarBottomPadding
-                            - mHotseatProfile.getCellHeightPx();
+                            - mHotseatProfile.getCellHeightPx() * numHotseatRows;
 
             int hotseatWidth = getHotseatRequiredWidth();
             int startSpacing;
@@ -1059,11 +1075,13 @@ public class DeviceProfile {
      * Returns the number of pixels the QSB is translated from the bottom of the screen.
      */
     public int getQsbOffsetY() {
-        if (mHotseatProfile.isQsbInline()) {
+        // Lawnchair: QSB on top for taskbar/two-panel layouts and inline in landscape
+        if (mDeviceProperties.isPhone() && mHotseatProfile.isQsbInline()) {
             return getHotseatBarBottomPadding()
                     - ((getHotseatProfile().getQsbHeight()
                     - mHotseatProfile.getCellHeightPx()) / 2);
-        } else if (mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent()) { // QSB on top
+        } else if (isQsbOnTop()
+                || (mDeviceProperties.isLandscape() && mHotseatProfile.isQsbInline())) {
             return mHotseatProfile.getBarSizePx() - getHotseatProfile().getQsbHeight()
                     + getHotseatProfile().getQsbShadowHeight();
         } else {
@@ -1076,14 +1094,21 @@ public class DeviceProfile {
      */
     private int getHotseatBarBottomPadding() {
         // QSB on top or inline
-        if (mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent()
-                || mHotseatProfile.isQsbInline()) {
+        if (isQsbOnTop() || mHotseatProfile.isQsbInline()) {
             return mHotseatProfile.getBarBottomSpacePx() - (Math.abs(
                     mHotseatProfile.getCellHeightPx()
                             - getWorkspaceProfile().getIconSizePx()) / 2);
         } else {
-            return mHotseatProfile.getBarSizePx() - mHotseatProfile.getCellHeightPx();
+            // Lawnchair: room for every dock row
+            return mHotseatProfile.getBarSizePx()
+                    - mHotseatProfile.getCellHeightPx() * numHotseatRows;
         }
+    }
+
+    /** Lawnchair: the QSB sits above the dock (taskbar or two panel layouts). */
+    private boolean isQsbOnTop() {
+        return mDeviceProperties.getTaskbarConfiguration().isTaskbarPresent()
+                || mDeviceProperties.isTwoPanels();
     }
 
     /**

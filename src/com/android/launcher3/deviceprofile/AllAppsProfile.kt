@@ -36,6 +36,7 @@ import com.android.launcher3.testing.shared.ResourceUtils.pxFromDp
 import com.android.launcher3.util.CellContentDimensions
 import com.android.launcher3.util.IconSizeSteps
 import kotlin.math.max
+import kotlin.math.roundToInt
 import kotlin.math.min
 
 data class AllAppsProfile(
@@ -418,7 +419,8 @@ data class AllAppsProfile(
             // Lawnchair: drawer row height preference
             cellHeightMultiplier: Float = 1f,
         ) =
-            when {
+            withLawnchairDrawer(
+                when {
                 isScalableGrid -> {
                     createAllAppsProfileScalableGrid(
                         inv = inv,
@@ -440,7 +442,8 @@ data class AllAppsProfile(
                         inv = inv,
                         metric = metric,
                         typeIndex = typeIndex,
-                        scale = workspaceProfile.scale,
+                        // Lawnchair: drawer icons use scale 1, independent of workspace scaling
+                        scale = 1f,
                         deviceProperties = deviceProperties,
                         context = context,
                         allAppsTopPadding = allAppsTopPadding,
@@ -449,6 +452,36 @@ data class AllAppsProfile(
                         cellHeightMultiplier = cellHeightMultiplier,
                     )
                 }
-            }
+                },
+                workspaceProfile,
+                deviceProperties,
+            )
+
+        /**
+         * Lawnchair: drawer top padding and side margin preferences, with the Android 16 math
+         * (the side factor is a multiplier: x100 on phones, x10 on large screens).
+         */
+        private fun withLawnchairDrawer(
+            profile: AllAppsProfile,
+            workspaceProfile: WorkspaceProfile,
+            deviceProperties: DeviceProperties,
+        ): AllAppsProfile {
+            val factors = LawnchairLayoutFactors.get()
+            val padding = Rect(profile.padding)
+            // Additive and slider-ranged 100%-200%: 100% keeps the AOSP padding
+            padding.top += (workspaceProfile.iconSizePx * (factors.drawerPaddingTop - 1f)).roundToInt()
+            val marginMultiplier =
+                factors.drawerLeftRightMargin * (if (deviceProperties.isLargeScreen) 10 else 100)
+            padding.left =
+                (if (padding.left != 0) padding.left * marginMultiplier else marginMultiplier)
+                    .toInt()
+            padding.right =
+                (if (padding.right != 0) padding.right * marginMultiplier else marginMultiplier)
+                    .toInt()
+            return profile.copy(
+                padding = padding,
+                leftRightMargin = (profile.leftRightMargin * marginMultiplier).toInt(),
+            )
+        }
     }
 }

@@ -55,6 +55,8 @@ data class HotseatProfileInitialValues(
     val qsbSpace: Int,
     val barSizePx: Int,
     val isQsbInline: Boolean,
+    // Lawnchair: dock sizing preferences (AOSP sizing when inactive)
+    val lawnchairDock: LawnchairDock = LawnchairDock.AOSP,
 ) {
 
     companion object Factory {
@@ -69,15 +71,18 @@ data class HotseatProfileInitialValues(
             barBottomSpacePx: Int,
             qsbSpace: Int,
             isQsbInline: Boolean,
-        ): Int {
-            if (isVerticalBarLayout) {
-                return (hotseatIconSizePx + barEdgePaddingPx + barWorkspaceSpacePx)
-            } else if (isQsbInline) {
-                return (max(hotseatIconSizePx, qsbVisualHeight) + barBottomSpacePx)
-            } else {
-                return (hotseatIconSizePx + qsbSpace + qsbVisualHeight + barBottomSpacePx)
-            }
-        }
+            lawnchairDock: LawnchairDock = LawnchairDock.AOSP,
+        ): Int =
+            lawnchairDock.barSizePx(
+                iconSizePx = hotseatIconSizePx,
+                barEdgePaddingPx = barEdgePaddingPx,
+                isVerticalBarLayout = isVerticalBarLayout,
+                barWorkspaceSpacePx = barWorkspaceSpacePx,
+                qsbVisualHeight = qsbVisualHeight,
+                barBottomSpacePx = barBottomSpacePx,
+                qsbSpace = qsbSpace,
+                isQsbInline = isQsbInline,
+            )
 
         fun createHotseatProfileInitialValues(
             deviceProperties: DeviceProperties,
@@ -91,6 +96,7 @@ data class HotseatProfileInitialValues(
             workspacePageIndicatorHeight: Int,
             responsiveWorkspaceCellSpec: CalculatedCellSpec?,
             qsbHeight: Int,
+            lawnchairDock: LawnchairDock = LawnchairDock.AOSP,
         ): HotseatProfileInitialValues {
             return when {
                 responsiveHotseatSpec != null && responsiveWorkspaceCellSpec != null ->
@@ -104,6 +110,7 @@ data class HotseatProfileInitialValues(
                         isVerticalBarLayout = isVerticalBarLayout,
                         typeIndex = typeIndex,
                         qsbHeight = qsbHeight,
+                        lawnchairDock = lawnchairDock,
                     )
                 else ->
                     createNonResponsiveHotseatProfileInitialValues(
@@ -116,6 +123,7 @@ data class HotseatProfileInitialValues(
                         isVerticalBarLayout = isVerticalBarLayout,
                         workspacePageIndicatorHeight = workspacePageIndicatorHeight,
                         qsbHeight = qsbHeight,
+                        lawnchairDock = lawnchairDock,
                     )
             }
         }
@@ -130,6 +138,7 @@ data class HotseatProfileInitialValues(
             responsiveWorkspaceCellSpec: CalculatedCellSpec,
             qsbHeight: Int,
             typeIndex: Int,
+            lawnchairDock: LawnchairDock = LawnchairDock.AOSP,
         ): HotseatProfileInitialValues {
 
             // For foldable (two panel), we inline the qsb if we have the screen open and we are in
@@ -172,12 +181,21 @@ data class HotseatProfileInitialValues(
             val hotseatQsbShadowHeight = res.getDimensionPixelSize(R.dimen.qsb_shadow_height)
 
             var hotseatQsbSpace: Int = responsiveHotseatSpec.hotseatQsbSpace
-            val hotseatBarBottomSpace: Int = responsiveHotseatSpec.edgePadding
+            var hotseatBarBottomSpace: Int = responsiveHotseatSpec.edgePadding
             var minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin)
 
+            // Lawnchair: no QSB space when the dock has no search bar. As on Android 16, the
+            // inset/QSB margin adjustment below only runs in that case.
+            if (lawnchairDock.active && !lawnchairDock.qsb) {
+                hotseatBarBottomSpace = 0
+                hotseatQsbSpace = 0
+            }
             var barBottomSpacePx = 0
             // Have a little space between the inset and the QSB
-            if (deviceProperties.insets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+            if (
+                (!lawnchairDock.active || !lawnchairDock.qsb) &&
+                    deviceProperties.insets.bottom + minQsbMargin > hotseatBarBottomSpace
+            ) {
                 val availableSpace: Int =
                     hotseatQsbSpace - (deviceProperties.insets.bottom - hotseatBarBottomSpace)
 
@@ -201,6 +219,9 @@ data class HotseatProfileInitialValues(
             // This (2 * hotseatQsbShadowHeight) is to account for the top space and the bottom.
             val qsbVisualHeight =
                 if (hotseatQsbHeight > 0) hotseatQsbHeight - (2 * hotseatQsbShadowHeight) else 0
+            // Lawnchair: room for dock labels under the QSB, and the bottom space preference
+            hotseatQsbSpace = lawnchairDock.qsbSpace(hotseatQsbSpace)
+            barBottomSpacePx = lawnchairDock.barBottomSpacePx(barBottomSpacePx)
             return HotseatProfileInitialValues(
                 areNavButtonsInline = areNavButtonsInline,
                 navButtonsLayoutWidthPx = navButtonsLayoutWidthPx,
@@ -230,8 +251,10 @@ data class HotseatProfileInitialValues(
                         barBottomSpacePx = barBottomSpacePx,
                         qsbSpace = hotseatQsbSpace,
                         isQsbInline = isQsbInline,
+                        lawnchairDock = lawnchairDock,
                     ),
                 isQsbInline = isQsbInline,
+                lawnchairDock = lawnchairDock,
             )
         }
 
@@ -245,6 +268,7 @@ data class HotseatProfileInitialValues(
             isVerticalBarLayout: Boolean,
             workspacePageIndicatorHeight: Int,
             qsbHeight: Int,
+            lawnchairDock: LawnchairDock = LawnchairDock.AOSP,
         ): HotseatProfileInitialValues {
             // For foldable (two panel), we inline the qsb if we have the screen open and we are in
             // either Landscape or Portrait. This cal also be disabled in the device_profile.xml
@@ -297,9 +321,18 @@ data class HotseatProfileInitialValues(
 
             var minQsbMargin = res.getDimensionPixelSize(R.dimen.min_qsb_margin)
 
+            // Lawnchair: no QSB space when the dock has no search bar. As on Android 16, the
+            // inset/QSB margin adjustment below only runs in that case.
+            if (lawnchairDock.active && !lawnchairDock.qsb) {
+                hotseatBarBottomSpace = 0
+                hotseatQsbSpace = 0
+            }
             var barBottomSpacePx = 0
             // Have a little space between the inset and the QSB
-            if (deviceProperties.insets.bottom + minQsbMargin > hotseatBarBottomSpace) {
+            if (
+                (!lawnchairDock.active || !lawnchairDock.qsb) &&
+                    deviceProperties.insets.bottom + minQsbMargin > hotseatBarBottomSpace
+            ) {
                 val availableSpace: Int =
                     hotseatQsbSpace - (deviceProperties.insets.bottom - hotseatBarBottomSpace)
 
@@ -327,6 +360,9 @@ data class HotseatProfileInitialValues(
             val barWorkspaceSpacePx = hotseatBarWorkspaceSpacePx
             val qsbVisualHeight =
                 if (hotseatQsbHeight > 0) hotseatQsbHeight - 2 * hotseatQsbShadowHeight else 0
+            // Lawnchair: room for dock labels under the QSB, and the bottom space preference
+            hotseatQsbSpace = lawnchairDock.qsbSpace(hotseatQsbSpace)
+            barBottomSpacePx = lawnchairDock.barBottomSpacePx(barBottomSpacePx)
             return HotseatProfileInitialValues(
                 areNavButtonsInline = areNavButtonsInline,
                 navButtonsLayoutWidthPx = navButtonsLayoutWidthPx,
@@ -356,8 +392,10 @@ data class HotseatProfileInitialValues(
                         barBottomSpacePx = barBottomSpacePx,
                         qsbSpace = hotseatQsbSpace,
                         isQsbInline = isQsbInline,
+                        lawnchairDock = lawnchairDock,
                     ),
                 isQsbInline = isQsbInline,
+                lawnchairDock = lawnchairDock,
             )
         }
     }

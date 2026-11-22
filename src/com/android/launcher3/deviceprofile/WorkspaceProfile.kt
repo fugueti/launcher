@@ -270,24 +270,18 @@ data class WorkspaceProfile(
             hotseatBarBottomSpacePx: Int,
             hotseatQsbSpace: Int,
             isQsbInline: Boolean,
-        ): Int {
-            return when {
-                isVerticalLayout -> {
-                    (iconSizePx +
-                        hotseatProfile.barEdgePaddingPx +
-                        hotseatProfile.barWorkspaceSpacePx)
-                }
-                isQsbInline -> {
-                    (max(iconSizePx, hotseatProfile.qsbVisualHeight) + hotseatBarBottomSpacePx)
-                }
-                else -> {
-                    (iconSizePx +
-                        hotseatQsbSpace +
-                        hotseatProfile.qsbVisualHeight +
-                        hotseatBarBottomSpacePx)
-                }
-            }
-        }
+        ): Int =
+            // Lawnchair: dock sizing preferences (AOSP sizing when inactive)
+            hotseatProfile.lawnchairDock.barSizePx(
+                iconSizePx = iconSizePx,
+                barEdgePaddingPx = hotseatProfile.barEdgePaddingPx,
+                isVerticalBarLayout = isVerticalLayout,
+                barWorkspaceSpacePx = hotseatProfile.barWorkspaceSpacePx,
+                qsbVisualHeight = hotseatProfile.qsbVisualHeight,
+                barBottomSpacePx = hotseatBarBottomSpacePx,
+                qsbSpace = hotseatQsbSpace,
+                isQsbInline = isQsbInline,
+            )
 
         private fun createWorkspacePadding(
             isVerticalLayout: Boolean,
@@ -508,6 +502,15 @@ data class WorkspaceProfile(
                 widgetPadding.top = widgetPadding.bottom
             } else {
                 widgetPadding.setEmpty()
+            }
+            // Lawnchair: widget padding preference (0 = remove, 1 = AOSP)
+            LawnchairLayoutFactors.get().widgetPadding.let { f ->
+                widgetPadding.set(
+                    (widgetPadding.left * f).roundToInt(),
+                    (widgetPadding.top * f).roundToInt(),
+                    (widgetPadding.right * f).roundToInt(),
+                    (widgetPadding.bottom * f).roundToInt(),
+                )
             }
 
             return WorkspaceProfile(

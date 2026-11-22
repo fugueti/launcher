@@ -406,7 +406,11 @@ data class HotseatProfile(
                 maxIconSpacePx = hotseatProfileInitialValues.maxIconSpacePx,
                 barBottomSpacePx = hotseatProfileInitialValues.barBottomSpacePx,
                 qsbSpace = hotseatProfileInitialValues.qsbSpace,
-                cellHeightPx = ceil(workspaceProfile.iconSizePx * ICON_OVERLAP_FACTOR).toInt(),
+                // Lawnchair: label-aware dock cell height
+                cellHeightPx =
+                    hotseatProfileInitialValues.lawnchairDock.cellHeightPx(
+                        workspaceProfile.iconSizePx
+                    ),
                 barSizePx =
                     calculateHotseatBarSizePx(
                         hotseatIconSizePx = workspaceProfile.iconSizePx,
@@ -417,6 +421,7 @@ data class HotseatProfile(
                         barBottomSpacePx = hotseatProfileInitialValues.barBottomSpacePx,
                         qsbSpace = hotseatProfileInitialValues.qsbSpace,
                         isQsbInline = hotseatProfileInitialValues.isQsbInline,
+                        lawnchairDock = hotseatProfileInitialValues.lawnchairDock,
                     ),
                 widthPx = hotseatWithBorderAndSpace.widthPx,
                 numShownIcons = hotseatWithBorderAndSpace.numShownIcons,
