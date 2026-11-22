@@ -31,9 +31,15 @@
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="@dimen/snackbar_max_text_size" />
 
-    <TextView
+    <!-- A Button since AOSP 17 (Snackbar casts it); the attributes below undo the button style. -->
+    <Button
         android:id="@+id/action"
         style="@style/TextTitle"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:textAllCaps="false"
+        android:stateListAnimator="@null"
+        android:longClickable="false"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/snackbar_content_height"
         android:layout_weight="0"
