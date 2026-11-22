@@ -1108,10 +1108,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
         RelativeLayout.LayoutParams layoutParams = (LayoutParams) v.getLayoutParams();
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        // Fugueti: no gap for the bottom-sheet drag handle. It is not drawn, and the list sits
+        // above it, so the first row can start at the top of the sheet.
         int topMargin = 0;
-        // Clear the bottom-sheet drag handle when search is not reserving that space.
-        topMargin = getContext().getResources().getDimensionPixelSize(
-                R.dimen.bottom_sheet_handle_area_height);
         if (includeTabsMargin) {
             topMargin += getContext().getResources().getDimensionPixelSize(
                     R.dimen.all_apps_header_pill_height);
