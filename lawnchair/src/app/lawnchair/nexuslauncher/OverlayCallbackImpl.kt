@@ -1,9 +1,11 @@
 package app.lawnchair.nexuslauncher
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import android.view.View
 import app.lawnchair.FeedBridge
 import app.lawnchair.LawnchairLauncher
 import app.lawnchair.preferences2.PreferenceManager2
@@ -36,6 +38,34 @@ class OverlayCallbackImpl(private val mLauncher: LawnchairLauncher) :
     private var mWasOverlayAttached = false
     private var mFlags = 0
 
+    /**
+     * Fugueti: AOSP 17 no longer forwards the activity lifecycle and window attach events to the
+     * overlay (Launcher3 "Removing some deprecated APIs around LauncherOverlay"), so the feed
+     * client follows the launcher activity itself.
+     */
+    private val lifecycleCallbacks = object : Application.ActivityLifecycleCallbacks {
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) = Unit
+        override fun onActivityStarted(activity: Activity) {
+            if (activity === mLauncher) onActivityStarted()
+        }
+        override fun onActivityResumed(activity: Activity) {
+            if (activity === mLauncher) onActivityResumed()
+        }
+        override fun onActivityPaused(activity: Activity) {
+            if (activity === mLauncher) onActivityPaused()
+        }
+        override fun onActivityStopped(activity: Activity) {
+            if (activity === mLauncher) onActivityStopped()
+        }
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+        override fun onActivityDestroyed(activity: Activity) = Unit
+    }
+
+    private val attachListener = object : View.OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(v: View) = onAttachedToWindow()
+        override fun onViewDetachedFromWindow(v: View) = onDetachedFromWindow()
+    }
+
     init {
         val prefs = PreferenceManager2.getInstance(mLauncher)
         val enableFeed = prefs.enableFeed.firstCached()
@@ -44,6 +74,11 @@ class OverlayCallbackImpl(private val mLauncher: LawnchairLauncher) :
             this,
             StaticInteger((if (enableFeed) 1 else 0) or 2 or 4 or 8),
         )
+        mLauncher.application.registerActivityLifecycleCallbacks(lifecycleCallbacks)
+        mLauncher.window?.decorView?.let { decorView ->
+            decorView.addOnAttachStateChangeListener(attachListener)
+            if (decorView.isAttachedToWindow) onAttachedToWindow()
+        }
     }
 
     fun reconnect() {
@@ -100,6 +135,8 @@ class OverlayCallbackImpl(private val mLauncher: LawnchairLauncher) :
     fun onActivitySaveInstanceState(activity: Activity, bundle: Bundle) = Unit
 
     override fun onActivityDestroyed() {
+        mLauncher.application.unregisterActivityLifecycleCallbacks(lifecycleCallbacks)
+        mLauncher.window?.decorView?.removeOnAttachStateChangeListener(attachListener)
         mClient.onDestroy()
     }
 

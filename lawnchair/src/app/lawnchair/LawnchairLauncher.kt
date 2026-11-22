@@ -509,6 +509,12 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun getDefaultOverlay(): LauncherOverlayManager = defaultOverlay
 
+    override fun dispatchDeviceProfileChanged() {
+        super.dispatchDeviceProfileChanged()
+        // Fugueti: AOSP 17 no longer tells the overlay about device profile changes
+        defaultOverlay.onDeviceProvideChanged()
+    }
+
     fun recreateIfNotScheduled() {
         if (sRestartFlags == 0) {
             recreate()
