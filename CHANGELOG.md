@@ -1,6 +1,6 @@
 # Fugueti Launcher changelog
 
-## 16.0.3 (unreleased)
+## 16.0.2 (2026-11-22)
 
 * **Updates:** the release app now updates itself like the nightly. Every day at 10:00 it looks
   for a newer GitHub release and posts a notification on its own **App updates** channel; the
@@ -8,9 +8,6 @@
   SHA-256 and hands it to the system installer. The check also runs when About opens and can be
   turned off in *Settings → General → Updates*. The launcher asks once for the notification
   permission.
-
-## 16.0.2 (2026-11-22)
-
 * **Hide** in the long-press menu of an app drawer icon hides the app from the drawer at once,
   with **Undo** in the snackbar. Hidden apps are still managed in *Settings → App drawer →
   Hidden apps*.
