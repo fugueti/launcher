@@ -46,14 +46,14 @@ Check these when the tree compiles.
 - `AllAppsProfile.createAllAppsProfile(..., cellHeightMultiplier)`: pass Lawnchair's drawer row height from `DeviceProfile`.
 - `lawnchair/src/com/android/app/tracing/TracingShim.kt`: stand-in for the non-vendored tracinglib (`traceSection`, `TraceUtils.trace`, `TraceStateLogger`); replace with the real lib if it gets vendored.
 - Depth/blur: `BaseDepthControllerImpl` rebuilt from AOSP 17 (lazy `EarlyWakeupInfo`, guarded hidden APIs, zoom only on R+). The cross-window blur state now comes from a `ListenableRef` passed by the caller: check the caller guards `CrossWindowBlurListeners` (S+) like Lawnchair did. Lawnchair's stuck-blur fix uses `DepthController.clearWorkspaceRenderEffects()`, implemented in `LauncherDepthController`.
-- Taskbar: `TaskbarView` is AOSP 17 (pinned apps overflow replaces Lawnchair's ignored icons; `getIgnoreTaskbarIconCount()` returns 0). The taskbar QSB now comes from `QsbWidgetFactory` (DI): make it honor Lawnchair's `HotseatMode` (empty view when the mode has no search bar), as Lawnchair did in `TaskbarView`.
+- Taskbar: `TaskbarView` is AOSP 17 plus Lawnchair's ignored-icons count for 3 button navigation (the merge kept it next to AOSP's pinned apps overflow; check both together). The taskbar QSB now comes from `QsbWidgetFactory` (DI): make it honor Lawnchair's `HotseatMode` (empty view when the mode has no search bar), as Lawnchair did in `TaskbarView`.
 - Hotseat predictions: AOSP moved the logic into `util/HybridHotseatOrganizer.kt`; Lawnchair's paged/multi-row dock handling was ported there (fills the visible page, per-page outlines/listeners). Test with predictions on and several dock pages.
 - App drawer: AOSP 17 always presents All Apps as a bottom sheet (no `shouldShowAllAppsOnSheet`).
   Lawnchair's drawer colour/opacity cache now feeds AOSP's `getBackgroundColor()`. The
   non-sheet header opacity path (`getAppDrawerSearchBarBackground` + drawer opacity) was dropped
   with AOSP's branch: check the search header still looks right with the drawer opacity setting.
-  `LawnchairAlphabeticalAppsList` must drop its `<T>` (AOSP `AlphabeticalAppsList` is no longer
-  generic).
+  `LawnchairAlphabeticalAppsList` dropped its `<T>` (AOSP `AlphabeticalAppsList` is no longer
+  generic); drawer folders inflate through a typed helper in `BaseAllAppsAdapter`.
 - **DeviceProfile**: rebuilt from AOSP 17 (sizing now lives in the Kotlin profile factories).
   Ported so far: dock rows/pages, notification count dot renderers, drawer row height, no QSB
   space when the dock mode has no search bar, taskbar-on-phone preference (`DeviceProperties`).
@@ -66,3 +66,34 @@ Check these when the tree compiles.
   - drawer: top padding factor, left/right margin factor, all apps scale 1.0
   - responsive grids: icon size scaled by the home icon size factor
 - **Build tooling**: framework-17.jar is post-processed (class version 52, InnerClasses entries added by ~/.cache/fugueti-android17/tools/FixInnerClasses.java); it is kept out of git (local only, see .git/info/exclude). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).
+- **Turned off for now (restore once 17 runs)**: Ambient Cue (`quickstep/.../cuebar`, Pixel
+  personal-context pill): `CueBarController` is a no-op stub and the `cuebar` package plus
+  `CueBarInsightRendererService` are removed; restore them from `aosp/android17-release`.
+- **Widget picker**: AOSP 17 replaced the old picker (`WidgetsFullSheet`, `WidgetCell`,
+  `WidgetsTwoPaneSheet`, ...), so Lawnchair's picker theming (`DrawableTokens` widget tokens,
+  `widgets_two_pane_sheet_recyclerview.xml`) is gone. Re-theme the new picker. Widget
+  predictions (`WidgetsPredictionUpdateTask`) went with it; `LawnchairAppPredictor` still
+  carries the widgets predictor state but no longer enqueues it.
+- **Database swaps**: `ModelDbController` is a singleton in 17. Backup restore, Nova import and
+  Lawndeck call the new `reopenDb()` before `RestoreDbTask.performRestore`; test all three
+  on a device (they used to create a fresh controller). "Clear home screen" now deletes rows
+  through `modelDbController` and reloads the model.
+- **Hidden platform flags**: `util/HiddenPlatformFlags.kt` pins flags that live in
+  `hidden_from_bootclasspath` (task continuity, app lock, contextual search desktop entry
+  points, moving content into private space, widget engagement metrics, UI latency stats,
+  MediaProvider trash) to false. The manifest permissions guarded by such flags were removed.
+  `RecentsWindowFlags` are plain `false` constants again (Lawnchair 16 behavior).
+- **AOSP build fields**: `WIDGETS_ENABLED`, `IS_STUDIO_BUILD`, `QSB_ON_FIRST_SCREEN`, ... are now
+  `buildConfigField`s, so AOSP code compiles unchanged; Lawnchair's `BuildConfigs` keeps the
+  same values.
+- **Icons**: icon pack clock/calendar ticks and Lawnicons theme changes go through
+  `IconChangeTracker` (registered in `LawnchairIconProvider`'s init); custom icons/labels call
+  `LauncherModel.onAppIconChanged`. `getStateForApp` appends Lawnchair's state to
+  `PersistedItemState`. Check that icon pack changes refresh icons without a restart.
+- **Widgets**: accent-colored widgets use `LocalColorExtractor.newInstance()` (Lawnchair's
+  `AccentColorExtractor` on S+); the Dagger-provided extractor (preview) is AOSP's no-op one.
+- **Process init**: `MainProcessInitializer.initialize()` (Unseal, prefs) runs in
+  `LauncherApplication.onCreate` before the Dagger graph; `LawnchairProcessInitializer`,
+  `TaskOverlayFactoryImpl` and `LawnchairWidgetHolder` are bound in Dagger modules now.
+- **Fugueti page reordering**: ported to `ModelWriter.moveWorkspaceScreensInDatabase` /
+  `persistWorkspaceScreenOrderSync` (transaction API); test reordering pages with items.
