@@ -16,6 +16,7 @@
 
 package com.android.launcher3.deviceprofile
 
+import app.lawnchair.preferences2.firstCached
 import android.graphics.Rect
 import com.android.launcher3.display.LauncherDisplayInfo
 import com.android.launcher3.util.WindowBounds
@@ -90,7 +91,13 @@ data class DeviceProperties(
                 deviceConfiguration = deviceConfiguration,
                 taskbarConfiguration =
                     TaskbarConfiguration(
+                        // Lawnchair: the taskbar can be turned off in the preferences
                         isTaskbarPresent =
+                            app.lawnchair.preferences2.PreferenceManager2.INSTANCE.get(
+                                    info.context
+                                )
+                                .enableTaskbarOnPhone
+                                .firstCached() &&
                             (isLargeScreen ||
                                 (taskbarOrBubbleBarOnPhones &&
                                     deviceConfiguration.isGestureMode)) && isTaskbarDrawnInProcess

@@ -15,7 +15,7 @@ Sorted by the size of our (Lawnchair + Fugueti) changes in the file.
 - [x] `quickstep/src/com/android/launcher3/uioverrides/QuickstepLauncher.java` (301 lines of ours)
 - [x] `src/com/android/launcher3/folder/Folder.java` (262 lines of ours)
 - [x] `quickstep/src/com/android/launcher3/uioverrides/SystemApiWrapper.kt` (253 lines of ours)
-- [ ] `src/com/android/launcher3/DeviceProfile.java` (241 lines of ours)
+- [x] `src/com/android/launcher3/DeviceProfile.java` (241 lines of ours)
 - [x] `src/com/android/launcher3/Launcher.java` (217 lines of ours)
 - [x] `src/com/android/launcher3/InvariantDeviceProfile.java` (189 lines of ours)
 - [x] `src/com/android/launcher3/BubbleTextView.java` (168 lines of ours)

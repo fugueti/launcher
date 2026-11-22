@@ -54,3 +54,14 @@ Check these when the tree compiles.
   with AOSP's branch: check the search header still looks right with the drawer opacity setting.
   `LawnchairAlphabeticalAppsList` must drop its `<T>` (AOSP `AlphabeticalAppsList` is no longer
   generic).
+- **DeviceProfile**: rebuilt from AOSP 17 (sizing now lives in the Kotlin profile factories).
+  Ported so far: dock rows/pages, notification count dot renderers, drawer row height, no QSB
+  space when the dock mode has no search bar, taskbar-on-phone preference (`DeviceProperties`).
+  Still to port, from `patches/src_com_android_launcher3_DeviceProfile.java.lawnchair16.patch`:
+  - workspace padding factors (horizontal at the source margin, vertical keeping the dock reserve)
+  - widget padding factor; page indicator height factor
+  - text size factors (icons, folders) from `DeviceProfileOverrides.getTextFactors()`
+  - dock: label-aware cell height (`DockCellSize`), bottom space factor, extra height per row,
+    QSB-on-top cases, hidden dock (`isHotseatEnabled`)
+  - drawer: top padding factor, left/right margin factor, all apps scale 1.0
+  - responsive grids: icon size scaled by the home icon size factor
