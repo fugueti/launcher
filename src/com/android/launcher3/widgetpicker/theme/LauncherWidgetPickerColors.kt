@@ -16,6 +16,7 @@
 
 package com.android.launcher3.widgetpicker.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -238,5 +239,104 @@ fun lightWidgetPickerColors(
         searchBarBackButtonIcon = colorResource(R.color.widget_picker_search_text_color_light),
         searchBarCursor = colorResource(R.color.widget_picker_search_cursor_color_light),
         focusOutline = colorResource(R.color.widget_picker_focus_outline_color_light),
+    )
+}
+
+/**
+ * Lawnchair: the widget picker colors from Lawnchair's color scheme (accent color and color
+ * style preferences) instead of the system's dynamic colors. Each token keeps the Material role
+ * AOSP's `widget_picker_*` resources point to, so the AOSP 17 picker looks the same, in the
+ * launcher's colors. Only the blur layers keep their neutral resources.
+ */
+@Composable
+fun lawnchairWidgetPickerColors(
+    scheme: ColorScheme,
+    darkTheme: Boolean,
+    supportsBlurTokens: Boolean,
+    isBlurEnabled: Boolean,
+): WidgetPickerColors {
+    val sheetBackgroundBottomLayer =
+        when {
+            supportsBlurTokens && isBlurEnabled -> {
+                val layerFg =
+                    colorResource(
+                        if (darkTheme) R.color.widget_picker_blur_fg_dark
+                        else R.color.widget_picker_blur_fg_light
+                    )
+                val layerBg =
+                    colorResource(
+                        if (darkTheme) R.color.widget_picker_blur_bg_dark
+                        else R.color.widget_picker_blur_bg_light
+                    )
+                layerFg.compositeOver(layerBg)
+            }
+
+            supportsBlurTokens && !isBlurEnabled -> scheme.secondaryContainer
+
+            else -> Color.Transparent
+        }
+
+    return WidgetPickerColors(
+        // Bottom Sheet
+        sheetBackground = scheme.surfaceContainer,
+        sheetBackgroundBottomLayer = sheetBackgroundBottomLayer,
+        sheetBackgroundScrim = Color.Transparent,
+        dragHandle = scheme.outline,
+        sheetTitle = scheme.onSurface,
+        sheetDescription = scheme.onSurfaceVariant,
+
+        // Expand collapse list
+        expandCollapseIndicatorIcon = scheme.onSecondaryContainer,
+        expandCollapseIndicatorBackground = scheme.secondaryContainer,
+        expandableListItemsBackground = scheme.surfaceBright,
+        expandableListHeaderTitle = scheme.onSurface,
+        expandableListHeaderSubTitle = scheme.onSurfaceVariant,
+
+        // List header
+        selectedListHeaderBackground = scheme.secondaryContainer,
+        unselectedListHeaderBackground = Color.Transparent,
+        featuredHeaderLeadingIconBackground = scheme.surfaceBright,
+        featuredHeaderLeadingIcon = scheme.primary,
+        unSelectedListHeaderTitle = scheme.onSurface,
+        unSelectedListHeaderSubTitle = scheme.onSurfaceVariant,
+        selectedListHeaderTitle = scheme.onSecondaryContainer,
+        selectedListHeaderSubTitle = scheme.onSecondaryContainer,
+
+        // Error message
+        noWidgetsErrorText = scheme.onSurface,
+
+        // Widgets container
+        widgetsContainerBackground = scheme.surfaceBright,
+
+        // App icon
+        placeholderAppIcon = scheme.onSurfaceVariant.copy(alpha = 0.2f),
+
+        // Widget details
+        widgetLabel = scheme.onSurfaceVariant,
+        widgetSpanText = scheme.onSurfaceVariant,
+        widgetDescription = scheme.onSurfaceVariant,
+        addButtonContent = scheme.onPrimary,
+        addButtonBackground = scheme.primary,
+
+        // Widget preview
+        widgetPlaceholderBackground = scheme.secondaryContainer,
+        widgetPlaceholderContent = scheme.onSecondaryContainer,
+
+        // Floating Toolbar
+        toolbarBackground = scheme.surfaceBright,
+        toolbarTabSelectedBackground = scheme.secondaryContainer,
+        toolbarTabUnSelectedBackground = Color.Transparent,
+        toolbarSelectedTabContent = scheme.onSecondaryContainer,
+        toolbarUnSelectedTabContent = scheme.onSurfaceVariant,
+
+        // Search bar
+        searchBarBackground = scheme.surfaceBright,
+        searchBarPlaceholderText = scheme.onSurfaceVariant,
+        searchBarText = scheme.onSurfaceVariant,
+        searchBarSearchIcon = scheme.onSurfaceVariant,
+        searchBarClearButtonIcon = scheme.onSurfaceVariant,
+        searchBarBackButtonIcon = scheme.onSurfaceVariant,
+        searchBarCursor = scheme.primary,
+        focusOutline = scheme.secondary,
     )
 }

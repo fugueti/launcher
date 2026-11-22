@@ -16,34 +16,34 @@
 
 package com.android.launcher3.widgetpicker.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import app.lawnchair.ui.theme.LawnchairTheme
+import app.lawnchair.ui.theme.isSelectedThemeDark
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import com.android.launcher3.widgetpicker.ui.theme.WidgetPickerTheme
 
-/** Contains theme that launcher applies to the widget picker. */
+/**
+ * Contains theme that launcher applies to the widget picker.
+ *
+ * Lawnchair: Lawnchair's theme (light/dark preference, accent color and color style) instead of
+ * the system's dynamic colors, as the Android 16 picker was themed with Lawnchair's color tokens.
+ */
 @Composable
 fun LauncherWidgetPickerTheme(
     supportsBlurTokens: Boolean = false,
     isBlurEnabled: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val widgetPickerColors =
-        if (isSystemInDarkTheme()) {
-            darkWidgetPickerColors(
-                supportsBlurTokens = supportsBlurTokens,
-                isBlurEnabled = isBlurEnabled,
-            )
-        } else {
-            lightWidgetPickerColors(
-                supportsBlurTokens = supportsBlurTokens,
-                isBlurEnabled = isBlurEnabled,
-            )
-        }
-
-    MaterialTheme {
+    val darkTheme = isSelectedThemeDark
+    LawnchairTheme(darkTheme = darkTheme) {
         WidgetPickerTheme(
-            colors = widgetPickerColors,
+            colors =
+                lawnchairWidgetPickerColors(
+                    scheme = MaterialTheme.colorScheme,
+                    darkTheme = darkTheme,
+                    supportsBlurTokens = supportsBlurTokens,
+                    isBlurEnabled = isBlurEnabled,
+                ),
             textStyles = launcherWidgetPickerTextStyles(),
         ) {
             content()

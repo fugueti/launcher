@@ -67,11 +67,12 @@ Check these when the tree compiles.
 - **Turned off for now (restore once 17 runs)**: Ambient Cue (`quickstep/.../cuebar`, Pixel
   personal-context pill): `CueBarController` is a no-op stub and the `cuebar` package plus
   `CueBarInsightRendererService` are removed; restore them from `aosp/android17-release`.
-- **Widget picker**: AOSP 17 replaced the old picker (`WidgetsFullSheet`, `WidgetCell`,
-  `WidgetsTwoPaneSheet`, ...), so Lawnchair's picker theming (`DrawableTokens` widget tokens,
-  `widgets_two_pane_sheet_recyclerview.xml`) is gone. Re-theme the new picker. Widget
-  predictions (`WidgetsPredictionUpdateTask`) went with it; `LawnchairAppPredictor` still
-  carries the widgets predictor state but no longer enqueues it.
+- **Widget picker**: AOSP 17 replaced the old picker (`WidgetsFullSheet`, `WidgetCell`, ...).
+  The new Compose picker is themed with Lawnchair's color scheme (accent color, color style,
+  theme preference) in `LauncherWidgetPickerTheme`/`lawnchairWidgetPickerColors`, keeping AOSP's
+  Material roles; verified on the Pixel with a green accent. Widget predictions
+  (`WidgetsPredictionUpdateTask`) were removed with the old picker; `LawnchairAppPredictor`
+  still carries the widgets predictor state but no longer enqueues it.
 - **Database swaps**: `ModelDbController` is a singleton in 17. Backup restore, Nova import and
   Lawndeck call the new `reopenDb()` before `RestoreDbTask.performRestore`; test all three
   on a device (they used to create a fresh controller). "Clear home screen" now deletes rows
