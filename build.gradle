@@ -143,12 +143,12 @@ final def releaseName = "Beta 1"
 // Fugueti Launcher: own version (APK name, settings, About screen, Play Store) and GitHub repo.
 // BASE.MINOR.PATCH, where BASE is the Android version Launcher3 comes from (16, 17…).
 // versionCode = major * 1_000_000 + minor * 10_000 + patch * 100 (last two digits free for rebuilds).
-// On main this is the next release; a release bumps it and is tagged v<version>.
-final def fuguetiVersion = "16.0.2"
+// On main this is the next 16 release (tagged v<version>); on 17-dev it is the coming 17.0.0.
+final def fuguetiVersion = "17.0.0"
 final def fuguetiVersionParts = fuguetiVersion.tokenize('.').collect { it as int }
 final def fuguetiVersionCode = fuguetiVersionParts[0] * 1_000_000 + fuguetiVersionParts[1] * 10_000 + fuguetiVersionParts[2] * 100
 final def fuguetiGithubRepo = findProperty("fugueti.githubRepo") ?: "victorwalter/fugueti-launcher"
-// Nightly builds (CI on main): <version>-nightly.<CI run>, versionCode = BASE * 1_000_000 + CI run, so
+// Nightly builds (nightly.yml, from 17-dev): <version>-nightly.<CI run>, versionCode = BASE * 1_000_000 + CI run, so
 // every nightly updates the previous one and the "major" (Android base) stays the same.
 final def nightlyNumber = (ciBuild && ciRunNumber ? ciRunNumber : "0") as int
 final def nightlyVersionName = "${fuguetiVersion}-nightly.${nightlyNumber}"

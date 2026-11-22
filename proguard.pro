@@ -32,3 +32,13 @@
 # This shouldn't concern us much
 -dontwarn androidx.window.extensions.**
 -dontwarn androidx.window.sidecar.**
+
+# Fugueti (Android 17): classes that only exist on the device.
+# framework-17.jar is made from a dex framework (see prebuilts/libs/README.md), so its synthetic
+# constructors still name d8's "-IA" access classes, which the stub does not ship.
+-dontwarn **-IA
+# Hidden platform classes referenced by the framework stub and SystemUI-statsd.
+-dontwarn dalvik.system.CloseGuard
+-dontwarn android.util.StatsEvent$Builder
+# androidx.appfunctions calls the platform's App Functions extension library when present.
+-dontwarn com.android.extensions.appfunctions.**
