@@ -81,6 +81,7 @@ internal constructor(
             // Initialize the restore task before opening the DB
             val restoreTask = RestoreDbTask.createRestoreTask(context)
             val dbFile = prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
+            prepareLawnchairDbFile(dbFile)
             openHelper = createDatabaseHelper(forMigration = false, dbFile)
             restoreTask.accept(this)
         }
@@ -97,7 +98,25 @@ internal constructor(
             openHelper.close()
         }
         val dbFile = prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
+        prepareLawnchairDbFile(dbFile)
         openHelper = createDatabaseHelper(forMigration = false, dbFile)
+    }
+
+    /**
+     * Lawnchair: before opening [dbFile], move Lawnchair's own database files into place, as
+     * Android 16's createDatabaseHelper did: a launcher.db from old Lawnchair versions, and the
+     * restored.db staged by backup restore and Nova import. Without this they open an empty
+     * database and the restored layout is lost. Not for sandboxed (preview) contexts.
+     */
+    private fun prepareLawnchairDbFile(dbFile: String) {
+        try {
+            val app = context.applicationContext as? app.lawnchair.LawnchairApp ?: return
+            app.migrateDbName(idp.dbFile)
+            // After migrateDbName, which would otherwise move a restored launcher.db to dbFile.
+            app.renameRestoredDb(dbFile)
+        } catch (t: Throwable) {
+            Log.w(TAG, "Could not prepare the launcher database file", t)
+        }
     }
 
     private fun createDatabaseHelper(forMigration: Boolean, dbFile: String): DatabaseHelper {
