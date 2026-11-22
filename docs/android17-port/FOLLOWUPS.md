@@ -61,8 +61,8 @@ Check these when the tree compiles.
   label-aware cell height, bottom space, rows, QSB-on-top, hidden dock, responsive icon size.
   Not ported: workspace side/vertical padding factors on **responsive** grids
   (`WorkspaceProfile.createWorkspacePadding`, Lawnchair grids are non-responsive). Verified on the
-  Pixel: dock rows and labels, folder text, workspace horizontal/vertical padding, drawer top
-  padding.
+  Pixel: dock rows and labels, hidden dock, dock without search bar, workspace/folder label size
+  and hidden labels, workspace horizontal/vertical padding, drawer top padding.
 - **Build tooling**: framework-17.jar is a stub JAR made from the AOSP-only emulator image by `prebuilts/tools/make-framework-jar.sh` (provenance and checksums in `prebuilts/libs/README.md`). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).
 - **Turned off for now (restore once 17 runs)**: Ambient Cue (`quickstep/.../cuebar`, Pixel
   personal-context pill): `CueBarController` is a no-op stub and the `cuebar` package plus

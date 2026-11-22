@@ -309,6 +309,9 @@ class PreferenceManager2 @Inject constructor(
     val isHotseatEnabled = preference(
         key = booleanPreferencesKey(name = "pref_show_hotseat"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_show_hotseat),
+        // Fugueti: the dock size is part of the grid, and the dock view and its search bar are
+        // built when the launcher is created
+        onSet = { reloadHelper.restart() },
     )
 
     val hotseatQsbProvider = preference(
