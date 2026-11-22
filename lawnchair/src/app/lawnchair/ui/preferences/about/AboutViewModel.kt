@@ -3,9 +3,8 @@ package app.lawnchair.ui.preferences.about
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import app.fugueti.update.FuguetiUpdates
 import app.lawnchair.preferences.PreferenceManager
-import app.lawnchair.preferences2.PreferenceManager2
-import app.lawnchair.preferences2.firstCached
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
 import java.io.File
@@ -22,7 +21,6 @@ class AboutViewModel(
 
     private val api: GitHubService = gitHubApiRetrofit.create()
     private val prefs: PreferenceManager = PreferenceManager.getInstance(application)
-    private val prefs2: PreferenceManager2 = PreferenceManager2.getInstance(application)
 
     private val nightlyBuildsRepository = NightlyBuildsRepository(
         applicationContext = application,
@@ -59,10 +57,10 @@ class AboutViewModel(
             uiState.update { it.copy(coreTeam = updatedCoreTeam) }
         }
 
-        // Check if the build variant is Nightly
-        // AND check if user has enabled auto updater (available to Nightly variant)
-        // OR check if user has overridden it in debug flags (available to All variant)
-        if (BuildConfig.APPLICATION_ID.contains("nightly") && prefs2.autoUpdaterNightly.firstCached()) {
+        // Fugueti: release and nightly apps both check, when the user left the updater on.
+        if (FuguetiUpdates.isEnabled(application)) {
+            // About shows the update itself, so the daily notification is no longer needed.
+            FuguetiUpdates.cancelNotification(application)
             nightlyBuildsRepository.checkForUpdate()
             viewModelScope.launch {
                 nightlyBuildsRepository.updateState.collect { state ->

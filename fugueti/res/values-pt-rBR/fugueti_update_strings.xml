@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Fugueti Launcher, an Android launcher based on Lawnchair.
+  ~ Copyright (C) 2026 Fugueti Launcher contributors
+  ~ SPDX-License-Identifier: GPL-3.0-or-later
+  -->
+<resources>
+    <string name="fugueti_auto_updater_description">Procura todo dia às 10:00 e ao abrir Sobre, e avisa quando houver uma versão nova</string>
+    <string name="update_channel_name">Atualizações do app</string>
+    <string name="update_channel_description">Novas versões do Fugueti</string>
+    <string name="update_notification_title">Fugueti %1$s disponível</string>
+    <string name="update_notification_text">Toque para baixar e instalar</string>
+</resources>

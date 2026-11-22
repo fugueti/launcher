@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.profileinstaller.ProfileInstaller
+import app.fugueti.update.FuguetiUpdates
 import app.lawnchair.backup.LawnchairBackup
 import app.lawnchair.flowerpot.Flowerpot
 import app.lawnchair.preferences.PreferenceManager
@@ -79,6 +80,10 @@ class LawnchairApp : LauncherApplication() {
         // Framework crash workaround on Android 15 and below, see DecorReattachGuard.
         DecorReattachGuard.install(this)
         scheduleBaselineProfileInstall()
+        // Fugueti: keep the daily update check scheduled (no-op on Play Store and debug builds).
+        if (isMainProcess()) {
+            Executors.ORDERED_BG_EXECUTOR.execute { FuguetiUpdates.schedule(this) }
+        }
     }
 
     /**
@@ -87,15 +92,16 @@ class LawnchairApp : LauncherApplication() {
      * ProfileInstallerInitializer, so this does its job the same way: main process only, a few
      * seconds after start, on a background thread. It is a no-op once written for this install.
      */
+    private fun isMainProcess(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        Application.getProcessName() == packageName
+    } else {
+        // API 26–27 has no Application.getProcessName().
+        getSystemService(ActivityManager::class.java)?.runningAppProcesses
+            ?.any { it.pid == Process.myPid() && it.processName == packageName } == true
+    }
+
     private fun scheduleBaselineProfileInstall() {
-        val isMainProcess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Application.getProcessName() == packageName
-        } else {
-            // API 26–27 has no Application.getProcessName().
-            getSystemService(ActivityManager::class.java)?.runningAppProcesses
-                ?.any { it.pid == Process.myPid() && it.processName == packageName } == true
-        }
-        if (!isMainProcess) return
+        if (!isMainProcess()) return
         Executors.ORDERED_BG_EXECUTOR.handler.postDelayed(
             {
                 try {

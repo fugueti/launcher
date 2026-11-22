@@ -24,6 +24,10 @@ interface GitHubService {
     @GET("repos/${BuildConfig.GITHUB_REPO}/releases")
     suspend fun getReleases(): List<GitHubRelease>
 
+    /** Fugueti: the newest stable release (GitHub leaves out drafts and pre-releases). */
+    @GET("repos/${BuildConfig.GITHUB_REPO}/releases/latest")
+    suspend fun getLatestRelease(): GitHubRelease
+
     @GET("repos/{owner}/{repo}/events")
     suspend fun getRepositoryEvents(
         @Path("owner") owner: String,

@@ -30,6 +30,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import app.fugueti.update.FuguetiUpdates
+import app.fugueti.update.UpdateChannel
 import app.lawnchair.data.Converters
 import app.lawnchair.font.FontCache
 import app.lawnchair.gestures.config.GestureHandlerConfig
@@ -885,6 +887,14 @@ class PreferenceManager2 @Inject constructor(
         } else {
             false
         },
+        onSet = { FuguetiUpdates.onPreferenceChanged(context, UpdateChannel.Nightly, it) },
+    )
+
+    // Fugueti: the release app checks GitHub's latest release (daily and in About).
+    val autoUpdaterRelease = preference(
+        key = booleanPreferencesKey(name = "enable_release_auto_updater"),
+        defaultValue = true,
+        onSet = { FuguetiUpdates.onPreferenceChanged(context, UpdateChannel.Release, it) },
     )
 
     // region Fugueti: extra home screen gestures

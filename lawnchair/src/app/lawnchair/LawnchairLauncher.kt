@@ -33,6 +33,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import app.fugueti.gestures.GestureTouchController
+import app.fugueti.update.FuguetiUpdates
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
@@ -474,6 +475,8 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun onResume() {
         super.onResume()
         restartIfPending()
+        // Fugueti: asks once, so the daily update check can notify.
+        FuguetiUpdates.maybeRequestNotificationPermission(this)
         refreshPredictionContainersFromModel()
 
         dragLayer.viewTreeObserver.addOnDrawListener(

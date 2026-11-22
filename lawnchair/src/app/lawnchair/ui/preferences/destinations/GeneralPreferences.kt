@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.fugueti.update.UpdateChannel
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
@@ -53,7 +54,6 @@ import app.lawnchair.ui.preferences.navigation.GeneralAdvancedIcons
 import app.lawnchair.ui.preferences.navigation.GeneralIconPack
 import app.lawnchair.ui.preferences.navigation.GeneralIconShape
 import app.lawnchair.ui.preferences.navigation.GeneralThemedIcons
-import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 
@@ -94,11 +94,17 @@ fun GeneralPreferences(modifier: Modifier = Modifier) {
             )
         }
         PreferenceGroup(heading = stringResource(id = R.string.updater)) {
-            if (BuildConfig.APPLICATION_ID.contains("nightly")) {
+            // Fugueti: release and nightly apps each have their own automatic check.
+            val autoUpdater = when (UpdateChannel.current) {
+                UpdateChannel.Release -> prefs2.autoUpdaterRelease
+                UpdateChannel.Nightly -> prefs2.autoUpdaterNightly
+                null -> null
+            }
+            if (autoUpdater != null) {
                 SwitchPreference(
-                    adapter = prefs2.autoUpdaterNightly.getAdapter(),
+                    adapter = autoUpdater.getAdapter(),
                     label = stringResource(id = R.string.auto_updater_label),
-                    description = stringResource(id = R.string.auto_updater_description),
+                    description = stringResource(id = R.string.fugueti_auto_updater_description),
                 )
             }
             SwitchPreference(

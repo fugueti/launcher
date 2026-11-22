@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Fugueti Launcher, an Android launcher based on Lawnchair.
+  ~ Copyright (C) 2026 Fugueti Launcher contributors
+  ~ SPDX-License-Identifier: GPL-3.0-or-later
+  -->
+<resources>
+    <!-- Automatic update check (app.fugueti.update) -->
+    <string name="fugueti_auto_updater_description">Checks every day at 10:00 and when you open About, and notifies you when a new version is available</string>
+    <string name="update_channel_name">App updates</string>
+    <string name="update_channel_description">New versions of Fugueti</string>
+    <!-- %1$s: version, e.g. 16.0.3 or "nightly #12" -->
+    <string name="update_notification_title">Fugueti %1$s is available</string>
+    <string name="update_notification_text">Tap to download and install</string>
+    <!-- Changes dialog header for releases: "16.0.2 → 16.0.3" -->
+    <string name="changes_dialog_version_format">%1$s → %2$s</string>
+</resources>
