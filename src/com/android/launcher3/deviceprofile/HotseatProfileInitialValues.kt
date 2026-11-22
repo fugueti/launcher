@@ -243,7 +243,9 @@ data class HotseatProfileInitialValues(
                 qsbSpace = hotseatQsbSpace,
                 barSizePx =
                     calculateHotseatBarSizePx(
-                        hotseatIconSizePx = responsiveWorkspaceCellSpec.iconSize,
+                        hotseatIconSizePx = LawnchairLayoutFactors.responsiveIconSize(
+                            responsiveWorkspaceCellSpec.iconSize
+                        ),
                         barEdgePaddingPx = 0,
                         isVerticalBarLayout = isVerticalBarLayout,
                         barWorkspaceSpacePx = 0,

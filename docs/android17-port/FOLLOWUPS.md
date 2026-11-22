@@ -54,17 +54,14 @@ Check these when the tree compiles.
   with AOSP's branch: check the search header still looks right with the drawer opacity setting.
   `LawnchairAlphabeticalAppsList` dropped its `<T>` (AOSP `AlphabeticalAppsList` is no longer
   generic); drawer folders inflate through a typed helper in `BaseAllAppsAdapter`.
-- **DeviceProfile**: rebuilt from AOSP 17 (sizing now lives in the Kotlin profile factories).
-  Ported so far: dock rows/pages, notification count dot renderers, drawer row height, no QSB
-  space when the dock mode has no search bar, taskbar-on-phone preference (`DeviceProperties`).
-  Still to port, from `patches/src_com_android_launcher3_DeviceProfile.java.lawnchair16.patch`:
-  - workspace padding factors (horizontal at the source margin, vertical keeping the dock reserve)
-  - widget padding factor; page indicator height factor
-  - text size factors (icons, folders) from `DeviceProfileOverrides.getTextFactors()`
-  - dock: label-aware cell height (`DockCellSize`), bottom space factor, extra height per row,
-    QSB-on-top cases, hidden dock (`isHotseatEnabled`)
-  - drawer: top padding factor, left/right margin factor, all apps scale 1.0
-  - responsive grids: icon size scaled by the home icon size factor
+- **DeviceProfile**: rebuilt from AOSP 17 (sizing lives in the Kotlin profile factories).
+  Lawnchair's preference-driven layout is ported through `deviceprofile/LawnchairLayoutFactors.kt`
+  (`LawnchairLayoutFactors` + `LawnchairDock`): workspace side/vertical padding, widget padding,
+  page indicator height, label and folder text sizes, drawer scale/top padding/side margin, dock
+  label-aware cell height, bottom space, rows, QSB-on-top, hidden dock, responsive icon size.
+  Not ported: workspace side/vertical padding factors on **responsive** grids
+  (`WorkspaceProfile.createWorkspacePadding`, Lawnchair grids are non-responsive). Verified on the
+  Pixel: dock rows and labels, folder text. Still to check by hand: each padding slider.
 - **Build tooling**: framework-17.jar is a stub JAR made from the AOSP-only emulator image by `prebuilts/tools/make-framework-jar.sh` (provenance and checksums in `prebuilts/libs/README.md`). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).
 - **Turned off for now (restore once 17 runs)**: Ambient Cue (`quickstep/.../cuebar`, Pixel
   personal-context pill): `CueBarController` is a no-op stub and the `cuebar` package plus

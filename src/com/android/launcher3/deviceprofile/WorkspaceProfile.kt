@@ -394,7 +394,8 @@ data class WorkspaceProfile(
 
             val iconDrawablePaddingOriginalPx = responsiveWorkspaceCellSpec.iconDrawablePadding
             var iconTextSizePx = responsiveWorkspaceCellSpec.iconTextSize
-            var iconSizePx = responsiveWorkspaceCellSpec.iconSize
+            // Lawnchair: home icon size preference also applies to responsive grids
+            var iconSizePx = LawnchairLayoutFactors.responsiveIconSize(responsiveWorkspaceCellSpec.iconSize)
             val cellWidthPx = responsiveWorkspaceWidthSpec.cellSizePx
             var cellHeightPx = responsiveWorkspaceHeightSpec.cellSizePx
             var maxIconTextLineCount = responsiveWorkspaceCellSpec.iconTextMaxLineCount

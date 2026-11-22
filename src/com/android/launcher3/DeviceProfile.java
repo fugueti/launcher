@@ -715,7 +715,7 @@ public class DeviceProfile {
                 mResponsiveFolderWidthSpec,
                 mIconSizeSteps,
                 mWorkspaceProfile
-        );
+        ).withTextSizeFactor(LawnchairLayoutFactors.from(context).getFolderTextSize());
     }
 
     public void updateInsets(Rect insets) {

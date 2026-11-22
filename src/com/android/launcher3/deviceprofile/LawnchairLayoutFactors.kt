@@ -61,6 +61,14 @@ data class LawnchairLayoutFactors(
     val hotseatRows: Int = 1,
 ) {
     companion object {
+        /**
+         * Responsive cell specs' icon size scaled by Home screen > Icon size, like the IDP grids
+         * (whose icon size DeviceProfileOverrides scales). The specs never see that setting.
+         */
+        @JvmStatic
+        fun responsiveIconSize(specIconSizePx: Int): Int =
+            kotlin.math.max(1, kotlin.math.round(specIconSizePx * get().homeIconSize).toInt())
+
         /** AOSP defaults, used when the application is not available (previews, tests). */
         @JvmField val DEFAULT = LawnchairLayoutFactors()
 

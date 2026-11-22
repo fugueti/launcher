@@ -54,6 +54,13 @@ data class FolderProfile(
     var folderIconSizePx: Int,
     var folderIconOffsetYPx: Int,
 ) {
+    /** Lawnchair: folder label size preference (0 when folder labels are hidden). */
+    fun withTextSizeFactor(factor: Float): FolderProfile =
+        copy(
+            labelTextSizePx = (labelTextSizePx * factor).toInt(),
+            childTextSizePx = (childTextSizePx * factor).toInt(),
+        )
+
     companion object Factory {
 
         const val MIN_FOLDER_TEXT_SIZE_SP: Float = 16f
@@ -72,7 +79,9 @@ data class FolderProfile(
         ): FolderProfile {
             val folderLabelTextScale = res.getFloat(R.dimen.folder_label_text_scale)
             val minLabelTextSize: Int = pxFromSp(MIN_FOLDER_TEXT_SIZE_SP, metrics, scale)
-            var folderChildIconSizePx = responsiveWorkspaceCellSpec.iconSize
+            // Lawnchair: home icon size preference also applies to responsive grids
+            var folderChildIconSizePx =
+                LawnchairLayoutFactors.responsiveIconSize(responsiveWorkspaceCellSpec.iconSize)
             var folderChildTextSizePx = responsiveWorkspaceCellSpec.iconTextSize
             val folderCellWidthPx = responsiveFolderWidthSpec.cellSizePx
             // Reduce icon width if it's wider than the expected folder cell width
