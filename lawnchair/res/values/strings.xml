@@ -1098,4 +1098,6 @@
     <string name="lawnchair_action_failed">Failed to trigger action</string>
 
     <string name="please_wait">Please wait…</string>
+    <string name="action_hide_app">Hide</string>
+    <string name="app_hidden_from_drawer">App hidden from the app drawer</string>
 </resources>

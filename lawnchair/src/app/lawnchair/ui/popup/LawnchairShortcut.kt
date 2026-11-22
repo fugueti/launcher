@@ -22,6 +22,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairLauncher
 import app.lawnchair.override.CustomizeAppDialog
 import app.lawnchair.preferences2.PreferenceManager2
@@ -30,6 +31,7 @@ import app.lawnchair.ui.preferences.PreferenceActivity
 import app.lawnchair.ui.preferences.navigation.AppDrawerAppListToFolder
 import app.lawnchair.views.ComposeBottomSheet
 import com.android.launcher3.AbstractFloatingView
+import com.android.launcher3.LauncherState
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK
 import com.android.launcher3.R
@@ -46,6 +48,8 @@ import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.PackageManagerHelper
 import com.android.launcher3.views.ActivityContext
 import com.android.launcher3.views.OptionsPopupView
+import com.android.launcher3.views.Snackbar
+import kotlinx.coroutines.launch
 import java.net.URISyntaxException
 
 class LawnchairShortcut {
@@ -96,6 +100,19 @@ class LawnchairShortcut {
                     null
                 } else {
                     getAppInfo(activity, itemInfo)?.let { Customize(activity, it, itemInfo, originalView) }
+                }
+            }
+
+        /** Hides the app from the app drawer, offered on app drawer icons only. */
+        val HIDE_FROM_DRAWER =
+            SystemShortcut.Factory { activity: LawnchairLauncher, itemInfo, originalView ->
+                val prefs2 = PreferenceManager2.getInstance(activity)
+                when {
+                    prefs2.lockHomeScreen.firstCached() -> null
+                    !activity.isInState(LauncherState.ALL_APPS) -> null
+                    itemInfo.itemType != ITEM_TYPE_APPLICATION -> null
+                    itemInfo.targetComponent == null -> null
+                    else -> HideFromDrawer(activity, itemInfo, originalView)
                 }
             }
 
@@ -234,6 +251,32 @@ class LawnchairShortcut {
             } else {
                 Toast.makeText(launcher, R.string.activity_not_found, Toast.LENGTH_SHORT).show()
                 AbstractFloatingView.closeAllOpenViews(launcher)
+            }
+        }
+    }
+
+    class HideFromDrawer(
+        private val launcher: LawnchairLauncher,
+        itemInfo: ItemInfo,
+        originalView: View,
+    ) : SystemShortcut<LawnchairLauncher>(
+        R.drawable.ic_visibility_off,
+        R.string.action_hide_app,
+        launcher,
+        itemInfo,
+        originalView,
+    ) {
+        override fun onClick(v: View) {
+            val key = ComponentKey(mItemInfo.targetComponent, mItemInfo.user).toString()
+            val hiddenApps = PreferenceManager2.getInstance(launcher).hiddenApps
+            AbstractFloatingView.closeAllOpenViews(launcher)
+            launcher.lifecycleScope.launch {
+                hiddenApps.set(hiddenApps.firstCached() + key)
+            }
+            Snackbar.show(launcher, R.string.app_hidden_from_drawer, R.string.undo, null) {
+                launcher.lifecycleScope.launch {
+                    hiddenApps.set(hiddenApps.firstCached() - key)
+                }
             }
         }
     }
