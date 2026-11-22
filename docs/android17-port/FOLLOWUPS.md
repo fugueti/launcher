@@ -96,3 +96,7 @@ Check these when the tree compiles.
   `TaskOverlayFactoryImpl` and `LawnchairWidgetHolder` are bound in Dagger modules now.
 - **Fugueti page reordering**: ported to `ModelWriter.moveWorkspaceScreensInDatabase` /
   `persistWorkspaceScreenOrderSync` (transaction API); test reordering pages with items.
+- **Google feed**: AOSP 17 stopped forwarding the activity lifecycle to the overlay;
+  `OverlayCallbackImpl` follows the activity itself now. Debug builds still talk to the Google
+  app directly (`FeedBridge.shouldUseFeed`), which refuses them, so test the feed with a
+  release-signed build or by routing debug through the Fugueti Feed bridge temporarily.
