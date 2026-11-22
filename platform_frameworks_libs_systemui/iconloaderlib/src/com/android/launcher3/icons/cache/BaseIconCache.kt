@@ -18,20 +18,17 @@ package com.android.launcher3.icons.cache
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
-import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.NameNotFoundException
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteReadOnlyDatabaseException
 import android.graphics.Bitmap
 import android.graphics.Bitmap.Config.HARDWARE
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
-import android.graphics.drawable.Drawable
+import android.graphics.drawable.BitmapDrawable
 import android.os.Handler
 import android.os.Looper
 import android.os.Trace
@@ -42,13 +39,13 @@ import android.util.SparseArray
 import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
 import com.android.launcher3.Flags
-import com.android.systemui.shared.Flags.extendibleThemeManager
 import com.android.launcher3.icons.BaseIconFactory
 import com.android.launcher3.icons.BaseIconFactory.IconOptions
 import com.android.launcher3.icons.BitmapInfo
 import com.android.launcher3.icons.BitmapInfo.Companion.LOW_RES_ICON
 import com.android.launcher3.icons.GraphicsUtils
 import com.android.launcher3.icons.IconProvider
+import com.android.launcher3.icons.PersistedItemState
 import com.android.launcher3.icons.SourceHint
 import com.android.launcher3.icons.ThemedBitmap
 import com.android.launcher3.icons.cache.CacheLookupFlag.Companion.DEFAULT_LOOKUP_FLAG
@@ -57,8 +54,6 @@ import com.android.launcher3.util.FlagOp
 import com.android.launcher3.util.SQLiteCacheHelper
 import java.util.function.Supplier
 import kotlin.collections.MutableMap.MutableEntry
-
-import app.lawnchair.icons.CustomAdaptiveIconDrawable
 
 abstract class BaseIconCache
 @JvmOverloads
@@ -95,7 +90,7 @@ constructor(
 
     @JvmField val workerHandler = Handler(bgLooper)
 
-    @JvmField protected var iconDb = IconDB(context, dbFileName, iconPixelSize)
+    @JvmField protected var iconDb = createIconDb(iconPixelSize)
 
     private var defaultIcon: BitmapInfo? = null
     private val userFlagOpMap = SparseArray<FlagOp>()
@@ -135,7 +130,7 @@ constructor(
             userFlagOpMap.clear()
             iconDb.clear()
             iconDb.close()
-            iconDb = IconDB(context, dbFileName, iconPixelSize)
+            iconDb = createIconDb(iconPixelSize)
             cache.clear()
         } catch (e: SQLiteReadOnlyDatabaseException) {
             // This is known to happen during repeated backup and restores, if the Launcher is in
@@ -146,18 +141,6 @@ constructor(
             // try / catch will stop the crash, and LoaderTask will sanitize any residual icon data,
             // leading to a completed backup / restore and a better experience for our customers.
             Log.e(TAG, "failed to clear the launcher's icon db or cache.", e)
-        }
-    }
-
-    fun getFullResIcon(info: ActivityInfo): Drawable? = iconProvider.getIcon(info, iconDpi)
-
-    fun getFullResIcon(packageName: String): Drawable? {
-        // LC-Note: Compat with Android 8.0/8.1/9/10/11
-        try {
-            val info = packageManager.getApplicationInfo(packageName, 0)
-            return iconProvider.getIcon(info, iconDpi)
-        } catch (e: NameNotFoundException) {
-            return null
         }
     }
 
@@ -202,8 +185,15 @@ constructor(
         val index = userFormatString.indexOfKey(key)
         var format: String?
         if (index < 0) {
-            format = packageManager.getUserBadgedLabel(IDENTITY_FORMAT_STRING, user).toString()
-            if (TextUtils.equals(IDENTITY_FORMAT_STRING, format)) {
+            try {
+                format = packageManager.getUserBadgedLabel(IDENTITY_FORMAT_STRING, user).toString()
+                if (TextUtils.equals(IDENTITY_FORMAT_STRING, format)) {
+                    format = null
+                }
+            } catch (e: Exception) {
+                // Its possible that the caller may have an outdated cached user specific-entry.
+                // For eg, if a user was removed but that event has not propagated to the client yet
+                Log.e(TAG, "failed to access private profile data", e)
                 format = null
             }
             userFormatString.put(key, format)
@@ -212,6 +202,21 @@ constructor(
         }
         return if (format == null) label else String.format(format, label)
     }
+
+    @JvmOverloads
+    fun <T> getIconLoadRequest(
+        obj: T,
+        cachingLogic: CachingLogic<T>,
+        lookupFlag: CacheLookupFlag = DEFAULT_LOOKUP_FLAG,
+    ) =
+        IconLoadRequest(
+            context = context,
+            item = obj,
+            logic = cachingLogic,
+            cache = this,
+            iconDpi = iconDpi,
+            lookupFlag = lookupFlag,
+        )
 
     /**
      * Adds/updates an entry into the DB and the in-memory cache. The update is skipped if the entry
@@ -222,12 +227,12 @@ constructor(
         val user = cachingLogic.getUser(obj)
         val componentName = cachingLogic.getComponent(obj)
         val key = ComponentKey(componentName, user)
-        val bitmapInfo = cachingLogic.loadIcon(context, this, obj)
+        val bitmapInfo = getIconLoadRequest(obj, cachingLogic).evaluate()
 
         // Icon can't be loaded from cachingLogic, which implies alternative icon was loaded
         // (e.g. fallback icon, default icon). So we drop here since there's no point in caching
         // an empty entry.
-        if (bitmapInfo.isNullOrLowRes || isDefaultIcon(bitmapInfo, user)) {
+        if (bitmapInfo.isLowRes || isDefaultIcon(bitmapInfo, user)) {
             return
         }
         val entryTitle =
@@ -332,7 +337,7 @@ constructor(
         user: UserHandle,
     ) {
         if (obj != null) {
-            entry.bitmap = cachingLogic.loadIcon(context, this, obj)
+            entry.bitmap = getIconLoadRequest(obj, cachingLogic, lookupFlag).evaluate()
         } else {
             if (lookupFlag.usePackageIcon()) {
                 val packageEntry =
@@ -395,8 +400,8 @@ constructor(
             iconFactory.use { li ->
                 entry.bitmap =
                     li.createBadgedIconBitmap(
-                        li.createShapedAdaptiveIcon(icon),
-                        IconOptions().setUser(user),
+                        BitmapDrawable(icon),
+                        IconOptions().setUser(user).assumeFullBleedIcon(true),
                     )
             }
         }
@@ -457,7 +462,8 @@ constructor(
 
                     // Load the full res icon for the application, but if useLowResIcon is set, then
                     // only keep the low resolution icon instead of the larger full-sized icon
-                    val iconInfo = appInfoCachingLogic.loadIcon(context, this, appInfo)
+                    val iconInfo =
+                        getIconLoadRequest(appInfo, appInfoCachingLogic, lookupFlags).evaluate()
                     entry.bitmap =
                         if (lookupFlags.useLowRes()) BitmapInfo.of(LOW_RES_ICON, iconInfo.color)
                         else iconInfo
@@ -498,28 +504,22 @@ constructor(
         lookupFlags: CacheLookupFlag,
         cachingLogic: CachingLogic<*>,
     ): Boolean {
-        var c: Cursor? = null
         Trace.beginSection("loadIconIndividually")
         try {
-            c =
-                iconDb.query(
-                    lookupFlags.toLookupColumns(),
-                    "$COLUMN_COMPONENT = ? AND $COLUMN_USER = ?",
-                    arrayOf(
-                        cacheKey.componentName.flattenToString(),
-                        getSerialNumberForUser(cacheKey.user).toString(),
-                    ),
-                )
-            if (c.moveToNext()) {
-                return updateTitleAndIconLocked(cacheKey, entry, c, lookupFlags, cachingLogic)
+            return iconDb.querySingleEntry(
+                lookupFlags.toLookupColumns(),
+                "$COLUMN_COMPONENT = ? AND $COLUMN_USER = ?",
+                arrayOf(
+                    cacheKey.componentName.flattenToString(),
+                    getSerialNumberForUser(cacheKey.user).toString(),
+                ),
+                false,
+            ) {
+                updateTitleAndIconLocked(cacheKey, entry, it, lookupFlags, cachingLogic)
             }
-        } catch (e: SQLiteException) {
-            Log.d(TAG, "Error reading icon cache", e)
         } finally {
-            c?.close()
             Trace.endSection()
         }
-        return false
     }
 
     private fun updateTitleAndIconLocked(
@@ -557,33 +557,44 @@ constructor(
                             Options().apply { inPreferredConfig = HARDWARE },
                         )!!,
                         entry.bitmap.color,
+                        iconFactory.use { it.defaultIconShape },
                     )
             } catch (e: Exception) {
                 return false
             }
 
-            if (!extendibleThemeManager() || lookupFlags.hasThemeIcon()) {
+            if (lookupFlags.hasThemeIcon()) {
                 // Always set a non-null theme bitmap if theming was requested
-                entry.bitmap.themedBitmap = ThemedBitmap.NOT_SUPPORTED
+                entry.bitmap = entry.bitmap.copy(themedBitmap = ThemedBitmap.NOT_SUPPORTED)
 
                 iconFactory.use { factory ->
                     val themeController = factory.themeController
                     val monoIconData = c.getBlob(INDEX_MONO_ICON)
                     if (themeController != null && monoIconData != null) {
-                        entry.bitmap.themedBitmap =
-                            themeController.decode(
-                                data = monoIconData,
-                                info = entry.bitmap,
-                                factory = factory,
-                                sourceHint =
-                                    SourceHint(cacheKey, logic, c.getString(INDEX_FRESHNESS_ID)),
+                        entry.bitmap =
+                            entry.bitmap.copy(
+                                themedBitmap =
+                                    themeController.decode(
+                                        bytes = monoIconData,
+                                        info = entry.bitmap,
+                                        factory = factory,
+                                        sourceHint =
+                                            SourceHint(
+                                                cacheKey,
+                                                logic,
+                                                c.getString(INDEX_FRESHNESS_ID),
+                                            ),
+                                    ),
+                                badgeProvider = themeController.badgeProvider,
                             )
                     }
                 }
             }
         }
-        entry.bitmap.flags = c.getInt(INDEX_FLAGS)
-        entry.bitmap = entry.bitmap.withFlags(getUserFlagOpLocked(cacheKey.user))
+        entry.bitmap =
+            entry.bitmap.copy(
+                flags = getUserFlagOpLocked(cacheKey.user).apply(c.getInt(INDEX_FLAGS))
+            )
         iconProvider.notifyIconLoaded(entry.bitmap, cacheKey, logic)
         return true
     }
@@ -593,7 +604,7 @@ constructor(
         label: CharSequence,
         key: ComponentName,
         userSerial: Long,
-        freshnessId: String,
+        freshnessId: PersistedItemState,
     ) {
         val values = ContentValues()
         if (bitmapInfo.canPersist()) {
@@ -610,7 +621,7 @@ constructor(
 
         values.put(COLUMN_COMPONENT, key.flattenToString())
         values.put(COLUMN_USER, userSerial)
-        values.put(COLUMN_FRESHNESS_ID, freshnessId)
+        values.put(COLUMN_FRESHNESS_ID, freshnessId.toString())
         iconDb.insertOrReplace(values)
     }
 
@@ -625,31 +636,26 @@ constructor(
         Log.d(TAG, message, e)
     }
 
-    /** Cache class to store the actual entries on disk */
-    class IconDB(context: Context, dbFileName: String?, iconPixelSize: Int) :
+    /** Creates a cache class to store the actual entries on disk */
+    private fun createIconDb(iconPixelSize: Int) =
         SQLiteCacheHelper(
             context,
             dbFileName,
             (RELEASE_VERSION shl 16) + iconPixelSize,
             TABLE_NAME,
         ) {
-
-        override fun onCreateTable(db: SQLiteDatabase) {
-            db.execSQL(
-                ("CREATE TABLE IF NOT EXISTS $TABLE_NAME (" +
-                    "$COLUMN_COMPONENT TEXT NOT NULL, " +
-                    "$COLUMN_USER INTEGER NOT NULL, " +
-                    "$COLUMN_FRESHNESS_ID TEXT, " +
-                    "$COLUMN_ICON BLOB, " +
-                    "$COLUMN_MONO_ICON BLOB, " +
-                    "$COLUMN_ICON_COLOR INTEGER NOT NULL DEFAULT 0, " +
-                    "$COLUMN_FLAGS INTEGER NOT NULL DEFAULT 0, " +
-                    "$COLUMN_LABEL TEXT, " +
-                    "PRIMARY KEY ($COLUMN_COMPONENT, $COLUMN_USER) " +
-                    ");")
-            )
+            "CREATE TABLE IF NOT EXISTS $TABLE_NAME (" +
+                "$COLUMN_COMPONENT TEXT NOT NULL, " +
+                "$COLUMN_USER INTEGER NOT NULL, " +
+                "$COLUMN_FRESHNESS_ID TEXT, " +
+                "$COLUMN_ICON BLOB, " +
+                "$COLUMN_MONO_ICON BLOB, " +
+                "$COLUMN_ICON_COLOR INTEGER NOT NULL DEFAULT 0, " +
+                "$COLUMN_FLAGS INTEGER NOT NULL DEFAULT 0, " +
+                "$COLUMN_LABEL TEXT, " +
+                "PRIMARY KEY ($COLUMN_COMPONENT, $COLUMN_USER) " +
+                ");"
         }
-    }
 
     companion object {
         protected const val TAG = "BaseIconCache"
@@ -667,7 +673,9 @@ constructor(
             ComponentKey(ComponentName(packageName, packageName + EMPTY_CLASS_NAME), user)
 
         // Ensures themed bitmaps in the icon cache are invalidated
-        @JvmField val RELEASE_VERSION = if (Flags.enableLauncherIconShapes()) 11 else 10
+        // LINT.IfChange(cache_release_version)
+        @JvmField val RELEASE_VERSION = if (Flags.enableLauncherIconShapes()) 14 else 12
+        // LINT.ThenChange()
 
         @JvmField val TABLE_NAME = "icons"
         @JvmField val COLUMN_ROWID = "rowid"
@@ -708,17 +716,15 @@ constructor(
         fun CacheLookupFlag.toLookupColumns() =
             when {
                 useLowRes() -> COLUMNS_LOW_RES
-                extendibleThemeManager() && !hasThemeIcon() -> COLUMNS_HIGH_RES_NO_THEME
+                !hasThemeIcon() -> COLUMNS_HIGH_RES_NO_THEME
                 else -> COLUMNS_HIGH_RES
             }
 
         @JvmStatic
         protected fun BitmapInfo.downSampleToLookupFlag(flag: CacheLookupFlag) =
             when {
-                !extendibleThemeManager() -> this
                 flag.useLowRes() -> BitmapInfo.of(LOW_RES_ICON, color)
-                !flag.hasThemeIcon() && themedBitmap != null ->
-                    clone().apply { themedBitmap = null }
+                !flag.hasThemeIcon() && themedBitmap != null -> copy(themedBitmap = null)
                 else -> this
             }
     }

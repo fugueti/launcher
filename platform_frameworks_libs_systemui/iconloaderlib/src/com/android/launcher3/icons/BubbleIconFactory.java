@@ -6,6 +6,7 @@ import android.content.pm.LauncherApps;
 import android.content.pm.ShortcutInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.AdaptiveIconDrawable;
@@ -15,6 +16,8 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.android.launcher3.util.UserIconInfo;
 
 /**
  * Factory for creating normalized bubble icons and app badges.
@@ -73,30 +76,45 @@ public class BubbleIconFactory extends BaseIconFactory {
      * Creates the bitmap for the provided drawable and returns the scale used for
      * drawing the actual drawable. This is used for the larger icon shown for the bubble.
      */
-    public Bitmap getBubbleBitmap(@NonNull Drawable icon, float[] outScale) {
-        if (outScale == null) {
-            outScale = new float[1];
-        }
-        icon = normalizeAndWrapToAdaptiveIcon(icon, outScale);
-        return createIconBitmap(icon, outScale[0], MODE_WITH_SHADOW);
+    public Bitmap getBubbleBitmap(@NonNull Drawable icon) {
+        return createBadgedIconBitmap(
+                icon, new IconOptions()
+                        .setBitmapGenerationMode(MODE_WITH_SHADOW)
+                        // We do not care about extracted color
+                        .setExtractedColor(Color.TRANSPARENT)).icon;
+    }
+
+    /**
+     * Creates the BitmapInfo for the app bubble. If the user is managed, the badge will be
+     * included in the drawable.
+     */
+    public BitmapInfo getAppBubbleBitmapInfo(@NonNull Drawable appIcon, UserIconInfo user) {
+        return createBadgedIconBitmap(
+                appIcon, new IconOptions()
+                        .setBitmapGenerationMode(MODE_WITH_SHADOW)
+                        .setUser(user)
+                        // We do not care about extracted color
+                        .setExtractedColor(Color.TRANSPARENT));
     }
 
     /**
      * Returns a {@link BitmapInfo} for the app-badge that is shown on top of each bubble. This
-     * will include the workprofile indicator on the badge if appropriate.
+     * will include the profile indicator on the badge if appropriate.
      */
-    public BitmapInfo getBadgeBitmap(Drawable userBadgedAppIcon, boolean isImportantConversation) {
-        if (userBadgedAppIcon instanceof AdaptiveIconDrawable) {
-            AdaptiveIconDrawable ad = (AdaptiveIconDrawable) userBadgedAppIcon;
-            userBadgedAppIcon = new CircularAdaptiveIcon(ad.getBackground(),
-                    ad.getForeground());
+    public BitmapInfo getBadgeBitmap(Drawable appIcon, UserIconInfo user,
+            boolean isImportantConversation) {
+        if (appIcon instanceof AdaptiveIconDrawable ad) {
+            appIcon = new CircularAdaptiveIcon(ad.getBackground(), ad.getForeground());
         }
         if (isImportantConversation) {
-            userBadgedAppIcon = new CircularRingDrawable(userBadgedAppIcon);
+            appIcon = new CircularRingDrawable(appIcon);
         }
-        Bitmap userBadgedBitmap = mBadgeFactory.createIconBitmap(
-                userBadgedAppIcon, 1, MODE_WITH_SHADOW);
-        return mBadgeFactory.createIconBitmap(userBadgedBitmap);
+        return mBadgeFactory.createBadgedIconBitmap(
+                appIcon,
+                new IconOptions()
+                        .setBitmapGenerationMode(MODE_WITH_SHADOW)
+                        .setWrapNonAdaptiveIcon(false)
+                        .setUser(user));
     }
 
     private class CircularRingDrawable extends CircularAdaptiveIcon {

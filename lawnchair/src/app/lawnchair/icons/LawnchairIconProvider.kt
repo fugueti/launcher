@@ -41,7 +41,7 @@ import com.android.launcher3.dagger.LauncherAppSingleton
 import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.icons.ClockDrawableWrapper
 import com.android.launcher3.icons.LauncherIconProvider
-import com.android.launcher3.icons.mono.ThemedIconDrawable
+import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.SafeCloseable
 import javax.inject.Inject
@@ -174,7 +174,7 @@ class LawnchairIconProvider @Inject constructor(
         iconEntry: IconEntry,
         iconDpi: Int,
     ): Drawable? {
-        val themedColors = ThemedIconDrawable.getColors(context)
+        val themedColors = ThemedIconDelegate.getColorArray(context)
         val clock = iconPackProvider.getClockMetadata(iconEntry)
 
         return when {

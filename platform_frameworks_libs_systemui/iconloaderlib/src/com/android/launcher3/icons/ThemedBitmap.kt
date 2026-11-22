@@ -18,14 +18,19 @@ package com.android.launcher3.icons
 
 import android.content.Context
 import android.graphics.drawable.AdaptiveIconDrawable
+import com.android.launcher3.BadgeProvider
+import com.android.launcher3.BadgeProvider.DefaultBadgeProvider
+import com.android.launcher3.icons.FastBitmapDrawableDelegate.DelegateFactory
+import com.android.launcher3.icons.cache.CacheLookupFlag
+import com.android.launcher3.icons.cache.CacheLookupFlag.Companion.DEFAULT_LOOKUP_FLAG
 import com.android.launcher3.icons.cache.CachingLogic
 import com.android.launcher3.util.ComponentKey
 
 /** Represents a themed version of a BitmapInfo */
 interface ThemedBitmap {
 
-    /** Creates a new Drawable */
-    fun newDrawable(info: BitmapInfo, context: Context): FastBitmapDrawable
+    /** Creates a new [DelegateFactory] based on the [context] */
+    fun newDelegateFactory(info: BitmapInfo, context: Context): DelegateFactory
 
     fun serialize(): ByteArray
 
@@ -35,7 +40,8 @@ interface ThemedBitmap {
         /** ThemedBitmap to be used when theming is not supported for a particular bitmap */
         val NOT_SUPPORTED =
             object : ThemedBitmap {
-                override fun newDrawable(info: BitmapInfo, context: Context) = info.newIcon(context)
+                override fun newDelegateFactory(info: BitmapInfo, context: Context) =
+                    info.delegateFactory
 
                 override fun serialize() = ByteArray(0)
             }
@@ -46,15 +52,18 @@ interface IconThemeController {
 
     val themeID: String
 
+    val badgeProvider: BadgeProvider
+        get() = DefaultBadgeProvider
+
     fun createThemedBitmap(
         icon: AdaptiveIconDrawable,
         info: BitmapInfo,
         factory: BaseIconFactory,
         sourceHint: SourceHint? = null,
-    ): ThemedBitmap?
+    ): ThemedBitmap
 
     fun decode(
-        data: ByteArray,
+        bytes: ByteArray,
         info: BitmapInfo,
         factory: BaseIconFactory,
         sourceHint: SourceHint,
@@ -77,5 +86,5 @@ data class SourceHint(
     val key: ComponentKey,
     val logic: CachingLogic<*>,
     val freshnessId: String? = null,
-    val isFileDrawable: Boolean = false,
+    val lookupFlag: CacheLookupFlag = DEFAULT_LOOKUP_FLAG,
 )

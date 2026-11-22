@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 import app.lawnchair.bugreport.LawnchairBugReporter
 import app.lawnchair.theme.color.tokens.ColorTokens
 import com.android.launcher3.Utilities
-import com.android.launcher3.icons.mono.ThemedIconDrawable
+import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.quickstep.QuickstepProcessInitializer
 
 @Keep
@@ -13,7 +13,7 @@ class LawnchairProcessInitializer(context: Context) : QuickstepProcessInitialize
 
     override fun init(context: Context) {
         LawnchairBugReporter.INSTANCE.get(context)
-        ThemedIconDrawable.COLORS_LOADER = {
+        ThemedIconDelegate.COLORS_LOADER = {
             if (Utilities.isDarkTheme(it)) {
                 intArrayOf(
                     ColorTokens.Accent2_800.resolveColor(it),

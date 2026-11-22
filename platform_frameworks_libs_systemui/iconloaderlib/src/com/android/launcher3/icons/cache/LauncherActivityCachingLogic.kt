@@ -16,20 +16,15 @@
 
 package com.android.launcher3.icons.cache
 
-import android.app.ActivityThread
 import android.content.ComponentName
-import android.content.Context
 import android.content.pm.LauncherActivityInfo
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.UserHandle
 import android.util.Log
-import com.android.launcher3.Flags.useNewIconForArchivedApps
 import com.android.launcher3.icons.BaseIconFactory.IconOptions
 import com.android.launcher3.icons.BitmapInfo
 import com.android.launcher3.icons.IconProvider
-
-import app.lawnchair.icons.getCustomAppNameForComponent
 
 object LauncherActivityCachingLogic : CachingLogic<LauncherActivityInfo> {
     const val TAG = "LauncherActivityCachingLogic"
@@ -38,47 +33,36 @@ object LauncherActivityCachingLogic : CachingLogic<LauncherActivityInfo> {
 
     override fun getUser(info: LauncherActivityInfo): UserHandle = info.user
 
-    override fun getLabel(info: LauncherActivityInfo): CharSequence? = getCustomAppNameForComponent(ActivityThread.currentApplication().applicationContext, info)
+    override fun getLabel(info: LauncherActivityInfo): CharSequence? = info.label
 
     override fun getApplicationInfo(info: LauncherActivityInfo) = info.applicationInfo
 
-    override fun loadIcon(
-        context: Context,
-        cache: BaseIconCache,
-        info: LauncherActivityInfo,
-    ): BitmapInfo {
-        // LC-Note: LauncherActivityInfo.getActivityInfo or known as info.getActivityInfo in the code requires Android 12
-        val activityInfo = if (VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            info.activityInfo
-        } else {
-            context.packageManager.getActivityInfo(info.componentName, 0)
-        }
-        cache.iconFactory.use { li ->
-            val iconOptions: IconOptions = IconOptions().setUser(info.user)
-            iconOptions
-                .setIsArchived(
-                    useNewIconForArchivedApps() &&
-                        VERSION.SDK_INT >= 35 &&
-                        activityInfo.isArchived
-                )
-                .setSourceHint(getSourceHint(info, cache))
-            val iconDrawable = cache.iconProvider.getIcon(activityInfo, li.fullResIconDpi)
-            if (VERSION.SDK_INT >= 30 && context.packageManager.isDefaultApplicationIcon(iconDrawable)) {
+    override fun loadIcon(request: IconLoadRequest<LauncherActivityInfo>): BitmapInfo =
+        request.run {
+            val iconDrawable = getIcon(getActivityInfo(item))
+            if (isDefaultApplicationIcon(iconDrawable)) {
                 Log.w(
                     TAG,
                     "loadIcon: Default app icon returned from PackageManager." +
-                        " component=${info.componentName}, user=${info.user}",
+                        " component=${item.componentName}, user=${item.user}",
                     Exception(),
                 )
                 // Make sure this default icon always matches BaseIconCache#getDefaultIcon
-                return cache.getDefaultIcon(info.user)
+                return getDefaultIcon()
             }
-            return li.createBadgedIconBitmap(iconDrawable, iconOptions)
+            iconFactory.use { li ->
+                val iconOptions: IconOptions =
+                    IconOptions()
+                        .setUser(item.user)
+                        .assumeFullBleedIcon(
+                            VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM
+                                && getActivityInfo(item).isArchived
+                        )
+                        .setSourceHint(sourceHint)
+                li.createBadgedIconBitmap(iconDrawable, iconOptions)
+            }
         }
-    }
 
-    override fun getFreshnessIdentifier(
-        item: LauncherActivityInfo,
-        provider: IconProvider,
-    ): String? = provider.getStateForApp(getApplicationInfo(item))
+    override fun getFreshnessIdentifier(item: LauncherActivityInfo, provider: IconProvider) =
+        provider.getStateForApp(getApplicationInfo(item))
 }

@@ -15,7 +15,7 @@ import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppSingleton
 import com.android.launcher3.graphics.ThemeManager
 import com.android.launcher3.icons.mono.MonoIconThemeController
-import com.android.launcher3.icons.mono.ThemedIconDrawable
+import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.launcher3.util.DaggerSingletonTracker
 import com.android.launcher3.util.DisplayController
 import com.android.launcher3.util.LooperExecutor
@@ -152,7 +152,7 @@ constructor(
         }
         val themedColorsKey =
             if (themeController != null) {
-                ThemedIconDrawable.getColors(context).joinToString(",")
+                ThemedIconDelegate.getColorArray(context).joinToString(",")
             } else {
                 ""
             }

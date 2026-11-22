@@ -1,0 +1,20 @@
+// Fugueti: stand-in for frameworks/libs/systemui/tracinglib. The real library calls Android 17
+// platform tracing classes (PerfettoCategories, TraceNameSupplier) that older releases lack, so
+// this keeps the same API on top of android.os.Trace only.
+plugins {
+    id 'com.android.library'
+}
+
+android {
+    namespace "com.android.app.tracing"
+    sourceSets {
+        main {
+            java.srcDirs = ['src']
+            kotlin.directories.add('src')
+        }
+    }
+}
+
+dependencies {
+    implementation libs.kotlinx.coroutines.android
+}

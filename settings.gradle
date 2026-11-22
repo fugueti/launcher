@@ -66,6 +66,9 @@ project(':contextualeducationlib').projectDir = new File(rootDir, 'platform_fram
 include ':viewcapturelib'
 project(':viewcapturelib').projectDir = new File(rootDir, 'platform_frameworks_libs_systemui/viewcapturelib')
 
+include ':tracinglib'
+project(':tracinglib').projectDir = new File(rootDir, 'platform_frameworks_libs_systemui/tracinglib')
+
 include ':displaylib'
 project(':displaylib').projectDir = new File(rootDir, 'platform_frameworks_libs_systemui/displaylib')
 

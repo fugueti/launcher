@@ -1,0 +1,18 @@
+diff --git a/iconloaderlib/src/com/android/launcher3/icons/GraphicsUtils.java b/iconloaderlib/src/com/android/launcher3/icons/GraphicsUtils.java
+index 1abac90..b17b006 100644
+--- a/iconloaderlib/src/com/android/launcher3/icons/GraphicsUtils.java
++++ b/iconloaderlib/src/com/android/launcher3/icons/GraphicsUtils.java
+@@ -95,7 +95,12 @@ public class GraphicsUtils {
+      */
+     public static int getAttrColor(Context context, int attr) {
+         TypedArray ta = context.obtainStyledAttributes(new int[]{attr});
+-        int colorAccent = ta.getColor(0, 0);
++        // pE-TODO(CompatTier2): wtf?
++        int colorAccent = 0;
++        try {
++            colorAccent = ta.getColor(0, 0);
++        } catch (UnsupportedOperationException ignored) {
++        }
+         ta.recycle();
+         return colorAccent;
+     }

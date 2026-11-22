@@ -16,18 +16,12 @@
 
 package com.android.launcher3.icons;
 
-import static android.content.Intent.ACTION_DATE_CHANGED;
-import static android.content.Intent.ACTION_TIMEZONE_CHANGED;
-import static android.content.Intent.ACTION_TIME_CHANGED;
 import static android.content.res.Resources.ID_NULL;
 import static android.graphics.drawable.AdaptiveIconDrawable.getExtraInsetFraction;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ComponentInfo;
 import android.content.pm.PackageItemInfo;
@@ -40,10 +34,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Process;
-import android.os.UserHandle;
-import android.os.UserManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -53,7 +43,6 @@ import androidx.core.os.BuildCompat;
 
 import com.android.launcher3.icons.cache.CachingLogic;
 import com.android.launcher3.util.ComponentKey;
-import com.android.launcher3.util.SafeCloseable;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -72,14 +61,12 @@ public class IconProvider {
 
     private static final String ICON_METADATA_KEY_PREFIX = ".dynamic_icons";
 
-    private static final String SYSTEM_STATE_SEPARATOR = " ";
-
     protected final Context mContext;
     protected final ComponentName mCalendar;
     protected final ComponentName mClock;
 
     @NonNull
-    protected String mSystemState = "";
+    protected PersistedItemState mSystemState = new PersistedItemState();
 
     public IconProvider(Context context) {
         mContext = context;
@@ -94,25 +81,24 @@ public class IconProvider {
      *
      * @see #updateSystemState()
      */
-    public String getStateForApp(@Nullable ApplicationInfo appInfo) {
+    public PersistedItemState getStateForApp(@Nullable ApplicationInfo appInfo) {
         if (appInfo == null) {
             return mSystemState;
         }
 
         if (mCalendar != null && mCalendar.getPackageName().equals(appInfo.packageName)) {
-            return mSystemState + SYSTEM_STATE_SEPARATOR + getDay() + SYSTEM_STATE_SEPARATOR
-                    + getApplicationInfoHash(appInfo);
+            return getApplicationInfoHash(appInfo).withAdditionalValues(Integer.toString(getDay()));
         } else {
-            return mSystemState + SYSTEM_STATE_SEPARATOR + getApplicationInfoHash(appInfo);
+            return getApplicationInfoHash(appInfo);
         }
     }
 
     /**
      * Returns a hash to uniquely identify a particular version of appInfo
      */
-    protected String getApplicationInfoHash(@NonNull ApplicationInfo appInfo) {
+    protected PersistedItemState getApplicationInfoHash(@NonNull ApplicationInfo appInfo) {
         // The hashString in source dir changes with every install
-        return appInfo.sourceDir;
+        return mSystemState.withAdditionalValues(appInfo.sourceDir);
     }
 
     /**
@@ -287,8 +273,9 @@ public class IconProvider {
      * and system-version.
      */
     public void updateSystemState() {
-        mSystemState = mContext.getResources().getConfiguration().getLocales().toLanguageTags()
-                + "," + Build.VERSION.SDK_INT;
+        mSystemState = mSystemState.withLocaleAndSdk(
+                mContext.getResources().getConfiguration().getLocales().toLanguageTags(),
+                Build.VERSION.SDK_INT);
     }
 
     /**
@@ -301,13 +288,6 @@ public class IconProvider {
     private static ComponentName parseComponentOrNull(Context context, int resId) {
         String cn = context.getString(resId);
         return TextUtils.isEmpty(cn) ? null : ComponentName.unflattenFromString(cn);
-    }
-
-    /**
-     * Registers a callback to listen for various system dependent icon changes.
-     */
-    public SafeCloseable registerIconChangeListener(IconChangeListener listener, Handler handler) {
-        return new IconChangeReceiver(listener, handler);
     }
 
     /**
@@ -336,60 +316,5 @@ public class IconProvider {
             Drawable fg = new InsetDrawable(d, inset);
             return fg;
         }
-    }
-
-    private class IconChangeReceiver extends BroadcastReceiver implements SafeCloseable {
-
-        private final IconChangeListener mCallback;
-
-        IconChangeReceiver(IconChangeListener callback, Handler handler) {
-            mCallback = callback;
-            if (mCalendar != null || mClock != null) {
-                final IntentFilter filter = new IntentFilter(ACTION_TIMEZONE_CHANGED);
-                if (mCalendar != null) {
-                    filter.addAction(Intent.ACTION_TIME_CHANGED);
-                    filter.addAction(ACTION_DATE_CHANGED);
-                }
-                mContext.registerReceiver(this, filter, null, handler);
-            }
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()) {
-                case ACTION_TIMEZONE_CHANGED:
-                    if (mClock != null) {
-                        mCallback.onAppIconChanged(mClock.getPackageName(), Process.myUserHandle());
-                    }
-                    // follow through
-                case ACTION_DATE_CHANGED:
-                case ACTION_TIME_CHANGED:
-                    if (mCalendar != null) {
-                        for (UserHandle user
-                                : context.getSystemService(UserManager.class).getUserProfiles()) {
-                            mCallback.onAppIconChanged(mCalendar.getPackageName(), user);
-                        }
-                    }
-                    break;
-            }
-        }
-
-        @Override
-        public void close() {
-            try {
-                mContext.unregisterReceiver(this);
-            } catch (Exception ignored) { }
-        }
-    }
-
-    /**
-     * Listener for receiving icon changes
-     */
-    public interface IconChangeListener {
-
-        /**
-         * Called when the icon for a particular app changes
-         */
-        void onAppIconChanged(String packageName, UserHandle user);
     }
 }

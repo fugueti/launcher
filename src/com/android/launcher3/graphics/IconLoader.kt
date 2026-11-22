@@ -16,7 +16,7 @@
 
 package com.android.launcher3.graphics
 
-import app.lawnchair.icons.ExtendedBitmapDrawable
+import app.lawnchair.icons.ExtendedBitmapDrawable.Companion.isFromIconPack
 import app.lawnchair.preferences.PreferenceManager
 import android.annotation.SuppressLint
 import android.content.Context
@@ -131,7 +131,7 @@ constructor(
         }
         // Lawnchair: icon-pack icons, and icons when adaptive wrapping is off, are not wrapped
         if (
-            ExtendedBitmapDrawable.isFromIconPack(mainIcon) ||
+            mainIcon.isFromIconPack ||
                 (!PreferenceManager.INSTANCE.get(context).wrapAdaptiveIcons.get() &&
                     info.itemType != Favorites.ITEM_TYPE_FOLDER)
         ) {

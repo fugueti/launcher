@@ -16,8 +16,11 @@
 
 package com.android.launcher3.icons;
 
+import static android.graphics.Color.luminance;
 import static android.graphics.Paint.ANTI_ALIAS_FLAG;
 import static android.graphics.Paint.FILTER_BITMAP_FLAG;
+
+import static com.android.launcher3.icons.IconNormalizer.ICON_VISIBLE_AREA_FACTOR;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -25,12 +28,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.graphics.PointF;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader.TileMode;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.ViewDebug;
+
 import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
 import androidx.palette.graphics.Palette;
 
@@ -41,94 +49,89 @@ public class DotRenderer {
 
     private static final String TAG = "DotRenderer";
 
+    // Maintain a cache of largest shadow bitmap used so far (per process) to avoid creating exact
+    // same bitmap multiple times
+    private static Bitmap sCachedShadowBitmap = null;
+
     // The dot size is defined as a percentage of the app icon size.
     private static final float SIZE_PERCENTAGE = 0.228f;
-    
-    // Lawnchair
-    private static final float SIZE_PERCENTAGE_WITH_COUNT = 0.348f;
-    private static final int MAX_COUNT = 99; // The max number to draw on dots
-
-    private final float mCircleRadius;
-    private final Paint mCirclePaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
-
-    // Lawnchair
-    private final Paint mTextPaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
-
-    private final Bitmap mBackgroundWithShadow;
-    private final float mBitmapOffset;
-
-    // Stores the center x and y position as a percentage (0 to 1) of the icon size
-    private final float[] mRightDotPosition;
-    private final float[] mLeftDotPosition;
-
-    private boolean mDisplayCount;
-    
-    // Lawnchair
-    @ColorInt
-    private int mColor;
-    @ColorInt
-    private int mCounterColor;
-    private final Rect mTextRect = new Rect();
+    // The black border needs a light notification dot color. This is for accessibility.
+    private static final float LUMINENSCE_LIMIT = .70f;
 
     private static final int MIN_DOT_SIZE = 1;
-    
+
+    private static final float SHADOW_FACTOR = 1f / 12;
+
+    private final Paint mCirclePaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
+    private final float mCircleRadius;
+    private final float mDrawnRadius;
+
+    private final Bitmap mShadowBitmap;
+    private final RectF mShadowDrawRect;
+
+    // Lawnchair: notification count on the dot, with dot/counter colors from the preferences
+    private static final float SIZE_PERCENTAGE_WITH_COUNT = 0.348f;
+    private static final int MAX_COUNT = 99; // The max number to draw on dots
+    private final Paint mTextPaint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
+    private final Rect mTextRect = new Rect();
+    private final boolean mDisplayCount;
+    @ColorInt private final int mColor;
+    @ColorInt private final int mCounterColor;
+
+    public DotRenderer(int iconSizePx) {
+        this(iconSizePx, false, null, 0, 0);
+    }
+
     /**
-     * AOSP's dot renderer with Lawnchair related change to show notification count on a dot.
-     *
-     * @param iconSizePx
-     * @param iconShapePath
-     * @param pathSize
+     * Lawnchair: dot renderer that can show the notification count. The icon shape path is no
+     * longer needed (the shape comes from {@link DrawParams#shapeInfo}); the signature is kept
+     * for callers.
      */
-    public DotRenderer(int iconSizePx, Path iconShapePath, int pathSize, Boolean displayCount, Typeface typeface, @ColorInt int color, @ColorInt int counterColor) {
+    public DotRenderer(int iconSizePx, Path iconShapePath, int pathSize, Boolean displayCount,
+            Typeface typeface, @ColorInt int color, @ColorInt int counterColor) {
+        this(iconSizePx, Boolean.TRUE.equals(displayCount), typeface, color, counterColor);
+    }
+
+    private DotRenderer(int iconSizePx, boolean displayCount, Typeface typeface,
+            @ColorInt int color, @ColorInt int counterColor) {
         mDisplayCount = displayCount;
         mColor = color;
         mCounterColor = counterColor;
-        int size = Math.round((displayCount ? SIZE_PERCENTAGE_WITH_COUNT : SIZE_PERCENTAGE) * iconSizePx);
-        if (size <= 0) {
-            size = MIN_DOT_SIZE;
-        }
-        ShadowGenerator.Builder builder = new ShadowGenerator.Builder(Color.TRANSPARENT);
-        builder.ambientShadowAlpha = 88;
-        mBackgroundWithShadow = builder.setupBlurForSize(size).createPill(size, size);
-        mCircleRadius = builder.radius;
-
-        mBitmapOffset = -mBackgroundWithShadow.getHeight() * 0.5f; // Same as width.
-
-        // Find the points on the path that are closest to the top left and right corners.
-        mLeftDotPosition = getPathPoint(iconShapePath, pathSize, -1);
-        mRightDotPosition = getPathPoint(iconShapePath, pathSize, 1);
-        
-        mTextPaint.setTextSize(size * 0.65f);
+        float dotSize = Math.max(MIN_DOT_SIZE, Math.round(
+                (displayCount ? SIZE_PERCENTAGE_WITH_COUNT : SIZE_PERCENTAGE) * iconSizePx));
+        mTextPaint.setTextSize(dotSize * 0.65f);
         mTextPaint.setTextAlign(Paint.Align.LEFT);
         mTextPaint.setTypeface(typeface);
+        float shadowSize = dotSize * SHADOW_FACTOR;
+
+        mCircleRadius = dotSize / 2;
+        mDrawnRadius = mCircleRadius + shadowSize;
+        mShadowDrawRect = new RectF(-mDrawnRadius, -mDrawnRadius, mDrawnRadius, mDrawnRadius);
+
+        int shadowBitmapSize = Math.max(MIN_DOT_SIZE, Math.round(2 * mDrawnRadius));
+        mShadowBitmap = getCachedShadowBitmap(shadowBitmapSize);
     }
 
+    private static Bitmap getCachedShadowBitmap(int bitmapSize) {
+        Bitmap cachedShadow = sCachedShadowBitmap;
+        if (cachedShadow == null || cachedShadow.getWidth() < bitmapSize) {
+            // Create a new shadow bitmap
+            var r = bitmapSize * 0.5f;
+            var shader = new RadialGradient(r, r, r,
+                    new int[] { Color.BLACK, Color.TRANSPARENT},
+                    new float[] {.3f, 1}, TileMode.CLAMP);
 
-    /**
-     * AOSP's dot renderer. To use notification count on the dot see {@link #DotRenderer(int, Path, int, Boolean, Typeface, int, int)}
-     * 
-     * @param iconSizePx 
-     * @param iconShapePath
-     * @param pathSize
-     */
-    public DotRenderer(int iconSizePx, Path iconShapePath, int pathSize) {
-        int size = Math.round(SIZE_PERCENTAGE * iconSizePx);
-        if (size <= 0) {
-            size = MIN_DOT_SIZE;
+            var paint = new Paint(ANTI_ALIAS_FLAG | FILTER_BITMAP_FLAG);
+            paint.setShader(shader);
+
+            cachedShadow = BitmapRenderer.createHardwareBitmap(bitmapSize, bitmapSize,
+                    c -> c.drawCircle(r, r, r, paint));
+            sCachedShadowBitmap = cachedShadow;
         }
-        ShadowGenerator.Builder builder = new ShadowGenerator.Builder(Color.TRANSPARENT);
-        builder.ambientShadowAlpha = 88;
-        mBackgroundWithShadow = builder.setupBlurForSize(size).createPill(size, size);
-        mCircleRadius = builder.radius;
-
-        mBitmapOffset = -mBackgroundWithShadow.getHeight() * 0.5f; // Same as width.
-
-        // Find the points on the path that are closest to the top left and right corners.
-        mLeftDotPosition = getPathPoint(iconShapePath, pathSize, -1);
-        mRightDotPosition = getPathPoint(iconShapePath, pathSize, 1);
+        return cachedShadow;
     }
 
-    private static float[] getPathPoint(Path path, float size, float direction) {
+    private static PointF getPathPoint(Path path, float size, float direction) {
         float halfSize = size / 2;
         // Small delta so that we don't get a zero size triangle
         float delta = 1;
@@ -143,111 +146,62 @@ public class DotRenderer {
         trianglePath.op(path, Path.Op.INTERSECT);
         float[] pos = new float[2];
         new PathMeasure(trianglePath, false).getPosTan(0, pos, null);
-
-        pos[0] = pos[0] / size;
-        pos[1] = pos[1] / size;
-        return pos;
-    }
-
-    public float[] getLeftDotPosition() {
-        return mLeftDotPosition;
-    }
-
-    public float[] getRightDotPosition() {
-        return mRightDotPosition;
+        return new PointF(pos[0] / size, pos[1] / size);
     }
 
     /**
-     * LC: Draw a circle on top of the canvas according to the given params.
-     * 
-     * Include: custom colour, notification number counter
+     * Draw a circle on top of the canvas according to the given params.
+     */
+    public void draw(Canvas canvas, DrawParams params) {
+        draw(canvas, params, -1);
+    }
+
+    /**
+     * Lawnchair: draws the dot and, when enabled, the notification count on it.
      */
     public void draw(Canvas canvas, DrawParams params, int numNotifications) {
         if (params == null) {
             Log.e(TAG, "Invalid null argument(s) passed in call to draw.");
             return;
         }
-        canvas.save();
+
+        int dotColor = mColor != 0 ? mColor : params.mDotColor;
+        mCirclePaint.setColor(dotColor);
 
         Rect iconBounds = params.iconBounds;
-        float[] dotPosition = params.leftAlign ? mLeftDotPosition : mRightDotPosition;
-        float dotCenterX = iconBounds.left + iconBounds.width() * dotPosition[0];
-        float dotCenterY = iconBounds.top + iconBounds.height() * dotPosition[1];
+        PointF dotPosition = params.getDotPosition();
+        float dotCenterX = iconBounds.left + iconBounds.width() * dotPosition.x;
+        float dotCenterY = iconBounds.top + iconBounds.height() * dotPosition.y;
 
         // Ensure dot fits entirely in canvas clip bounds.
         Rect canvasBounds = canvas.getClipBounds();
-        float offsetX = params.leftAlign
-            ? Math.max(0, canvasBounds.left - (dotCenterX + mBitmapOffset))
-            : Math.min(0, canvasBounds.right - (dotCenterX - mBitmapOffset));
-        float offsetY = Math.max(0, canvasBounds.top - (dotCenterY + mBitmapOffset));
+        float centerX = params.leftAlign
+                ? (Math.max(dotCenterX - mDrawnRadius, canvasBounds.left) + mDrawnRadius)
+                : (Math.min(dotCenterX + mDrawnRadius, canvasBounds.right) - mDrawnRadius);
+        float centerY = Math.max(dotCenterY - mDrawnRadius, canvasBounds.top) + mDrawnRadius;
 
         // We draw the dot relative to its center.
-        canvas.translate(dotCenterX + offsetX, dotCenterY + offsetY);
+        canvas.save();
+        canvas.translate(centerX, centerY);
         canvas.scale(params.scale, params.scale);
 
-        mCirclePaint.setColor(Color.BLACK);
-        canvas.drawBitmap(mBackgroundWithShadow, mBitmapOffset, mBitmapOffset, mCirclePaint);
-        mCirclePaint.setColor(mColor != 0 ? mColor : params.dotColor);
+        if (mShadowBitmap != null) {
+            canvas.drawBitmap(mShadowBitmap, null, mShadowDrawRect, mCirclePaint);
+        }
         canvas.drawCircle(0, 0, mCircleRadius, mCirclePaint);
 
         if (mDisplayCount && numNotifications > 0) {
-            // Draw the numNotifications text
-            final int counterColor;
-            if (mCounterColor != 0) {
-                counterColor = mCounterColor;
-            } else {
-                counterColor = getCounterTextColor(params.dotColor);
-            }
-            mTextPaint.setColor(counterColor);
+            mTextPaint.setColor(mCounterColor != 0 ? mCounterColor : getCounterTextColor(dotColor));
             String text = String.valueOf(Math.min(numNotifications, MAX_COUNT));
             mTextPaint.getTextBounds(text, 0, text.length(), mTextRect);
             float x = (-mTextRect.width() / 2f - mTextRect.left) * getAdjustment(numNotifications);
             float y = mTextRect.height() / 2f - mTextRect.bottom;
             canvas.drawText(text, x, y, mTextPaint);
         }
-
         canvas.restore();
     }
 
-    /**
-     * Draw a circle on top of the canvas according to the given params.
-     * 
-     * This is the original AOSP method without notification count feature. To use it with count see {@link #draw(Canvas, DrawParams, int)}
-     */
-    public void draw(Canvas canvas, DrawParams params) {
-        if (params == null) {
-            Log.e(TAG, "Invalid null argument(s) passed in call to draw.");
-            return;
-        }
-        canvas.save();
-
-        Rect iconBounds = params.iconBounds;
-        float[] dotPosition = params.leftAlign ? mLeftDotPosition : mRightDotPosition;
-        float dotCenterX = iconBounds.left + iconBounds.width() * dotPosition[0];
-        float dotCenterY = iconBounds.top + iconBounds.height() * dotPosition[1];
-
-        // Ensure dot fits entirely in canvas clip bounds.
-        Rect canvasBounds = canvas.getClipBounds();
-        float offsetX = params.leftAlign
-                ? Math.max(0, canvasBounds.left - (dotCenterX + mBitmapOffset))
-                : Math.min(0, canvasBounds.right - (dotCenterX - mBitmapOffset));
-        float offsetY = Math.max(0, canvasBounds.top - (dotCenterY + mBitmapOffset));
-
-        // We draw the dot relative to its center.
-        canvas.translate(dotCenterX + offsetX, dotCenterY + offsetY);
-        canvas.scale(params.scale, params.scale);
-
-        mCirclePaint.setColor(Color.BLACK);
-        canvas.drawBitmap(mBackgroundWithShadow, mBitmapOffset, mBitmapOffset, mCirclePaint);
-        mCirclePaint.setColor(params.dotColor);
-        canvas.drawCircle(0, 0, mCircleRadius, mCirclePaint);
-        canvas.restore();
-    }
-
-    /**
-     * LC: An attempt to adjust digits to their perceived center, they were tuned with Roboto but should
-     * (hopefully) work with other OEM fonts as well.
-     */
+    // Lawnchair: optical centering of the digits
     private float getAdjustment(int number) {
         return switch (number) {
             case 1 -> 1.01f;
@@ -259,23 +213,14 @@ public class DotRenderer {
         };
     }
 
-    /**
-     * LC: Returns the color to use for the counter text based on the dot's background color.
-     *
-     * @param dotBackgroundColor The color of the dot background.
-     * @return The color to use on the counter text.
-     */
     private int getCounterTextColor(int dotBackgroundColor) {
-        return new Palette.Swatch(ColorUtils.setAlphaComponent(dotBackgroundColor, 0xFF), 1).getBodyTextColor();
+        return new Palette.Swatch(
+                ColorUtils.setAlphaComponent(dotBackgroundColor, 0xFF), 1).getBodyTextColor();
     }
 
     public static class DrawParams {
-        /** The color (possibly based on the icon) to use for the dot. */
         @ViewDebug.ExportedProperty(category = "notification dot", formatToHexString = true)
-        public int dotColor;
-        /** The color (possibly based on the icon) to use for a predicted app. */
-        @ViewDebug.ExportedProperty(category = "notification dot", formatToHexString = true)
-        public int appColor;
+        private int mDotColor;
         /** The bounds of the icon that the dot is drawn on top of. */
         @ViewDebug.ExportedProperty(category = "notification dot")
         public Rect iconBounds = new Rect();
@@ -285,5 +230,57 @@ public class DotRenderer {
         /** Whether the dot should align to the top left of the icon rather than the top right. */
         @ViewDebug.ExportedProperty(category = "notification dot")
         public boolean leftAlign;
+
+        @NonNull
+        public IconShapeInfo shapeInfo = IconShapeInfo.DEFAULT;
+
+        public PointF getDotPosition() {
+            return leftAlign ? shapeInfo.leftCornerPosition : shapeInfo.rightCornerPosition;
+        }
+
+        /** The color (possibly based on the icon) to use for the dot. */
+        public void setDotColor(int color) {
+            mDotColor = color;
+
+            if (luminance(color) < LUMINENSCE_LIMIT) {
+                double[] lab = new double[3];
+                ColorUtils.colorToLAB(color, lab);
+                mDotColor = ColorUtils.LABToColor(100 * LUMINENSCE_LIMIT, lab[1], lab[2]);
+            }
+        }
+    }
+
+    /**
+     * Class stores information about the icon icon shape on which the dot is being rendered.
+     * It stores the center x and y position as a percentage (0 to 1) of the icon size
+     */
+    public record IconShapeInfo(PointF leftCornerPosition, PointF rightCornerPosition) {
+
+        /** Shape when the icon rendered completely fills {@link DrawParams#iconBounds} */
+        public static IconShapeInfo DEFAULT =
+                fromPath(IconShape.EMPTY.path, IconShape.EMPTY.pathSize);
+
+        /** Shape when a normalized icon is rendered within {@link DrawParams#iconBounds} */
+        public static IconShapeInfo DEFAULT_NORMALIZED = new IconShapeInfo(
+                normalizedPosition(DEFAULT.leftCornerPosition),
+                normalizedPosition(DEFAULT.rightCornerPosition)
+        );
+
+        /**
+         * Creates an IconShapeInfo from the provided path in bounds [0, 0, pathSize, pathSize]
+         */
+        public static IconShapeInfo fromPath(Path path, int pathSize) {
+            return new IconShapeInfo(
+                    getPathPoint(path, pathSize, -1),
+                    getPathPoint(path, pathSize, 1));
+        }
+
+        private static PointF normalizedPosition(PointF pos) {
+            float center = 0.5f;
+            return new PointF(
+                    center + ICON_VISIBLE_AREA_FACTOR * (pos.x - center),
+                    center + ICON_VISIBLE_AREA_FACTOR * (pos.y - center)
+            );
+        }
     }
 }
