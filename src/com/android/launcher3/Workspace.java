@@ -3909,6 +3909,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             mScreenOrder.set(targetIndex, fromScreenId);
         }
         applyScreenOrderToChildViews();
+        // Fugueti: moveWorkspaceScreensInDatabase below gives the moved pages each other's screen
+        // ids (ids stay positional, FIRST_SCREEN_ID first). Re-key the pages the same way, or the
+        // persisted order would still name the old ids and undo the move on the next load.
+        remapWorkspaceScreenIds(screenSwapMap);
+        defaultScreenId = screenSwapMap.get(defaultScreenId, defaultScreenId);
         if (screenSwapMap.size() > 0) {
             ((ModelWriter) mLauncher.getModelWriter()).persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
             mDeferStripEmptyScreensForScreenRemap = true;
@@ -4040,6 +4045,23 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             return;
         }
         ((ModelWriter) mLauncher.getModelWriter()).persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
+    }
+
+    /** Fugueti: renames page screen ids with [screenIdMap] (old id to new id). */
+    private void remapWorkspaceScreenIds(SparseIntArray screenIdMap) {
+        IntSparseArrayMap<CellLayout> remapped = new IntSparseArrayMap<>();
+        for (int i = 0; i < mWorkspaceScreens.size(); i++) {
+            int screenId = mWorkspaceScreens.keyAt(i);
+            remapped.put(screenIdMap.get(screenId, screenId), mWorkspaceScreens.valueAt(i));
+        }
+        mWorkspaceScreens.clear();
+        for (int i = 0; i < remapped.size(); i++) {
+            mWorkspaceScreens.put(remapped.keyAt(i), remapped.valueAt(i));
+        }
+        for (int i = 0; i < mScreenOrder.size(); i++) {
+            int screenId = mScreenOrder.get(i);
+            mScreenOrder.set(i, screenIdMap.get(screenId, screenId));
+        }
     }
 
     private void applyScreenOrderToChildViews() {
