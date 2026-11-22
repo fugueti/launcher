@@ -18,8 +18,10 @@ package com.android.launcher3.model
 import android.content.ContentValues
 import android.content.Context
 import android.util.Log
+import android.util.SparseIntArray
 import com.android.launcher3.Flags
 import com.android.launcher3.LauncherModel
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings.Favorites
 import com.android.launcher3.Utilities
 import com.android.launcher3.celllayout.CellPosMapper
@@ -36,6 +38,7 @@ import com.android.launcher3.ui.DefaultLauncherUiStateNotifier
 import com.android.launcher3.ui.LauncherUiStateNotifier
 import com.android.launcher3.util.ContentWriter
 import com.android.launcher3.util.Executors
+import com.android.launcher3.util.IntArray
 import com.android.launcher3.widget.LauncherWidgetHolder
 import java.util.concurrent.Executor
 import java.util.function.Consumer
@@ -255,6 +258,46 @@ open class ModelWriter(
     }
 
     override fun getNotifier(): LauncherUiStateNotifier = launcherStateNotifier
+
+    /**
+     * Fugueti: remaps the screen ids of all desktop items using [screenIdMap] (workspace page
+     * reordering). [onComplete] runs on the main thread, also when there is nothing to update.
+     */
+    fun moveWorkspaceScreensInDatabase(screenIdMap: SparseIntArray?, onComplete: Runnable?) {
+        if (screenIdMap == null || screenIdMap.size() == 0) {
+            onComplete?.let { Executors.MAIN_EXECUTOR.execute(it) }
+            return
+        }
+        scheduleTransaction(
+            onComplete = { success, _ ->
+                if (!success) Log.e(TAG, "Failed to remap workspace screens")
+                onComplete?.let { Executors.MAIN_EXECUTOR.execute(it) }
+            }
+        ) { tx ->
+            val updated = ArrayList<ItemInfo>()
+            synchronized(bgDataModel) {
+                for (item in bgDataModel.itemsIdMap) {
+                    if (item.container != Favorites.CONTAINER_DESKTOP) continue
+                    val newScreenId = screenIdMap.get(item.screenId, item.screenId)
+                    if (newScreenId != item.screenId) {
+                        item.screenId = newScreenId
+                        updated.add(item)
+                    }
+                }
+            }
+            // Rows are updated by item id, so cyclic swaps cannot collide
+            if (updated.isNotEmpty()) {
+                tx.moveItemsInDatabase(updated, Favorites.CONTAINER_DESKTOP, -1)
+            }
+        }
+    }
+
+    /** Fugueti: persists the explicit workspace screen order synchronously. */
+    fun persistWorkspaceScreenOrderSync(screenOrder: IntArray?) {
+        if (screenOrder == null || screenOrder.isEmpty) return
+        LauncherPrefs.get(context)
+            .putSync(LauncherPrefs.WORKSPACE_SCREEN_ORDER.to(screenOrder.toConcatString()))
+    }
 
     /** Updates the location properties of the item */
     fun updateItemModel(item: ItemInfo, container: Int, screenId: Int, cellX: Int, cellY: Int) {

@@ -488,7 +488,7 @@ public class ItemInfo {
         LauncherAtom.ItemInfo.Builder itemBuilder = LauncherAtom.ItemInfo.newBuilder();
         if (LawnchairApp.isRecentsEnabled()) {
             itemBuilder.setIsKidsMode(
-                SettingsCache.INSTANCE.get(context).getValue(NAV_BAR_KIDS_MODE, 0));
+                SettingsCache.INSTANCE.get(context).getValue(NAV_BAR_KIDS_MODE));
         }
         itemBuilder.setUserType(getUserType(UserCache.INSTANCE.get(context).getUserInfo(user)));
         itemBuilder.setRank(rank);

@@ -78,6 +78,7 @@ import javax.inject.Named;
 import app.lawnchair.LawnchairApp;
 import app.lawnchair.compat.LawnchairQuickstepCompat;
 
+import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_WIDGETS_PREDICTION;
 /**
  * Model delegate which loads prediction items
  */

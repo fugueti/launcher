@@ -1941,7 +1941,7 @@ public class TaskbarActivityContext extends BaseTaskbarContext {
         } else if (tag instanceof ItemClickProxy) {
             ((ItemClickProxy) tag).onItemClicked(view);
         } else if (tag instanceof HandoffSuggestion handoffSuggestion) {
-            if (android.companion.Flags.taskContinuity()) {
+            if (com.android.launcher3.util.HiddenPlatformFlags.taskContinuity()) {
                 mControllers.taskbarHandoffController.launch(handoffSuggestion);
             } else {
                 Log.w(

@@ -288,7 +288,7 @@ public class TaskbarModelCallbacks implements
         hotseatItemInfos = recentAppsController.updateHotseatItemInfos(hotseatItemInfos);
 
         final List<HandoffSuggestion> handoffSuggestions
-            = android.companion.Flags.taskContinuity()
+            = com.android.launcher3.util.HiddenPlatformFlags.taskContinuity()
                 ? mControllers.taskbarHandoffController.getSuggestions()
                 : Collections.emptyList();
 
@@ -354,7 +354,7 @@ public class TaskbarModelCallbacks implements
     public void commitHandoffSuggestionsToUI() {
         // This API is only exposed to taskbar
         Preconditions.assertTaskbarUiThread();
-        if (!android.companion.Flags.taskContinuity()) {
+        if (!com.android.launcher3.util.HiddenPlatformFlags.taskContinuity()) {
             return;
         }
 

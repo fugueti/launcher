@@ -42,8 +42,7 @@
     <uses-permission android:name="android.permission.READ_REMOTE_TASKS"/>
     <uses-permission android:name="android.permission.REQUEST_TASK_HANDOFF"/>
 
-    <uses-permission android:name="android.permission.REPORT_UI_LATENCY_STATS"
-                     android:featureFlag="com.android.server.ui_latency_stats.ui_latency_stats_service" />
+    <!-- Fugueti: android.permission.REPORT_UI_LATENCY_STATS removed (guarded by platform flag com.android.server.ui_latency_stats.ui_latency_stats_service, off for a non-system launcher) -->
     <uses-permission android:name="android.permission.SYSTEM_APPLICATION_OVERLAY" />
     <uses-permission android:name="android.permission.EXECUTE_APP_FUNCTIONS_SYSTEM"/>
 
@@ -60,8 +59,7 @@
     <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
     <!-- Permission required to listen to recent, all app key gestures. -->
-    <uses-permission android:name="android.permission.MANAGE_KEY_GESTURES"
-        android:featureFlag="com.android.window.flags.grant_manage_key_gestures_to_recents" />
+    <!-- Fugueti: android.permission.MANAGE_KEY_GESTURES removed (guarded by platform flag com.android.window.flags.grant_manage_key_gestures_to_recents, off for a non-system launcher) -->
 
     <!-- Permission required to start a WidgetPickerActivity. -->
     <permission android:name="${applicationId}.permission.START_WIDGET_PICKER_ACTIVITY"
@@ -71,9 +69,7 @@
         Permission required to send an intent to the file manager when attempting to click on a zip
         file on the launcher home screen.
     -->
-    <uses-permission
-        android:name="com.android.documentsui.LAUNCH_FILE_MANAGER"
-        android:featureFlag="com.android.launcher3.show_files_on_home_screen" />
+    <!-- Fugueti: com.android.documentsui.LAUNCH_FILE_MANAGER removed (guarded by platform flag com.android.launcher3.show_files_on_home_screen, off for a non-system launcher) -->
 
     <application android:backupAgent="com.android.launcher3.LauncherBackupAgent"
          android:enableOnBackInvokedCallback="true"

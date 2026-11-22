@@ -506,7 +506,7 @@ public abstract class BaseContainerInterface<STATE_TYPE extends BaseState<STATE_
         } else {
             outRect.set(
                 Math.max(insets.left, sideMargin),
-                insets.top + topMargin,
+                insets.top,
                 outRect.width() - Math.max(insets.right, sideMargin),
                 outRect.height() - Math.max(insets.bottom, bottomMargin)
             );

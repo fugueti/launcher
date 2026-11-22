@@ -130,6 +130,7 @@ import com.android.launcher3.logger.LauncherAtom;
 import com.android.launcher3.logging.InstanceId;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.logging.StatsLogManager.LauncherEvent;
+import com.android.launcher3.model.ModelWriter;
 import com.android.launcher3.model.data.AppPairInfo;
 import com.android.launcher3.model.data.FolderInfo;
 import com.android.launcher3.model.data.ItemInfo;
@@ -287,6 +288,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     float[] mDragViewVisualCenter = new float[2];
 
     private SpringLoadedDragController mSpringLoadedDragController;
+
+    // Lawnchair: smartspace / search bar pinned to the first page
+    private View mFirstPagePinnedItem;
 
     private boolean mIsSwitchingState = false;
 
@@ -3906,9 +3910,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
         applyScreenOrderToChildViews();
         if (screenSwapMap.size() > 0) {
-            mLauncher.getModelWriter().persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
+            ((ModelWriter) mLauncher.getModelWriter()).persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
             mDeferStripEmptyScreensForScreenRemap = true;
-            mLauncher.getModelWriter().moveWorkspaceScreensInDatabase(
+            ((ModelWriter) mLauncher.getModelWriter()).moveWorkspaceScreensInDatabase(
                     screenSwapMap, this::onWorkspaceScreenRemapFinished);
         }
         int remappedDefaultPage = mScreenOrder.indexOf(defaultScreenId);
@@ -4035,7 +4039,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (mLauncher.isWorkspaceLoading()) {
             return;
         }
-        mLauncher.getModelWriter().persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
+        ((ModelWriter) mLauncher.getModelWriter()).persistWorkspaceScreenOrderSync(getPersistableScreenOrder());
     }
 
     private void applyScreenOrderToChildViews() {

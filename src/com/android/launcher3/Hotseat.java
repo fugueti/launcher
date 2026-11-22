@@ -72,6 +72,7 @@ import app.lawnchair.preferences.PreferenceManager;
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import app.lawnchair.preferences2.PreferenceManager2;
 
+import android.view.LayoutInflater;
 /**
  * View class that represents the bottom dock of the home screen.
  * Hosts a {@link app.lawnchair.hotseat.HotseatPagedView} of icon grids plus an optional QSB.
@@ -297,7 +298,7 @@ public class Hotseat extends FrameLayout implements Insettable {
     public int getCellYFromOrder(int rank) {
         if (mHasVerticalHotseat) {
             CellLayout page = getCurrentPageLayout();
-            int countY = page != null ? page.getCountY() : mActivity.getDeviceProfile().numShownHotseatIcons;
+            int countY = page != null ? page.getCountY() : mActivity.getDeviceProfile().getHotseatProfile().getNumShownIcons();
             return countY - (rank + 1);
         }
         DeviceProfile dp = mActivity.getDeviceProfile();

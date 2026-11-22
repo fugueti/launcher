@@ -17,7 +17,7 @@
  */
 package com.android.launcher3.allapps;
 
-import static android.multiuser.Flags.enableMovingContentIntoPrivateSpace;
+import static com.android.launcher3.util.HiddenPlatformFlags.enableMovingContentIntoPrivateSpace;
 
 import static com.android.launcher3.Utilities.ATLEAST_BAKLAVA;
 import static com.android.launcher3.LauncherSettings.Favorites.CONTAINER_PRIVATESPACE;

@@ -30,6 +30,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.util.Log;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
@@ -49,7 +50,6 @@ import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.testing.TestLogging;
 import com.android.launcher3.testing.shared.TestProtocol;
 import com.android.launcher3.util.ActivityOptionsWrapper;
-import com.android.launcher3.util.ResourceBasedOverride;
 import com.android.launcher3.util.SafeCloseable;
 import com.android.launcher3.views.ActivityContext;
 import com.android.launcher3.widget.ListenableAppWidgetHost.ProviderChangedListener;
@@ -72,6 +72,8 @@ import app.lawnchair.LawnchairAppWidgetHostView;
  * background.
  */
 public class LauncherWidgetHolder {
+
+    private static final String TAG = "LauncherWidgetHolder";
 
     public static final int APPWIDGET_HOST_ID = 1024;
 

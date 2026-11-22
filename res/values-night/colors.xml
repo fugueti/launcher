@@ -86,4 +86,7 @@
     <color name="materialColorSecondaryFixedDim">@color/system_secondary_fixed_dim</color>
     <color name="materialColorTertiaryFixed">@color/system_tertiary_fixed</color>
     <color name="materialColorTertiaryFixedDim">@color/system_tertiary_fixed_dim</color>
+    <!-- Fugueti: folder blur colors (AOSP 17 takes them from the dynamiccolors module) -->
+    <color name="customColorSurfaceEffect0">@color/folder_background_dark</color>
+    <color name="customColorSurfaceEffect0Fallback">@color/folder_background_dark</color>
 </resources>

@@ -26,6 +26,7 @@ import static com.android.launcher3.allapps.UserProfileManager.STATE_DISABLED;
 import static com.android.launcher3.allapps.UserProfileManager.STATE_ENABLED;
 
 import android.util.Log;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -386,8 +387,8 @@ public abstract class BaseAllAppsAdapter
                 ViewGroup container = (ViewGroup) holder.itemView;
                 container.removeAllViews();
                 // LC-Note: Implement long-press support for folder type for purposes like showing popup
-                FolderIcon folderIcon = FolderIcon.inflateFolderAndIcon(
-                        R.layout.all_apps_folder_icon, mActivityContext, container, folderInfo);
+                FolderIcon folderIcon = inflateDrawerFolder(mActivityContext, container,
+                        folderInfo);
                 folderIcon.setOnLongClickListener(mOnIconLongClickListener);
                 container.addView(folderIcon);
                 break;
@@ -435,4 +436,15 @@ public abstract class BaseAllAppsAdapter
         return (viewType & viewTypeMask) != 0;
     }
 
+
+    /**
+     * Lawnchair: AOSP 17 holds a plain ActivityContext here, while FolderIcon needs a
+     * Context & ActivityContext (every launcher ActivityContext is a Context).
+     */
+    @SuppressWarnings("unchecked")
+    private static <T extends Context & ActivityContext> FolderIcon inflateDrawerFolder(
+            ActivityContext activityContext, ViewGroup container, FolderInfo folderInfo) {
+        return FolderIcon.inflateFolderAndIcon(R.layout.all_apps_folder_icon,
+                (T) activityContext, container, folderInfo);
+    }
 }

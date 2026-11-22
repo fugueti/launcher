@@ -47,6 +47,7 @@ import androidx.annotation.WorkerThread;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.BuildConfigs;
 import com.android.launcher3.InvariantDeviceProfile;
+import com.android.launcher3.dagger.LauncherComponentProvider;
 import com.android.launcher3.LauncherAppState;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
@@ -306,8 +307,9 @@ public class QsbContainerView extends FrameLayout {
 
         protected Bundle createBindOptions() {
             InvariantDeviceProfile idp = LauncherAppState.getIDP(getContext());
-            return WidgetSizes.getWidgetSizeOptions(getContext(), mWidgetInfo.provider,
-                    idp.numColumns, 1);
+            // AOSP 17 moved the size options to WidgetSizeHandler
+            return LauncherComponentProvider.get(getContext()).getWidgetSizeHandler()
+                    .getWidgetSizeOptions(idp.numColumns, 1);
         }
 
         protected View getDefaultView(ViewGroup container, boolean showSetupIcon) {

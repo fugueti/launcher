@@ -49,8 +49,7 @@
     <uses-permission android:name="android.permission.ROTATE_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.WAKEUP_SURFACE_FLINGER" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.LOCK_APPS"
-                     android:featureFlag="android.security.app_lock_apis" />
+    <!-- Fugueti: android.permission.LOCK_APPS removed (guarded by platform flag android.security.app_lock_apis, off for a non-system launcher) -->
     <uses-permission android:name="com.android.systemui.permission.LAUNCH_ACCESSIBILITY_SHORTCUT_CHOOSER_DIALOG" />
 
     <permission

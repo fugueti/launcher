@@ -40,6 +40,7 @@ import com.android.launcher3.util.ApiWrapper;
 
 import app.lawnchair.preferences.PreferenceManager;
 
+import com.android.launcher3.Utilities;
 /**
  * Represents an ItemInfo which also holds an icon.
  */
@@ -380,7 +381,6 @@ public abstract class ItemInfoWithIcon extends ItemInfo {
      */
     public FastBitmapDrawable newIcon(Context context, @DrawableCreationFlags int creationFlags,
             boolean shouldTheme) {
-        if (!shouldTheme) {
         ThemeManager themeManager = ThemeManager.INSTANCE.get(context);
         IconShape iconShape = null;
         if (HomeScreenFilesUtilsKt.isFileSystemFileItem(this)) {

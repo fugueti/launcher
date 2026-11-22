@@ -35,6 +35,15 @@ object HiddenPlatformFlags {
     /** com.android.server.ui_latency_stats.Flags.uiLatencyStatsService */
     @JvmStatic fun uiLatencyStatsService() = false
 
+    /** com.android.hardware.input.Flags.enableContextualSearchDesktopEntrypoints */
+    @JvmStatic fun enableContextualSearchDesktopEntrypoints() = false
+
+    /** android.multiuser.Flags.enableMovingContentIntoPrivateSpace */
+    @JvmStatic fun enableMovingContentIntoPrivateSpace() = false
+
+    /** android.appwidget.flags.Flags.engagementMetrics */
+    @JvmStatic fun engagementMetrics() = false
+
     /** com.android.providers.media.flags.Flags.enableTrashAndRestoreByFilePathApi */
     @JvmStatic fun enableTrashAndRestoreByFilePathApi() = false
 }

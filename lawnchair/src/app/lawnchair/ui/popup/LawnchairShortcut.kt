@@ -14,6 +14,7 @@ import android.content.pm.SuspendDialogInfo
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.RemoteException
 import android.os.UserHandle
@@ -33,6 +34,7 @@ import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_APPLICATION
 import com.android.launcher3.LauncherSettings.Favorites.ITEM_TYPE_TASK
 import com.android.launcher3.R
+import com.android.launcher3.LauncherAppState
 import com.android.launcher3.Utilities
 import com.android.launcher3.folder.FolderIcon
 import com.android.launcher3.graphics.ThemeManager
@@ -200,11 +202,23 @@ class LawnchairShortcut {
     ) : SystemShortcut<LawnchairLauncher>(R.drawable.ic_edit, R.string.action_customize, launcher, itemInfo, originalView) {
 
         override fun onClick(v: View) {
-            val outObj = Array<Any?>(1) { null }
-            var icon = Utilities.loadFullDrawableWithoutTheme(launcher, appInfo, 0, 0, outObj)
+            // AOSP 17 removed Utilities.loadFullDrawableWithoutTheme; same lookup as its app branch
+            val launcherActivityInfo = launcher.getSystemService(LauncherApps::class.java)
+                ?.resolveActivity(appInfo.intent, appInfo.user)
+            val iconProvider = LauncherAppState.getInstance(launcher).iconProvider
+            val iconDpi = launcher.deviceProfile.inv.fillResIconDpi
+            var icon: Drawable? = launcherActivityInfo?.let {
+                if (Utilities.ATLEAST_S) {
+                    iconProvider.getIcon(it.activityInfo, iconDpi)
+                } else {
+                    iconProvider.getIcon(it.applicationInfo, iconDpi)
+                }
+            }
             if (mItemInfo.screenId != NO_ID && Utilities.ATLEAST_T) {
-                val adaptiveIcon = icon as? AdaptiveIconDrawable
-                    ?: LauncherIcons.obtain(launcher).use { it.wrapToAdaptiveIcon(icon) }
+                val adaptiveIcon = icon?.let { d ->
+                    d as? AdaptiveIconDrawable
+                        ?: LauncherIcons.obtain(launcher).use { it.wrapToAdaptiveIcon(d) }
+                }
                 if (adaptiveIcon != null) {
                     val themeController = ThemeManager.INSTANCE.get(launcher).themeController
                     themeController?.createThemedAdaptiveIcon(
@@ -216,8 +230,7 @@ class LawnchairShortcut {
                     }
                 }
             }
-            val launcherActivityInfo = outObj[0] as LauncherActivityInfo?
-            if (launcherActivityInfo != null) {
+            if (launcherActivityInfo != null && icon != null) {
                 val defaultTitle = launcherActivityInfo.label.toString()
 
                 AbstractFloatingView.closeAllOpenViews(launcher)
@@ -226,7 +239,7 @@ class LawnchairShortcut {
                     contentPaddings = PaddingValues(bottom = 64.dp),
                 ) {
                     CustomizeAppDialog(
-                        icon = icon,
+                        icon = icon!!,
                         defaultTitle = defaultTitle,
                         componentKey = appInfo.toComponentKey(),
                     ) { close(true) }

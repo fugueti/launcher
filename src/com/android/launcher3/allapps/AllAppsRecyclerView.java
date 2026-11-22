@@ -74,7 +74,7 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
     private int mCumulativeVerticalScroll;
     private ConstraintLayout mLetterList;
 
-    public AlphabeticalAppsList<?> mApps;
+    public AlphabeticalAppsList mApps;
 
     public AllAppsRecyclerView(Context context) {
         this(context, null);

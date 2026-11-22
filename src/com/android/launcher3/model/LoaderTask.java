@@ -18,7 +18,6 @@ package com.android.launcher3.model;
 
 import static android.os.Process.myUserHandle;
 import static com.android.launcher3.BuildConfigs.WIDGET_ON_FIRST_SCREEN;
-import static com.android.launcher3.Flags.enableLauncherBrMetricsFixed;
 import static com.android.launcher3.LauncherPrefs.IS_FIRST_LOAD_AFTER_RESTORE;
 import static com.android.launcher3.icons.CacheableShortcutInfo.convertShortcutsToCacheableShortcuts;
 import static com.android.launcher3.icons.cache.CacheLookupFlag.DEFAULT_LOOKUP_FLAG;

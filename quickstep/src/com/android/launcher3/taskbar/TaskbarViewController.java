@@ -1227,7 +1227,7 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
                 setter.addFloat(child, VIEW_ALPHA, 0f, 1f,
                         isToHome
                                 ? Interpolators.clampToProgress(LINEAR, 0f, 0.35f)
-                                : mActivity.getDeviceProfile().isQsbInline
+                                : mActivity.getDeviceProfile().getHotseatProfile().isQsbInline()
                                         ? Interpolators.clampToProgress(LINEAR, 0f, 1f)
                                         : Interpolators.clampToProgress(LINEAR, 0.84f, 1f));
                 setter.addOnFrameListener(animator -> AlphaUpdateListener.updateVisibility(child));
@@ -1466,7 +1466,7 @@ public class TaskbarViewController implements TaskbarControllers.LoggableTaskbar
 
     /** Called when there's a change in handoff suggestions to update the UI. */
     public void commitHandoffSuggestionsToUI() {
-        if (!android.companion.Flags.taskContinuity()) {
+        if (!com.android.launcher3.util.HiddenPlatformFlags.taskContinuity()) {
             return;
         }
 

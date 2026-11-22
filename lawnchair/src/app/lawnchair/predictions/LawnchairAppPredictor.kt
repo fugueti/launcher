@@ -27,7 +27,6 @@ import com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_WIDG
 import com.android.launcher3.model.BgDataModel
 import com.android.launcher3.model.PredictionUpdateTask
 import com.android.launcher3.model.PredictorState
-import com.android.launcher3.model.WidgetsPredictionUpdateTask
 import com.android.launcher3.pm.UserCache
 import com.android.launcher3.util.Executors.MODEL_EXECUTOR
 import com.android.quickstep.logging.StatsLogCompatManager
@@ -171,7 +170,7 @@ class LawnchairAppPredictor(private val context: Context) : StatsLogCompatManage
 
         model.enqueueModelUpdateTask(PredictionUpdateTask(allAppsState, allAppsTargets))
         model.enqueueModelUpdateTask(PredictionUpdateTask(hotseatState, hotseatTargets))
-        model.enqueueModelUpdateTask(WidgetsPredictionUpdateTask(widgetsState, widgetTargets))
+        // AOSP 17 removed widget predictions (they fed the old widget picker recommendations)
     }
 
     @WorkerThread
@@ -183,7 +182,6 @@ class LawnchairAppPredictor(private val context: Context) : StatsLogCompatManage
     ) {
         model.enqueueModelUpdateTask(PredictionUpdateTask(allAppsState, emptyList()))
         model.enqueueModelUpdateTask(PredictionUpdateTask(hotseatState, emptyList()))
-        model.enqueueModelUpdateTask(WidgetsPredictionUpdateTask(widgetsState, emptyList()))
     }
 
     private fun recordDismissEvent(

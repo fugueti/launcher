@@ -400,6 +400,8 @@
 
     <!-- Strings for settings -->
     <!-- Text explaining when the home screen will get rotated. [CHAR LIMIT=100] -->
+    <!-- Fugueti: still used by launcher_preferences.xml (removed from AOSP 17) -->
+    <string name="allow_rotation_title">Allow home screen rotation</string>
     <string name="allow_rotation_desc">When phone is rotated</string>
     <!-- Title for Compose settings  [CHAR LIMIT=50] -->
     <string name="compose_developer_options_section">Jetpack Compose</string>

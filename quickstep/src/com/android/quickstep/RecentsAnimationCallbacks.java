@@ -108,8 +108,9 @@ public class RecentsAnimationCallbacks implements
     public final void onAnimationStart(RecentsAnimationControllerCompat controller,
             RemoteAnimationTarget[] appTargets, Rect homeContentInsets,
             Rect minimizedHomeBounds, Bundle extras) {
+        // AOSP 17 dropped minimizedHomeBounds from onAnimationStart
         onAnimationStart(controller, appTargets, new RemoteAnimationTarget[0],
-                homeContentInsets, minimizedHomeBounds, extras, /* transitionInfo= */ null);
+                homeContentInsets, extras, /* transitionInfo= */ null);
     }
 
     // Introduced in NothingOS 2.5.5, needed in 2.6

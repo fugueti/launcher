@@ -683,9 +683,7 @@ public class Launcher extends StatefulActivity<LauncherState>
     }
 
     private void updateFixedLandscape() {
-        if (!com.android.launcher3.Flags.oneGridSpecs()) {
-            return;
-        }
+        // oneGridSpecs was rolled out (removed in AOSP 17); Lawnchair had it on
         // When the flag oneGridSpecs is on we want to disable ALLOW_ROTATION which is replaced
         // by FIXED_LANDSCAPE_MODE, ALLOW_ROTATION will only be used on Tablets and foldables
         // afterwards.
@@ -2714,7 +2712,8 @@ public class Launcher extends StatefulActivity<LauncherState>
      */
     public SparseArray<ItemInfo> getPinnedItems() {
         SparseArray<ItemInfo> items = new SparseArray<>();
-        mapOverCellLayouts(new CellLayout[]{getHotseat()}, (info, view) -> {
+        // Lawnchair: the hotseat is paged, check every page
+        mapOverCellLayouts(getHotseat().getPageLayouts(), (info, view) -> {
             // Always return false to make sure all items in the hotseat are checked.
             if (info == null) return false;
             if (info.isPredictedItem()) return false;

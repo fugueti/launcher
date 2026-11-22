@@ -106,7 +106,7 @@ import com.android.launcher3.logger.LauncherAtom.FromState;
 import com.android.launcher3.logger.LauncherAtom.ToState;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.logging.StatsLogManager.StatsLogger;
-import com.android.launcher3.model.ModelWriter;
+import com.android.launcher3.model.IModelWriter;
 import com.android.launcher3.model.data.FolderInfo;
 import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.model.data.WorkspaceItemFactory;
@@ -534,7 +534,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
      * Returns null for drawer folders so callers only update the in-memory state.
      */
     @Nullable
-    private ModelWriter getModelWriter() {
+    private IModelWriter getModelWriter() {
         return isInAppDrawer() ? null : mActivityContext.getModelWriter();
     }
 

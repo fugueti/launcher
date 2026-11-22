@@ -56,6 +56,7 @@ import com.android.launcher3.views.AbstractSlideInView;
 
 import java.util.function.Consumer;
 
+import com.android.launcher3.Flags;
 /** Wrapper for taskbar all apps with slide-in behavior. */
 public class TaskbarAllAppsSlideInView extends AbstractSlideInView<TaskbarOverlayContext>
         implements Insettable, DeviceProfile.OnDeviceProfileChangeListener {
@@ -270,14 +271,7 @@ public class TaskbarAllAppsSlideInView extends AbstractSlideInView<TaskbarOverla
 
     @Override
     protected int getScrimColor(Context context) {
-        if (!mActivityContext.getDeviceProfile().shouldShowAllAppsOnSheet()) {
-            // Always use an opaque scrim if there's no sheet.
-            return ColorTokens.AllAppsScrimColor.resolveColor(context);
-        } else if (!Flags.allAppsBlur()) {
-            // If there's a sheet but no blur, use the old scrim color.
-            return LawnchairUtilsKt.getAllAppsBackgroundColor(context, 
-                ColorTokens.WidgetsPickerScrim.resolveColor(context));
-        }
+        // Lawnchair: AOSP 17 always uses a sheet and removed allAppsBlur (Lawnchair had it on)
         return ColorTokens.AllAppsScrimColor.resolveColor(context);
     }
 

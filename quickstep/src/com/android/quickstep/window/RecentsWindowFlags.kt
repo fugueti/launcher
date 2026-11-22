@@ -16,24 +16,15 @@
 
 package com.android.quickstep.window
 
-import android.window.DesktopExperienceFlags.DesktopExperienceFlag
-import com.android.launcher3.Flags
-import com.android.launcher3.util.OverviewReleaseFlags
-
+/**
+ * Lawnchair: overview in a window is a desktop experience feature backed by the hidden
+ * android.window.DesktopExperienceFlags (absent on older Android). All Android desktop flags
+ * are disabled, so these are plain constants.
+ */
 object RecentsWindowFlags {
-    @JvmField
-    val enableLauncherOverviewInWindow: DesktopExperienceFlag =
-        DesktopExperienceFlag(
-            OverviewReleaseFlags::enableLauncherOverviewInWindow,
-            false,
-            Flags.FLAG_ENABLE_LAUNCHER_OVERVIEW_IN_WINDOW,
-        )
+    @JvmField val enableLauncherOverviewInWindow = false
 
-    @JvmField
-    val enableFallbackOverviewInWindow: DesktopExperienceFlag =
-        DesktopExperienceFlag(
-            OverviewReleaseFlags::enableFallbackOverviewInWindow,
-            false,
-            Flags.FLAG_ENABLE_FALLBACK_OVERVIEW_IN_WINDOW,
-        )
+    @JvmField val enableFallbackOverviewInWindow = false
+
+    @JvmField val enableOverviewOnConnectedDisplays = false
 }

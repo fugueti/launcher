@@ -109,7 +109,7 @@ public class QsbWidgetHostView extends NavigableAppWidgetHostView {
         return v;
     }
 
-    @Override
+    // AOSP 17 removed NavigableAppWidgetHostView.shouldAllowDirectClick
     protected boolean shouldAllowDirectClick() {
         return true;
     }

@@ -222,7 +222,7 @@ public class PrivateProfileManager extends UserProfileManager {
     public boolean isPrivateSpaceHiddenWhenLocked() {
         try {
             return SettingsCache.INSTANCE
-                    .get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI, 0);
+                    .get(mAllApps.getContext()).getValue(PRIVATE_SPACE_HIDE_WHEN_LOCKED_URI);
         } catch (Throwable t) {
             Log.e("PrivateSpaceManager", "Cannot access setting: hide_privatespace_entry_point", t);
             return false;

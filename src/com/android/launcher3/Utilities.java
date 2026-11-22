@@ -201,58 +201,6 @@ public final class Utilities {
         return nightMode == Configuration.UI_MODE_NIGHT_YES;
     }
 
-    public static Drawable loadFullDrawableWithoutTheme(Context context, ItemInfo info,
-                                                        int width, int height, Object[] outObj) {
-        ActivityContext activity = ActivityContext.lookupContext(context);
-        LauncherAppState appState = LauncherAppState.getInstance(context);
-        if (info instanceof PendingAddShortcutInfo) {
-            ShortcutConfigActivityInfo activityInfo = ((PendingAddShortcutInfo) info).getActivityInfo(context);
-            outObj[0] = activityInfo;
-            return activityInfo.getFullResIcon(appState.getIconCache());
-        }
-        if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_APPLICATION) {
-            LauncherActivityInfo activityInfo = context.getSystemService(LauncherApps.class)
-                    .resolveActivity(info.getIntent(), info.user);
-            outObj[0] = activityInfo;
-            if (Utilities.ATLEAST_S) {
-                return activityInfo == null ? null
-                        : LauncherAppState.getInstance(context)
-                        .getIconProvider().getIcon(
-                                activityInfo.getActivityInfo(), activity.getDeviceProfile().inv.fillResIconDpi);
-            } else {
-                return activityInfo == null ? null
-                        : LauncherAppState.getInstance(context)
-                        .getIconProvider().getIcon(
-                                activityInfo.getApplicationInfo(), activity.getDeviceProfile().inv.fillResIconDpi);
-            }
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_DEEP_SHORTCUT) {
-            List<ShortcutInfo> si = ShortcutKey.fromItemInfo(info)
-                    .buildRequest(context)
-                    .query(ShortcutRequest.ALL);
-            if (si.isEmpty()) {
-                return null;
-            } else {
-                outObj[0] = si.get(0);
-                BitmapInfo bi = CacheableShortcutCachingLogic.INSTANCE.loadIcon(
-                    context, appState.getIconCache(), new CacheableShortcutInfo(si.get(0), context));
-                return bi.newIcon(context);
-            }
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER) {
-            FolderAdaptiveIcon icon = FolderAdaptiveIcon.createFolderAdaptiveIcon(
-                    activity, info.id, new Point(width, height));
-            if (icon == null) {
-                return null;
-            }
-            outObj[0] = icon;
-            return icon;
-        } else if (info.itemType == LauncherSettings.Favorites.ITEM_TYPE_SEARCH_ACTION
-                && info instanceof ItemInfoWithIcon) {
-            return ((ItemInfoWithIcon) info).bitmap.newIcon(context);
-        } else {
-            return null;
-        }
-    }
-
     private static boolean sIsRunningInTestHarness = Utilities.ATLEAST_Q
             ? ActivityManager.isRunningInUserTestHarness()
             : ActivityManager.isRunningInTestHarness();

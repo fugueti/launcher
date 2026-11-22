@@ -43,6 +43,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.android.launcher3.Launcher;
+import com.android.launcher3.popup.WorkspaceLongPressOptions;
 import com.android.launcher3.R;
 import com.android.launcher3.logging.StatsLogManager.EventEnum;
 import com.android.launcher3.popup.ArrowPopup;
@@ -57,6 +58,12 @@ import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import app.lawnchair.preferences2.PreferenceManager2;
 import app.lawnchair.ui.popup.LauncherOptionsPopup;
 
+import android.widget.Toast;
+import com.android.launcher3.LauncherSettings;
+import com.android.launcher3.Utilities;
+import com.android.launcher3.model.data.WorkspaceItemInfo;
+import com.android.launcher3.testing.TestLogging;
+import com.android.launcher3.testing.shared.TestProtocol;
 /**
  * Popup shown on long pressing an empty space in launcher
  *
@@ -229,7 +236,7 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
      */
     public static boolean enterAllApps(View view) {
         Launcher launcher = Launcher.getLauncher(view.getContext());
-        launcher.getStatsLogManager().keyboardStateManager().setLaunchedFromA11y(true);
+        launcher.getActivityComponent().getKeyboardStateManager().setLaunchedFromA11y(true);
         launcher.getStateManager().goToState(ALL_APPS);
         return true;
     }
@@ -241,7 +248,8 @@ public class OptionsPopupView<T extends Context & ActivityContext> extends Arrow
     }
 
     private static boolean onWidgetsClicked(View view) {
-        return Launcher.getLauncher(view.getContext()).openWidgetPicker();
+        // AOSP 17 moved the widget picker launch to WorkspaceLongPressOptions
+        return WorkspaceLongPressOptions.openWidgetPicker(view.getContext());
     }
 
     private static boolean startSettings(View view) {

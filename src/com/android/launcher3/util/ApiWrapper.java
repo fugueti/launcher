@@ -56,6 +56,7 @@ import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
+import com.android.launcher3.util.TouchController;
 /**
  * A wrapper for the hidden API calls
  */

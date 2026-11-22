@@ -202,14 +202,6 @@ public class TaskbarView extends FrameLayout implements FolderIcon.FolderIconPar
     private Set<GroupTask> mPrevRecentTasks = Collections.emptySet();
     private Set<GroupTask> mPrevOverflowTasks = Collections.emptySet();
 
-    /**
-     * Lawnchair: number of hotseat icons hidden at the edge of 3 button navigation. AOSP 17
-     * replaced this with the pinned apps overflow, so nothing is hidden any more.
-     */
-    public int getIgnoreTaskbarIconCount() {
-        return 0;
-    }
-
     public TaskbarView(@NonNull Context context) {
         this(context, null);
     }

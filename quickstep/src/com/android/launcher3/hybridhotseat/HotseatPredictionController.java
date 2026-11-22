@@ -32,6 +32,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.launcher3.Flags;
+import com.android.launcher3.CellLayout;
 import com.android.launcher3.Hotseat;
 import com.android.launcher3.Launcher;
 import com.android.launcher3.LauncherPrefs;
@@ -213,7 +214,12 @@ public class HotseatPredictionController implements
      * Called when user completes adding item requiring a config activity to the hotseat
      */
     public void onDeferredDrop(int cellX, int cellY) {
-        View child = mHotseat.getChildAt(cellX, cellY);
+        // Lawnchair: the hotseat is paged
+        CellLayout page = mHotseat.getCurrentPageLayout();
+        if (page == null) {
+            return;
+        }
+        View child = page.getChildAt(cellX, cellY);
         if (child instanceof PredictedAppIcon predictedAppIcon) {
             mHotseatOrganizer.removeIconWithoutNotify(predictedAppIcon);
         }
