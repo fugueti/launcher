@@ -67,9 +67,11 @@ private constructor(
             prefs.put(THEME_ID, oldValue.toString())
             currentValue = oldValue
         }
-        // Delete old keys from preference, after the one-time migration is complete
-        if (oldValue != null)
-            prefs.remove(*(legacyThemeKeys.values + LEGACY_MONO_THEME_ICON).toTypedArray())
+        // Delete old keys from preference, after the one-time migration is complete.
+        // Lawnchair: keep themed_icons, it is Lawnchair's "Themed icons" setting (synced with
+        // this preference by LawnchairThemeManager).
+        if (oldValue != null && legacyThemeKeys.isNotEmpty())
+            prefs.remove(*legacyThemeKeys.values.toTypedArray())
         themePref.dispatchValue(currentValue)
     }
 

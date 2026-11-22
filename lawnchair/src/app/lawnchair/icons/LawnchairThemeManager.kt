@@ -72,6 +72,10 @@ constructor(
         uiExecutor.execute { verifyIconState() }
     }
 
+    private val themedIconsListener = PreferenceChangeListener {
+        uiExecutor.execute { syncMonoThemeFromLawnchair() }
+    }
+
     // Set once this class is constructed: ThemeManager's constructor can call verifyIconState
     // (overlay/theme callbacks) before the fields below exist.
     @Volatile
@@ -123,6 +127,25 @@ constructor(
 
         statePrefs1.forEach { it.addListener(prefListener) }
 
+        // Lawnchair's "Themed icons" (key themed_icons) and AOSP 17's theme preference (also set
+        // by the wallpaper picker) are one setting, as they shared the themed_icons key on Android
+        // 16. Lawnchair's value wins at start; without one (ThemePreference used to delete it),
+        // it is restored from the AOSP preference. Posted: writing Lawnchair's preference reloads
+        // the icons, which need this (still constructing) singleton.
+        uiExecutor.execute {
+            if (prefs1.sp.contains(prefs1.themedIcons.key)) {
+                syncMonoThemeFromLawnchair()
+            } else if (isMonoThemeEnabled) {
+                prefs1.themedIcons.set(true)
+            }
+        }
+        prefs1.themedIcons.addListener(themedIconsListener)
+        // The AOSP preference changed (e.g. the wallpaper picker): mirror it in Lawnchair's.
+        val monoThemeCloseable = themePreference.forEach(uiExecutor) {
+            val mono = isMonoThemeEnabled
+            if (prefs1.themedIcons.get() != mono) prefs1.themedIcons.set(mono)
+        }
+
         initialized = true
 
         lifecycle.addCloseable {
@@ -130,7 +153,15 @@ constructor(
             scope.cancel()
             nightModeCloseable?.close()
             statePrefs1.forEach { it.removeListener(prefListener) }
+            prefs1.themedIcons.removeListener(themedIconsListener)
+            monoThemeCloseable.close()
         }
+    }
+
+    /** Lawnchair's setting changed: update the AOSP preference, which refreshes the icons. */
+    private fun syncMonoThemeFromLawnchair() {
+        val themed = prefs1.themedIcons.get()
+        if (isMonoThemeEnabled != themed) isMonoThemeEnabled = themed
     }
 
     override fun verifyIconState() {
