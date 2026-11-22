@@ -8,7 +8,11 @@ import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.concurrent.annotations.Ui
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppSingleton
+import com.android.launcher3.display.OverlayChangeHandler
 import com.android.launcher3.graphics.ThemeManager
+import com.android.launcher3.graphics.theme.IconThemeFactory
+import com.android.launcher3.graphics.theme.ThemePreference
+import javax.inject.Named
 import com.android.launcher3.util.DaggerSingletonTracker
 import com.android.launcher3.util.LooperExecutor
 import dagger.Module
@@ -24,7 +28,10 @@ class ThemeManagerModule {
         @Ui uiExecutor: LooperExecutor,
         prefs: LauncherPrefs,
         lifecycle: DaggerSingletonTracker,
-        iconControllerFactory: ThemeManager.IconControllerFactory,
+        themePreference: ThemePreference,
+        @Named(ThemeManager.ICON_FACTORY_DAGGER_KEY)
+        iconThemeFactories: Map<String, @JvmSuppressWildcards IconThemeFactory>,
+        overlayChangeHandler: OverlayChangeHandler,
         prefs2: PreferenceManager2,
         prefs1: PreferenceManager,
         themeProvider: ThemeProvider,
@@ -34,7 +41,9 @@ class ThemeManagerModule {
             uiExecutor = uiExecutor,
             prefs = prefs,
             lifecycle = lifecycle,
-            iconControllerFactory = iconControllerFactory,
+            themePreference = themePreference,
+            iconThemeFactories = iconThemeFactories,
+            overlayChangeHandler = overlayChangeHandler,
             prefs2 = prefs2,
             prefs1 = prefs1,
             themeProvider = themeProvider,

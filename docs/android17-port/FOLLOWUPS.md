@@ -65,3 +65,4 @@ Check these when the tree compiles.
     QSB-on-top cases, hidden dock (`isHotseatEnabled`)
   - drawer: top padding factor, left/right margin factor, all apps scale 1.0
   - responsive grids: icon size scaled by the home icon size factor
+- **Build tooling**: framework-17.jar is post-processed (class version 52, InnerClasses entries added by ~/.cache/fugueti-android17/tools/FixInnerClasses.java); it is kept out of git (local only, see .git/info/exclude). KotlinPoet is forced to 2.4.0 on KSP classpaths (2.0.0 overflows on RecentsView recursive generics). `ComputerControlExtensions` is a no-op stub (system-only library).

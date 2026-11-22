@@ -314,8 +314,8 @@ android {
             res.srcDirs = ['res']
 
             // Lawnchair-TODO: Don't include Compose Disabled, but there's has to be another way of making this NOT long
-            java.srcDirs = ['src', 'src_plugins', 'compose/facade/core', 'compose/facade/enabled', 'compose/features']
-            kotlin.directories.addAll('src', 'src_plugins', 'compose/facade/core', 'compose/facade/enabled', 'compose/features')
+            java.srcDirs = ['src', 'src_plugins', 'compose/facade/core', 'compose/facade/enabled', 'compose/features', 'modules/concurrent/src']
+            kotlin.directories.addAll('src', 'src_plugins', 'compose/facade/core', 'compose/facade/enabled', 'compose/features', 'modules/concurrent/src')
 
             manifest.srcFile 'AndroidManifest-common.xml'
             proto {
@@ -421,6 +421,9 @@ dependencies {
     implementation projects.mechanics
     implementation projects.tracinglib
     implementation projects.usertypelib
+    implementation projects.modules.appfunctions
+    implementation libs.androidx.appfunctions
+    implementation libs.androidx.appfunctions.service
 
     // Recents lib dependency
     withQuickstepCompileOnly projects.hiddenApi
@@ -584,3 +587,13 @@ licensee {
 
 
 apply from: "fugueti/unit-tests.gradle"
+
+// Fugueti: KotlinPoet 2.0.0 (pulled by Dagger/Room KSP) overflows the stack hashing the recursive
+// generic bounds of AOSP 17's RecentsView members injector; use the latest KotlinPoet.
+configurations.matching { it.name.startsWith('ksp') }.configureEach {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.squareup' && details.requested.name in ['kotlinpoet', 'kotlinpoet-jvm']) {
+            details.useVersion '2.4.0'
+        }
+    }
+}

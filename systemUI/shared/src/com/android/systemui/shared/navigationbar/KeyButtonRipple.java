@@ -19,7 +19,6 @@ package com.android.systemui.shared.navigationbar;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.companion.virtualdevice.flags.Flags;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.CanvasProperty;
@@ -105,7 +104,7 @@ public class KeyButtonRipple extends Drawable {
         mMaxWidthResource = maxWidthResource;
         mMaxWidth = ctx.getResources().getDimensionPixelSize(maxWidthResource);
         mTargetView = targetView;
-        if ((VERSION.SDK_INT_FULL >= 3600001) && Flags.viewconfigurationApis()) {
+        if (VERSION.SDK_INT_FULL >= 3600001) { // Fugueti: viewconfiguration_apis is on from 16 QPR1
             mTapTimeoutMillis = ViewConfiguration.get(mTargetView.getContext()).getTapTimeoutMillis();
         } else {
             mTapTimeoutMillis = ViewConfiguration.getTapTimeout();

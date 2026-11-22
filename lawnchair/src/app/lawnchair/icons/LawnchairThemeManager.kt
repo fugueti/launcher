@@ -13,13 +13,19 @@ import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.concurrent.annotations.Ui
 import com.android.launcher3.dagger.ApplicationContext
 import com.android.launcher3.dagger.LauncherAppSingleton
+import com.android.launcher3.display.OverlayChangeHandler
 import com.android.launcher3.graphics.ThemeManager
+import com.android.launcher3.graphics.ThemeManager.Companion.DEFAULT_SHAPE_DELEGATE
+import com.android.launcher3.graphics.ThemeManager.Companion.ICON_FACTORY_DAGGER_KEY
+import com.android.launcher3.graphics.theme.IconThemeFactory
+import com.android.launcher3.graphics.theme.ThemePreference
 import com.android.launcher3.icons.mono.MonoIconThemeController
 import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.launcher3.util.DaggerSingletonTracker
 import com.android.launcher3.util.DisplayController
 import com.android.launcher3.util.LooperExecutor
 import javax.inject.Inject
+import javax.inject.Named
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -35,16 +41,21 @@ constructor(
     @ApplicationContext private val context: Context,
     @Ui private val uiExecutor: LooperExecutor,
     private val prefs: LauncherPrefs,
-    private val iconControllerFactory: IconControllerFactory,
+    themePreference: ThemePreference,
+    @Named(ICON_FACTORY_DAGGER_KEY)
+    iconThemeFactories: Map<String, @JvmSuppressWildcards IconThemeFactory>,
+    overlayChangeHandler: OverlayChangeHandler,
     private val lifecycle: DaggerSingletonTracker,
     private val prefs2: PreferenceManager2,
     private val prefs1: PreferenceManager,
     private val themeProvider: ThemeProvider,
 ) : ThemeManager(
     context,
-    uiExecutor,
     prefs,
-    iconControllerFactory,
+    themePreference,
+    iconThemeFactories,
+    uiExecutor,
+    overlayChangeHandler,
     lifecycle,
 ) {
     private val statePrefs1 = listOf(
@@ -143,13 +154,18 @@ constructor(
         val currentPrefs1State = prefs1State()
         val appShapeKey = currentAppShape.getHashString() + currentPrefs1State
         val folderShapeKey = currentFolderShape.getHashString() + currentPrefs1State
-        val themeController = iconControllerFactory.createThemeController()?.let {
-            if (prefs1.forceIconMonochrome.get()) {
-                FORCED_MONO_THEME_CONTROLLER
+        // Lawnchair: themed icons when the mono theme is selected (Lawnchair's themed icons
+        // preference writes it); forced monochrome uses its own controller
+        val themeController =
+            if (isMonoThemeEnabled) {
+                if (prefs1.forceIconMonochrome.get()) {
+                    FORCED_MONO_THEME_CONTROLLER
+                } else {
+                    MONO_THEME_CONTROLLER
+                }
             } else {
-                MONO_THEME_CONTROLLER
+                null
             }
-        }
         val themedColorsKey =
             if (themeController != null) {
                 ThemedIconDelegate.getColorArray(context).joinToString(",")
@@ -177,8 +193,10 @@ constructor(
             folderRadius = 1f,
             shapeRadius = 1f,
             themeController = themeController,
+            themeCode = if (themeController != null) "lawnchair-mono:$combinedKey" else "no-theme",
             iconShape = appShape,
             folderShape = folderShape,
+            fileShape = oldState?.fileShape ?: DEFAULT_SHAPE_DELEGATE,
         )
     }
 }

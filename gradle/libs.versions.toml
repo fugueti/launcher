@@ -38,6 +38,10 @@ rikka-refine = { id = "dev.rikka.tools.refine", version.ref = "refine" }
 diffplug-spotless = "com.diffplug.spotless:8.11.0"
 
 [libraries]
+# Fugueti: AppFunctions as used by AOSP Launcher3 17 (modules/appfunctions)
+androidx-appfunctions = { module = "androidx.appfunctions:appfunctions", version = "1.0.0-alpha09" }
+androidx-appfunctions-service = { module = "androidx.appfunctions:appfunctions-service", version = "1.0.0-alpha09" }
+androidx-appfunctions-compiler = { module = "androidx.appfunctions:appfunctions-compiler", version = "1.0.0-alpha09" }
 # AndroidX
 androidx-activity-compose = "androidx.activity:activity-compose:1.13.0"
 androidx-benchmark-macro-junit4 = "androidx.benchmark:benchmark-macro-junit4:1.5.0"

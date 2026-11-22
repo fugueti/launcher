@@ -1,0 +1,23 @@
+// Fugueti: Gradle build for AOSP Launcher3's workspace-functions module (Android.bp in AOSP).
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.google.ksp)
+}
+
+android {
+    namespace "com.android.launcher3.appfunctions"
+    sourceSets {
+        main {
+            java.srcDirs = ['src']
+            kotlin.directories.add('src')
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}
+
+dependencies {
+    implementation libs.androidx.appfunctions
+    implementation libs.androidx.appfunctions.service
+    ksp libs.androidx.appfunctions.compiler
+    implementation libs.kotlinx.coroutines.android
+}

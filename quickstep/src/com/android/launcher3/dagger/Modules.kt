@@ -80,7 +80,6 @@ import com.android.quickstep.DesktopShortcut
 import com.android.quickstep.ExternalDisplayShortcut
 import com.android.quickstep.InstantAppResolverImpl
 import com.android.quickstep.LauncherRestoreEventLoggerImpl
-import com.android.quickstep.QuickstepTestInformationHandler
 import com.android.quickstep.TaskShortcutFactory
 import com.android.quickstep.TaskUtils
 import com.android.quickstep.WellbeingShortcut
@@ -165,10 +164,7 @@ abstract class ApiWrapperModule {
         impl: LauncherRestoreEventLoggerImpl
     ): LauncherRestoreEventLogger
 
-    @Binds
-    abstract fun bindTestInformationHandler(
-        impl: QuickstepTestInformationHandler
-    ): TestInformationHandler
+    // LC: QuickstepTestInformationHandler is a no-op; TestInformationHandler is injected directly
 
     @Binds abstract fun bindDisplayController(impl: DisplayControllerImpl): DisplayController
 
