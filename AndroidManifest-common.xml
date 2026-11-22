@@ -98,6 +98,21 @@
         </receiver>
 
         <!-- Intent received used to initialize a restored widget -->
+        <!-- Fugueti: daily update check (app.fugueti.update.FuguetiUpdates) -->
+        <receiver
+            android:name="app.fugueti.update.UpdateCheckReceiver"
+            android:exported="false" />
+        <receiver
+            android:name="app.fugueti.update.UpdateScheduleReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name="com.android.launcher3.AppWidgetsRestoredReceiver"
             android:exported="true">
             <intent-filter>

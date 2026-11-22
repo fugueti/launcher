@@ -144,6 +144,9 @@ data class ChangelogState(
     val commits: List<GitHubCommit> = emptyList(),
     val currentBuildNumber: Int = 0,
     val latestBuildNumber: Int = 0,
+    // Fugueti: releases are compared by version (16.0.2 → 16.0.3), nightlies by build number.
+    val currentVersion: String? = null,
+    val latestVersion: String? = null,
 )
 
 /**

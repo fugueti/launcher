@@ -65,12 +65,18 @@ fun ChangesDialog(
                     text = stringResource(R.string.changes_dialog_title),
                     style = MaterialTheme.typography.headlineSmall,
                 )
+                val currentVersion = changelogState?.currentVersion
+                val latestVersion = changelogState?.latestVersion
                 Text(
-                    text = stringResource(
-                        R.string.changes_dialog_build_format,
-                        currentBuild,
-                        latestBuild,
-                    ),
+                    text = if (currentVersion != null && latestVersion != null) {
+                        stringResource(R.string.changes_dialog_version_format, currentVersion, latestVersion)
+                    } else {
+                        stringResource(
+                            R.string.changes_dialog_build_format,
+                            currentBuild,
+                            latestBuild,
+                        )
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),

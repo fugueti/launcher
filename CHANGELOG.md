@@ -1,12 +1,23 @@
 # Fugueti Launcher changelog
 
-## 16.0.2 (unreleased)
+## 16.0.2 (2026-11-22)
 
+* **Updates:** the release app now updates itself like the nightly. Every day at 10:00 it looks
+  for a newer GitHub release and posts a notification on its own **App updates** channel; the
+  notification opens *Settings → About*, which lists the changes, downloads the APK, checks its
+  SHA-256 and hands it to the system installer. The check also runs when About opens and can be
+  turned off in *Settings → General → Updates*. The launcher asks once for the notification
+  permission.
+* **Hide** in the long-press menu of an app drawer icon hides the app from the drawer at once,
+  with **Undo** in the snackbar. Hidden apps are still managed in *Settings → App drawer →
+  Hidden apps*.
+* App drawer: no empty band above the apps when the drawer search bar is hidden.
 * **Support** in *Settings → About* opens a sheet to report a bug or suggest a feature on GitHub
   (issue forms titled `[BUG]` / `[FEATURE]`, with app version, device and Android version filled
   in) or to send an e-mail.
-* Development builds: every change merged into `main` publishes a signed **nightly** build
-  (`app.fugueti.launcher.nightly`, installs next to the release app) as the `nightly` release.
+* Release channels: stable versions (Launcher3 from Android 16) come from `main` as tagged
+  releases; the **nightly** (`app.fugueti.launcher.nightly`) now follows `17-dev`, Fugueti on
+  Launcher3 from Android 17.
 
 ## 16.0.1 (2026-11-21)
 
