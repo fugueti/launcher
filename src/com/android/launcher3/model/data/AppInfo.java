@@ -221,7 +221,7 @@ public class AppInfo extends ItemInfoWithIcon implements WorkspaceItemFactory {
             info.runtimeStatusFlags &= ~FLAG_NOT_PINNABLE;
         }
 
-        if (android.security.Flags.appLockApis()) {
+        if (com.android.launcher3.util.HiddenPlatformFlags.appLockApis()) {
             if (appInfo.isAppLockSupported()) {
                 info.runtimeStatusFlags |= FLAG_APP_LOCK_SUPPORTED;
             } else {

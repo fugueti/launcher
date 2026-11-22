@@ -13,6 +13,7 @@ import android.os.Process
 import android.util.Log
 import app.lawnchair.DeviceProfileOverrides
 import app.lawnchair.preferences.PreferenceManager
+import com.android.launcher3.LauncherAppState
 import com.android.launcher3.GridType
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherSettings.Favorites
@@ -189,7 +190,8 @@ class NovaBackupConverter(
             restoredDbFile.parentFile?.mkdirs()
             stagedDbFile.copyTo(restoredDbFile, overwrite = true)
 
-            val dbController = ModelDbController(context)
+            val dbController = LauncherAppState.getInstance(context).model.modelDbController
+            dbController.reopenDb()
             RestoreDbTask.performRestore(context, dbController)
 
             pinImportedDeepShortcuts(importedDeepShortcuts)

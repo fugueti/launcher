@@ -16,7 +16,7 @@
 
 package com.android.quickstep.recents.ui.mapper
 
-import android.security.Flags.appLockCore
+import com.android.launcher3.util.HiddenPlatformFlags.appLockCore
 import android.util.Log
 import android.view.View.OnClickListener
 import com.android.launcher3.R

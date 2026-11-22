@@ -34,7 +34,7 @@ fun ColumnScope.GridOverridesPreview(
         val matchingProfile = previewIdp.supportedProfiles.firstOrNull { profile ->
             profile.deviceProperties.isLandscape != isPortrait
         } ?: previewIdp.supportedProfiles.firstOrNull { profile ->
-            !profile.deviceProperties.isMultiDisplay
+            !profile.deviceProperties.deviceConfiguration.isMultiDisplay
         } ?: previewIdp.supportedProfiles.firstOrNull()
 
         val width = matchingProfile?.deviceProperties?.widthPx?.toFloat()

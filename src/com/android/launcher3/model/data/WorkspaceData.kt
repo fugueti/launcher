@@ -20,8 +20,9 @@ import android.content.Context
 import android.util.SparseArray
 import androidx.core.util.putAll
 import androidx.core.util.valueIterator
+import app.lawnchair.LawnchairApp
 import app.lawnchair.preferences2.PreferenceManager2
-import com.android.launcher3.BuildConfig
+import androidx.annotation.VisibleForTesting
 import com.android.launcher3.BuildConfigs
 import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
@@ -41,8 +42,9 @@ import java.util.stream.StreamSupport
 sealed class WorkspaceData : Iterable<ItemInfo> {
 
     /** Creates an array of valid workspace screens based on current items in the model. */
-    // LC-Note: Add context to replace QSB_ON_FIRST_SCREEN config
-    fun collectWorkspaceScreens(context: Context): IntArray {
+    // LC-Note: Add context to replace QSB_ON_FIRST_SCREEN config (AOSP 17 callers pass none)
+    @JvmOverloads
+    fun collectWorkspaceScreens(context: Context = LawnchairApp.instance): IntArray {
         val prefs2 = PreferenceManager2.INSTANCE.get(context)
         val smartspaceEnabled = prefs2.enableSmartspace.firstCached()
 

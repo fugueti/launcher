@@ -22,7 +22,6 @@ import androidx.annotation.VisibleForTesting
 import com.android.internal.policy.DesktopModeCompatPolicy
 import com.android.launcher3.BubbleTextView.RunningAppState
 import com.android.launcher3.Flags
-import com.android.launcher3.Flags.enableRecentsInTaskbar
 import com.android.launcher3.Utilities
 import com.android.launcher3.Flags.enableTaskbarUiThread
 import com.android.launcher3.graphics.ThemeManager

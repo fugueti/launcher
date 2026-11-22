@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.android.launcher3.Launcher;
 import com.android.launcher3.R;
 import com.android.launcher3.logging.StatsLogManager.EventEnum;
 import com.android.launcher3.popup.ArrowPopup;

@@ -22,6 +22,7 @@ import static com.android.launcher3.util.OnboardingPrefs.HOTSEAT_LONGPRESS_TIP_S
 
 import android.animation.ObjectAnimator;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
@@ -55,6 +56,8 @@ import com.android.launcher3.views.Snackbar;
 
 import java.io.PrintWriter;
 
+import app.lawnchair.ui.preferences.PreferenceActivity;
+import app.lawnchair.ui.preferences.navigation.Predictions;
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import app.lawnchair.preferences2.PreferenceManager2;
 
@@ -96,7 +99,7 @@ public class HotseatPredictionController implements
             Snackbar.show(mLauncher, R.string.hotseat_tip_gaps_filled,
                     R.string.hotseat_prediction_settings, null,
                     () -> mLauncher.startActivity(
-                            HotseatEduController.getLawnchairSettingsIntent(mLauncher)));
+                            getLawnchairSettingsIntent(mLauncher)));
             LauncherPrefs.get(mLauncher).put(HOTSEAT_LONGPRESS_TIP_SEEN, true);
             mLauncher.getDragLayer().performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
             return true;
@@ -240,5 +243,11 @@ public class HotseatPredictionController implements
 
     static Intent getSettingsIntent() {
         return new Intent(SETTINGS_ACTION).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    }
+
+    /** Lawnchair: prediction settings (AOSP 17 removed HotseatEduController). */
+    private static Intent getLawnchairSettingsIntent(Context context) {
+        return PreferenceActivity.createIntent(context, Predictions.INSTANCE)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     }
 }

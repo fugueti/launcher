@@ -1,5 +1,6 @@
 package app.lawnchair
 
+import com.android.launcher3.deviceprofile.parser.GridOption
 import android.content.Context
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
@@ -56,7 +57,7 @@ class DeviceProfileOverrides @Inject constructor(
     }
 
     fun getOverrides(
-        defaultGrid: InvariantDeviceProfile.GridOption,
+        defaultGrid: GridOption,
         deviceType: Int,
         previewOverrides: PreviewOverrides? = null,
     ) = Options(
@@ -113,7 +114,7 @@ class DeviceProfileOverrides @Inject constructor(
         constructor(
             prefs: PreferenceManager,
             prefs2: PreferenceManager2,
-            defaultGrid: InvariantDeviceProfile.GridOption,
+            defaultGrid: GridOption,
             deviceType: Int,
             previewOverrides: PreviewOverrides,
         ) : this(

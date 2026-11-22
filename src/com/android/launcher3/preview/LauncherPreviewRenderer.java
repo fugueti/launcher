@@ -124,12 +124,12 @@ public class LauncherPreviewRenderer extends BaseContext
             ColorsOverride colorsOverride,
             LauncherModel model,
             int themeRes) {
-        this(context, workspaceScreenId, wallpaperColorResources, model, themeRes, null);
+        this(context, workspaceScreenId, colorsOverride, model, themeRes, null);
     }
 
     public LauncherPreviewRenderer(Context context,
             int workspaceScreenId,
-            @Nullable SparseIntArray wallpaperColorResources,
+            @Nullable ColorsOverride colorsOverride,
             LauncherModel model,
             int themeRes,
             @Nullable InvariantDeviceProfile previewIdp) {

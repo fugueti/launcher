@@ -125,6 +125,21 @@ public class DepthController<
     }
 
     /**
+     * Lawnchair: cleans up a temporary controller (LawnchairFloatingSurfaceView) so it can be
+     * garbage collected without leaving listeners behind. AOSP 17 dropped dispose().
+     */
+    public void dispose() {
+        View rootView = mContainer.getRootView();
+        if (rootView != null && mOnAttachListener != null) {
+            rootView.removeOnAttachStateChangeListener(mOnAttachListener);
+            mOnAttachListener = null;
+        }
+        if (mContainer.getScrimView() != null) {
+            mContainer.getScrimView().removeOpaquenessListener(mOpaquenessListener);
+        }
+    }
+
+    /**
      * Sets if the underlying activity is started or not
      */
     public void setActivityStarted(boolean isStarted) {

@@ -62,6 +62,18 @@ object GraphicsUtils {
     fun setColorAlphaBound(color: Int, alpha: Int): Int =
         (color and 0x00ffffff) or (alpha.coerceIn(0, 255) shl 24)
 
+    /** Lawnchair: total area of [r] (IconShape picks the closest shape with it). */
+    @JvmStatic
+    fun getArea(r: android.graphics.Region): Int {
+        val itr = android.graphics.RegionIterator(r)
+        val tempRect = Rect()
+        var area = 0
+        while (itr.next(tempRect)) {
+            area += tempRect.width() * tempRect.height()
+        }
+        return area
+    }
+
     /** Compresses the bitmap to a byte array for serialization. */
     @JvmStatic
     fun flattenBitmap(bitmap: Bitmap): ByteArray {

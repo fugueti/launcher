@@ -89,9 +89,11 @@ class LawndeckManager(private val context: Context) {
     private fun backupExists(suffix: String): Boolean = getDatabaseFiles(suffix).backupDb.exists()
 
     private fun postRestoreActions() {
-        ModelDbController(context).let { RestoreDbTask.performRestore(context, it) }
+        val dbController = LauncherAppState.getInstance(context).model.modelDbController
+        dbController.reopenDb()
+        RestoreDbTask.performRestore(context, dbController)
         MainScope().launch(Dispatchers.Main) {
-            LauncherAppState.getInstance(context).model.forceReload()
+            LauncherAppState.getInstance(context).model.forceReload("LawndeckManager")
         }
     }
 

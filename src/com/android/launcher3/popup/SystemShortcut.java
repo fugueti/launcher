@@ -644,7 +644,7 @@ public abstract class SystemShortcut<T extends ActivityContext> extends ItemInfo
 
     public static final Factory<ActivityContext> APP_LOCK =
             (activity, itemInfo, originalView) -> {
-                if (!android.security.Flags.appLockApis()) {
+                if (!com.android.launcher3.util.HiddenPlatformFlags.appLockApis()) {
                     return null;
                 }
                 if (itemInfo instanceof ItemInfoWithIcon itemInfoWithIcon) {

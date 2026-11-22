@@ -35,7 +35,7 @@ import com.android.launcher3.icons.LauncherIcons
 import com.android.launcher3.model.DeviceGridState
 import com.android.launcher3.util.ComponentKey
 import com.android.launcher3.util.DaggerSingletonObject
-import com.android.launcher3.util.DisplayController
+import com.android.launcher3.display.DisplayController
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.SafeCloseable
 import com.android.quickstep.RecentsModel
@@ -53,13 +53,13 @@ class PreferenceManager @Inject constructor(
     private val mRecentsModel get() = RecentsModel.INSTANCE.get(context)
     private val las get() = LauncherAppState.INSTANCE.get(context)
     private val reloadIcons: () -> Unit = {
-        mRecentsModel.onThemeChanged()
+        mRecentsModel.iconCache.clearCache()
         Executors.MODEL_EXECUTOR.execute {
             // All of this is like refreshAndReloadLauncher in ModelInitializer
             LauncherIcons.clearPool(context)
             las.iconCache.clearMemoryCache()
             las.iconCache.updateIconParams(idp.fillResIconDpi, idp.iconBitmapSize)
-            las.model.forceReload()
+            las.model.forceReload("Lawnchair")
         }
     }
     private val reloadGrid: () -> Unit = { idp.onPreferencesChanged(context) }

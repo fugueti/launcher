@@ -22,7 +22,9 @@ import com.android.launcher3.MainProcessInitializer
 import com.android.launcher3.model.QuickstepModelDelegate
 import com.android.launcher3.util.BaseDefaultsValueProvider
 import com.android.launcher3.util.DefaultsValueProvider
-import com.android.quickstep.QuickstepProcessInitializer
+import app.lawnchair.LawnchairProcessInitializer
+import app.lawnchair.overview.TaskOverlayFactoryImpl
+import com.android.quickstep.TaskOverlayFactory
 import dagger.Binds
 import dagger.Module
 
@@ -40,9 +42,12 @@ abstract class AppModule {
         impl: BaseDefaultsValueProvider
     ): DefaultsValueProvider
 
+    // Lawnchair: overview actions
+    @Binds abstract fun bindTaskOverlayFactory(impl: TaskOverlayFactoryImpl): TaskOverlayFactory
+
     @Binds
     abstract fun bindMainProcessInitializer(
-        impl: QuickstepProcessInitializer
+        impl: LawnchairProcessInitializer
     ): MainProcessInitializer
 }
 

@@ -142,7 +142,7 @@ data class HotseatProfileInitialValues(
                 if (deviceProperties.isTwoPanels) twoPanelCanInline else tabletInlineQsb
             canQsbInline = canQsbInline && qsbHeight > 0
 
-            val isQsbInline = (inv.inlineQsb[typeIndex] && canQsbInline) || inv.isFixedLandscape
+            val isQsbInline = (inv.inlineQsb[typeIndex] && canQsbInline) || InvariantDeviceProfile.isFixedLandscape
 
             val areNavButtonsInline =
                 deviceProperties.taskbarConfiguration.isTaskbarPresent &&
@@ -257,7 +257,7 @@ data class HotseatProfileInitialValues(
                 (if (deviceProperties.isTwoPanels) twoPanelCanInline else tabletInlineQsb) &&
                     qsbHeight > 0
 
-            val isQsbInline = (inv.inlineQsb[typeIndex] && canQsbInline) || inv.isFixedLandscape
+            val isQsbInline = (inv.inlineQsb[typeIndex] && canQsbInline) || InvariantDeviceProfile.isFixedLandscape
 
             val areNavButtonsInline =
                 deviceProperties.taskbarConfiguration.isTaskbarPresent &&

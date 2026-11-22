@@ -596,7 +596,7 @@ public class QuickstepLauncher extends Launcher implements RecentsViewContainer,
         if (mBubbleFeatureConfig.areAppBubblesSupported()) {
             shortcuts.add(BUBBLE_SHORTCUT);
         }
-        if (android.security.Flags.appLockApis() && Flags.enableAppLockShortcut()) {
+        if (com.android.launcher3.util.HiddenPlatformFlags.appLockApis() && Flags.enableAppLockShortcut()) {
             shortcuts.add(APP_LOCK);
         }
         return shortcuts.stream();

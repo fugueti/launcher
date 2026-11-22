@@ -457,7 +457,7 @@ data class WorkspaceProfile(
                 createWorkspacePadding(
                     isVerticalLayout = isVerticalLayout,
                     isSeascape = isSeascape,
-                    isFixedLandscape = inv.isFixedLandscape,
+                    isFixedLandscape = InvariantDeviceProfile.isFixedLandscape,
                     isScalableGrid = isScalableGrid,
                     responsiveWorkspaceWidthSpec = responsiveWorkspaceWidthSpec,
                     responsiveWorkspaceHeightSpec = responsiveWorkspaceHeightSpec,

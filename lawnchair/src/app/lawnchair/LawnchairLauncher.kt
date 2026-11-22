@@ -282,8 +282,8 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
     }
 
-    override fun getSupportedShortcuts(container: Int): Stream<SystemShortcut.Factory<*>> = Stream.concat(
-        super.getSupportedShortcuts(container),
+    override fun getSupportedShortcuts(itemInfo: ItemInfo): Stream<SystemShortcut.Factory<*>> = Stream.concat(
+        super.getSupportedShortcuts(itemInfo),
         Stream.concat(
             Stream.of(LawnchairShortcut.UNINSTALL, LawnchairShortcut.CUSTOMIZE, LawnchairShortcut.OPEN_IN_STORE),
             Stream.of(LawnchairShortcut.PAUSE_APPS),
@@ -552,7 +552,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         if (
             preferenceManager2.alwaysReloadIcons.firstCached()
         ) {
-            LauncherAppState.getInstance(this).model.reloadIfActive()
+            LauncherAppState.getInstance(this).model.reloadIfActive("Lawnchair")
         }
     }
 

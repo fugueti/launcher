@@ -36,6 +36,7 @@ import com.android.launcher3.LauncherAnimUtils
 import com.android.launcher3.QuickstepTransitionManager.CONTENT_SCALE_DURATION
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import com.android.launcher3.util.WindowBlurState
 import com.android.launcher3.statehandlers.DepthController
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.MultiPropertyFactory
@@ -134,7 +135,7 @@ class LawnchairFloatingSurfaceView @JvmOverloads constructor(
         val launcherAnimator = AnimatorSet()
         val endListener: Runnable?
 
-        val scales = floatArrayOf(mDeviceProfile.workspaceContentScale, 1f)
+        val scales = floatArrayOf(mDeviceProfile.workspaceProfile.workspaceContentScale, 1f)
 
         mLauncher.pauseExpensiveViewUpdates()
 
@@ -170,8 +171,8 @@ class LawnchairFloatingSurfaceView @JvmOverloads constructor(
     }
 
     private fun getBackgroundAnimator(): ObjectAnimator {
-        val depthController = DepthController(mLauncher)
-        val targetDepth = mLauncher.stateManager.state.getDepth<LawnchairLauncher?>(mLauncher)
+        val depthController = DepthController(mLauncher, WindowBlurState.getInstance(mLauncher))
+        val targetDepth = mLauncher.stateManager.state.getDepth(mLauncher)
 
         val backgroundRadiusAnim = createDepthAnimator(
             depthController,
@@ -209,7 +210,7 @@ class LawnchairFloatingSurfaceView @JvmOverloads constructor(
     }
 
     private fun createDepthAnimator(
-        depthController: DepthController,
+        depthController: DepthController<*, *>,
         targetDepth: Float,
         onEnd: (() -> Unit)? = null,
     ): ObjectAnimator {

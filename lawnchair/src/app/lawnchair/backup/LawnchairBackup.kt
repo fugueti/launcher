@@ -102,7 +102,8 @@ class LawnchairBackup(
             if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
                 // After the preferences: they are now the live values, so this no longer undoes them.
                 DeviceGridState(info.gridState).writeToPrefs(context, true)
-                val dbController = ModelDbController(context)
+                val dbController = LauncherAppState.getInstance(context).model.modelDbController
+                dbController.reopenDb()
                 RestoreDbTask.performRestore(context, dbController)
             }
         } finally {

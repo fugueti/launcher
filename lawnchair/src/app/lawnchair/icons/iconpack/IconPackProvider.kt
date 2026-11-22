@@ -59,7 +59,7 @@ class IconPackProvider @Inject constructor(
                 val clockDrawable: ClockDrawableWrapper =
                     ClockDrawableWrapper.forMeta(Build.VERSION.SDK_INT, clockMetadata) {
                         drawable
-                    }
+                    } ?: return drawable
 
                 return if (context.shouldTransparentBGIcons()) {
                     clockDrawable.foreground

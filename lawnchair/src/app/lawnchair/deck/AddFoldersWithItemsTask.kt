@@ -13,7 +13,7 @@ import com.android.launcher3.model.WorkspaceItemSpaceFinder
 import com.android.launcher3.model.data.FolderInfo
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.model.data.WorkspaceItemInfo
-import com.android.launcher3.util.IntArray
+import com.android.launcher3.util.IntSet
 import com.android.launcher3.util.PackageManagerHelper
 
 /**
@@ -41,25 +41,21 @@ class AddFoldersWithItemsTask(
         }
 
         val addedItemsFinal = ArrayList<ItemInfo>()
-        val addedWorkspaceScreensFinal = IntArray()
 
         synchronized(dataModel) {
-            val workspaceScreens = dataModel.itemsIdMap.collectWorkspaceScreens(context)
             val modelWriter = taskController.getModelWriter()
 
             folders.forEach { folderInfo ->
-                // Find space for the folder
+                // Find space for the folder (AOSP 17 API)
                 val coords = itemSpaceFinder.findSpaceForItem(
-                    workspaceScreens,
-                    addedWorkspaceScreensFinal,
                     addedItemsFinal,
                     folderInfo.spanX,
                     folderInfo.spanY,
-                    context,
+                    IntSet(),
                 )
-                val screenId = coords[0]
-                val cellX = coords[1]
-                val cellY = coords[2]
+                val screenId = coords.screenId
+                val cellX = coords.cellX
+                val cellY = coords.cellY
 
                 // Add folder to database
                 modelWriter.addItemToDatabase(

@@ -389,6 +389,11 @@ constructor(@ApplicationContext private val encryptedContext: Context) {
         @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
         @JvmStatic
         fun getPrefs(context: Context) = INSTANCE[context].backedUpPrefs
+
+        /** Lawnchair: device (non backed up) shared preferences, removed from AOSP 17. */
+        @Deprecated("Don't use shared preferences directly. Use other LauncherPref methods.")
+        @JvmStatic
+        fun getDevicePrefs(context: Context): SharedPreferences = INSTANCE[context].devicePrefs
     }
 }
 

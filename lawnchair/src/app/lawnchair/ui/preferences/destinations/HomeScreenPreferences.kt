@@ -53,10 +53,10 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.navigation.HomeScreenGrid
 import app.lawnchair.util.collectAsStateBlocking
 import com.android.launcher3.LauncherAppState
+import com.android.launcher3.util.Executors
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
-import com.android.launcher3.celllayout.CellPosMapper
 import kotlinx.coroutines.launch
 
 object HomeScreenRoutes {
@@ -312,19 +312,22 @@ fun HomeScreenPreferences(
 
 private fun clearAllViewsFromHomeScreen(context: Context, type: Int) {
     val launcherModel = LauncherAppState.getInstance(context).model
-    val modelWriter = launcherModel.getWriter(
-        verifyChanges = false,
-        cellPosMapper = CellPosMapper.DEFAULT,
-        owner = null,
-    )
-    val isViewsRemoved = modelWriter.clearAllHomeScreenViewsByType(type)
-    if (isViewsRemoved) {
-        launcherModel.forceReload()
-        Toast.makeText(
-            context,
-            R.string.home_screen_all_views_removed_msg,
-            Toast.LENGTH_SHORT,
-        ).show()
+    // AOSP 17 model writers need an ActivityContext; remove the rows directly and reload instead
+    Executors.MODEL_EXECUTOR.execute {
+        val removed = launcherModel.modelDbController.delete(
+            "${LauncherSettings.Favorites.CONTAINER}=?",
+            arrayOf(type.toString()),
+        )
+        if (removed > 0) {
+            launcherModel.forceReload("Lawnchair")
+            Executors.MAIN_EXECUTOR.execute {
+                Toast.makeText(
+                    context,
+                    R.string.home_screen_all_views_removed_msg,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        }
     }
 }
 

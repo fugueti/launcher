@@ -183,7 +183,7 @@ class HybridHotseatOrganizer(
             }
             val predictedItem = predictedItems[predictionIndex++] as WorkspaceItemInfo
 
-            if (isPredictedIcon(child) && child.isEnabled) {
+            if (child != null && isPredictedIcon(child) && child.isEnabled) {
                 val icon = child as PredictedAppIcon
                 if (icon.applyFromWorkspaceItemWithAnimation(predictedItem, numViewsAnimated)) {
                     numViewsAnimated++

@@ -26,10 +26,36 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.launcher3.Utilities;
+
 import javax.inject.Inject;
+
+import app.lawnchair.AccentColorExtractor;
 
 /** Extracts the colors we need from the wallpaper at given locations. */
 public class LocalColorExtractor {
+
+    /** Listener for color changes on a screen location. */
+    public interface Listener {
+        /**
+         * Method called when the colors on a registered location has changed.
+         *
+         * {@code extractedColors} maps the color resources {@code android.R.colors.system_*} to
+         * their value, in a format that can be passed directly to
+         * {@link AppWidgetHostView#setColorResources(SparseIntArray)}.
+         */
+        void onColorsChanged(SparseIntArray extractedColors);
+    }
+
+    /**
+     * Lawnchair: widget hosts get their own extractor that follows Lawnchair's accent colors
+     * (Android 16 resolved it from R.string.local_colors_extraction_class).
+     */
+    public static LocalColorExtractor newInstance(Context context) {
+        return Utilities.ATLEAST_S
+                ? new AccentColorExtractor(context.getApplicationContext())
+                : new LocalColorExtractor();
+    }
 
     @Inject
     public LocalColorExtractor() {

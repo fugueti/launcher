@@ -86,6 +86,20 @@ internal constructor(
         }
     }
 
+    /**
+     * Lawnchair: closes the open database and opens the current db file again. Backup restore,
+     * Nova import and Lawndeck replace the db file on disk; on Android 16 they created a new
+     * controller, but this one is a singleton now.
+     */
+    @Synchronized
+    fun reopenDb() {
+        if (::openHelper.isInitialized) {
+            openHelper.close()
+        }
+        val dbFile = prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
+        openHelper = createDatabaseHelper(forMigration = false, dbFile)
+    }
+
     private fun createDatabaseHelper(forMigration: Boolean, dbFile: String): DatabaseHelper {
         // Set the flag for empty DB
         val onEmptyDbCreateCallback =

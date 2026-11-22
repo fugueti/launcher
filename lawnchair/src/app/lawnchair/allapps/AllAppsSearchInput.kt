@@ -98,7 +98,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
         Selection.setSelection(this, 0)
     }
 
-    private lateinit var apps: LawnchairAlphabeticalAppsList<*>
+    private lateinit var apps: LawnchairAlphabeticalAppsList
     private lateinit var appsView: ActivityAllAppsContainerView<*>
     private var searchAlgorithm: LawnchairSearchAlgorithm? = null
 
@@ -453,7 +453,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
     }
 
     override fun initializeSearch(appsView: ActivityAllAppsContainerView<*>) {
-        apps = appsView.searchResultList as LawnchairAlphabeticalAppsList<*>
+        apps = appsView.searchResultList as LawnchairAlphabeticalAppsList
         this.appsView = appsView
         val algorithm = LawnchairSearchAlgorithm.create(context)
         this.searchAlgorithm = algorithm
@@ -534,16 +534,16 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
                 // Sheet mode already pads the container with status-bar insets; only clear the
                 // drag handle. Re-applying insets.top here created the large empty band under it.
-                launcher.deviceProfile.shouldShowAllAppsOnSheet() ->
-                    resources.getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
-
-                else -> max(-allAppsSearchVerticalOffset, insets.top - qsbMarginTopAdjusting)
+                // AOSP 17 always shows all apps on a sheet (shouldShowAllAppsOnSheet was removed)
+                else -> resources.getDimensionPixelSize(R.dimen.bottom_sheet_handle_area_height)
             }
         }
         requestLayout()
     }
 
     override fun getEditText() = input
+
+    override fun isSearchQueryEmpty() = input.text.isNullOrEmpty()
 
     override fun setBackgroundVisibility(visible: Boolean, maxAlpha: Float) {
         if (bgVisible != visible) {

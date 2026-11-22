@@ -17,6 +17,7 @@
 
 package app.lawnchair.preferences2
 
+import com.android.launcher3.deviceprofile.parser.GridOption
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -56,7 +57,6 @@ import app.lawnchair.ui.preferences.data.liveinfo.LiveInformationManager
 import app.lawnchair.util.kotlinxJson
 import app.lawnchair.views.overlay.FullScreenOverlayMode
 import com.android.launcher3.BuildConfig
-import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.InvariantDeviceProfile.INDEX_DEFAULT
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherPrefs
@@ -102,7 +102,7 @@ class PreferenceManager2 @Inject constructor(
 
     private fun idpPreference(
         key: Preferences.Key<Int>,
-        defaultSelector: InvariantDeviceProfile.GridOption.() -> Int,
+        defaultSelector: GridOption.() -> Int,
         onSet: (Int) -> Unit = {},
     ): IdpPreference = IdpPreference(
         key = key,
@@ -954,7 +954,7 @@ class PreferenceManager2 @Inject constructor(
             .onEach { shape ->
                 initializeIconShape(shape)
                 L3ThemeManager.INSTANCE.get(context)
-                LauncherAppState.getInstance(context).model.reloadIfActive()
+                LauncherAppState.getInstance(context).model.reloadIfActive("Lawnchair")
             }
             .launchIn(scope)
 

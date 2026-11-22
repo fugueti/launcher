@@ -29,14 +29,9 @@ class DesksUtils {
             Resources.getSystem().getString(com.android.internal.R.string.config_systemUi)
 
         @JvmStatic
-        fun areMultiDesksFlagsEnabled() =
-            if (false) {
-                // LC-Ignored: Intentional, all Android desktop flags are disabled
-                DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_BACKEND.isTrue &&
-                    DesktopExperienceFlags.ENABLE_MULTIPLE_DESKTOPS_FRONTEND.isTrue
-            } else {
-                false
-            }
+        // LC-Ignored: Intentional, all Android desktop flags are disabled (the multiple desktops
+        // flags were also removed from the Android 17 framework)
+        fun areMultiDesksFlagsEnabled() = false
 
         /** Returns true if this [task] contains the [DesktopWallpaperActivity]. */
         @JvmStatic

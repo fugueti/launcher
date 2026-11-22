@@ -119,6 +119,12 @@ public class ItemInstallQueue {
         flushInstallQueue();
     }
 
+    /** Lawnchair: queues an app by package name (used by Lawndeck). */
+    @AnyThread
+    public void queueItem(String packageName, UserHandle userHandle) {
+        queueItem(new SerializedItemItem(packageName, userHandle));
+    }
+
     @WorkerThread
     private void ensureQueueLoaded() {
         Preconditions.assertWorkerThread();

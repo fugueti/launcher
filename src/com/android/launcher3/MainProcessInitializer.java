@@ -57,6 +57,10 @@ public class MainProcessInitializer {
 
     private static final boolean DEBUG_STRICT_MODE = false;
 
+    /**
+     * Lawnchair: one time process setup that must run before the Dagger graph is created
+     * (hidden API exemption, preferences once the user is unlocked).
+     */
     public static void initialize(Context context) {
         try {
             Unseal.unseal();
@@ -76,10 +80,7 @@ public class MainProcessInitializer {
         // *Unless* your SharedPreferences instance is explicitly told to run in device-protected storage or (DE) Device Encrypted storage, 
         // but in this case it's not, but it's something to keep in mind.
         LockedUserState.get(context).runOnUserUnlocked(() -> PreferenceManager.getInstance(context));
-        
-        Overrides.getObject(
-                MainProcessInitializer.class, context, R.string.main_process_initializer_class)
-                .init(context);
+
     }
 
     protected void init(Context context) {

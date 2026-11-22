@@ -78,7 +78,7 @@ data class FolderAnimationData(
             // to the device profile icon size so that opening the folder does not crash.
             val baseIconSize: Float =
                 itemsInPreview.firstOrNull()?.let { getBubbleTextView(it).iconSize.toFloat() }
-                    ?: mActivityContext.deviceProfile.iconSizePx.toFloat()
+                    ?: mActivityContext.deviceProfile.workspaceProfile.iconSizePx.toFloat()
             val initialFolderSize = (scaledFolderRadius * 2) * scaleRelativeToDragLayer
             val initialFolderScale = previewSize / baseIconSize * scaleRelativeToDragLayer
 

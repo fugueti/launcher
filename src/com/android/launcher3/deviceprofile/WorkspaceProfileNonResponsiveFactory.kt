@@ -213,7 +213,7 @@ object WorkspaceProfileNonResponsiveFactory {
             createWorkspacePadding(
                 isVerticalLayout = isVerticalLayout,
                 isSeascape = isSeascape,
-                isFixedLandscape = inv.isFixedLandscape,
+                isFixedLandscape = InvariantDeviceProfile.isFixedLandscape,
                 isScalableGrid = false,
                 hotseatProfile = hotseatProfile,
                 desiredWorkspaceHorizontalMarginPx = desiredWorkspaceHorizontalMarginPx,
@@ -410,7 +410,7 @@ object WorkspaceProfileNonResponsiveFactory {
             createWorkspacePadding(
                 isVerticalLayout = isVerticalLayout,
                 isSeascape = isSeascape,
-                isFixedLandscape = inv.isFixedLandscape,
+                isFixedLandscape = InvariantDeviceProfile.isFixedLandscape,
                 isScalableGrid = true,
                 hotseatProfile = hotseatProfile,
                 desiredWorkspaceHorizontalMarginPx = desiredWorkspaceHorizontalMarginPx,
@@ -669,7 +669,7 @@ object WorkspaceProfileNonResponsiveFactory {
         return workspaceProfile.recalculateWorkspacePadding(
             isVerticalLayout,
             isSeascape,
-            inv.isFixedLandscape,
+            InvariantDeviceProfile.isFixedLandscape,
             isScalableGrid,
             hotseatProfile,
             deviceProperties,

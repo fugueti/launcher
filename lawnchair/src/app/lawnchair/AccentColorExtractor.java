@@ -26,6 +26,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.android.launcher3.widget.ColorsOverride;
 import com.android.launcher3.widget.LocalColorExtractor;
 
 import java.util.Map;
@@ -71,12 +72,13 @@ public class AccentColorExtractor extends LocalColorExtractor implements ThemePr
     }
 
     @Override
-    public void applyColorsOverride(Context base, WallpaperColors colors) {
+    public ColorsOverride applyColorsOverride(Context base, WallpaperColors colors) {
         RemoteViews.ColorResources res =
                 RemoteViews.ColorResources.create(base, generateColorsOverride(colors));
         if (res != null) {
             res.apply(base);
         }
+        return null;
     }
 
     @Override

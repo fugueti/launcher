@@ -479,7 +479,9 @@ class RestoreDbTask {
                 }
         }
 
-        private fun performRestore(context: Context, controller: ModelDbController): Boolean {
+        // Lawnchair: public, Lawndeck re-runs the restore sanitizer after swapping databases
+        @JvmStatic
+        fun performRestore(context: Context, controller: ModelDbController): Boolean {
             val db = controller.db
 
             val restoreDbTaskWriteDao = LegacyRestoreDbTaskWriteDao(db)

@@ -44,6 +44,7 @@ import com.android.launcher3.model.data.WorkspaceItemInfo
 import com.android.launcher3.model.tasks.CacheDataUpdatedTask
 import com.android.launcher3.pm.UserCache
 import com.android.launcher3.util.DaggerSingletonTracker
+import com.android.launcher3.dagger.LauncherComponentProvider.appComponent
 import com.android.launcher3.util.Executors.MODEL_EXECUTOR
 import com.android.launcher3.util.PackageUserKey
 import com.android.launcher3.views.ActivityContext
@@ -250,14 +251,27 @@ constructor(
      *
      * @return true if the model is loaded or if loader task is running.
      */
-    fun isActive(): Boolean = mModelLoaded || mIsLoaderTaskRunning
+    fun isActive(): Boolean = mModelLoaded || mLoaderTask != null
 
     /**
-     * Loads the model if not loaded
-     *
-     * @return true if the model is loaded or if loader task is running.
+     * Lawnchair: refreshes the icon and label of [packageName] for [user] (custom icons and
+     * names). AOSP 17 routes icon changes through IconChangeTracker.
      */
-    fun isActive(): Boolean = mModelLoaded || mLoaderTask != null
+    fun onAppIconChanged(packageName: String, user: android.os.UserHandle) =
+        context.appComponent.iconChangeTracker.notifyIconChanged(packageName, user)
+
+    /**
+     * Lawnchair: loads the model if needed and hands the data to [callback] on the model thread
+     * (null when the model could not be loaded).
+     */
+    fun loadAsync(callback: java.util.function.Consumer<BgDataModel?>) {
+        synchronized(mLock) {
+            if (!mModelLoaded && mLoaderTask == null) {
+                startLoader("LawnchairLoadAsync")
+            }
+        }
+        MODEL_EXECUTOR.post { callback.accept(if (isModelLoaded()) mBgDataModel else null) }
+    }
 
     inner class LoaderTransaction(task: LoaderTask) : AutoCloseable {
         private var mTask: LoaderTask? = null

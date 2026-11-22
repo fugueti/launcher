@@ -46,6 +46,7 @@ import com.android.launcher3.notification.NotificationListener
 import com.android.launcher3.settings.SettingsActivity.EXTRA_FRAGMENT_ARGS
 import com.android.launcher3.settings.SettingsActivity.EXTRA_FRAGMENT_HIGHLIGHT_KEY
 import com.android.launcher3.util.MSDLPlayerWrapper
+import com.android.launcher3.util.Executors
 import com.android.launcher3.util.SettingsCache
 import com.android.launcher3.util.SettingsCache.NOTIFICATION_BADGING_URI
 import com.google.android.msdl.data.model.MSDLToken
@@ -142,14 +143,11 @@ fun NotificationAccessConfirmation(
 }
 
 fun notificationDotsEnabled(context: Context) = callbackFlow {
-    val observer = SettingsCache.OnChangeListener {
-        val enabled = SettingsCache.INSTANCE.get(context).getValue(NOTIFICATION_BADGING_URI)
-        trySend(enabled)
-    }
-    val settingsCache = SettingsCache.INSTANCE.get(context)
-    observer.onSettingsChanged(false)
-    settingsCache.register(NOTIFICATION_BADGING_URI, observer)
-    awaitClose { settingsCache.unregister(NOTIFICATION_BADGING_URI, observer) }
+    // AOSP 17: SettingsCache exposes a ListenableRef per uri (values arrive on the main thread)
+    val ref = SettingsCache.INSTANCE.get(context).getListenableRef(NOTIFICATION_BADGING_URI)
+    trySend(ref.value)
+    val closeable = ref.forEach(Executors.MAIN_EXECUTOR) { trySend(it) }
+    awaitClose { closeable.close() }
 }
 
 fun isNotificationServiceEnabled(context: Context): Boolean {

@@ -16,7 +16,7 @@
 
 package com.android.launcher3.taskbar.handoff
 
-import android.companion.Flags.taskContinuity
+import com.android.launcher3.util.HiddenPlatformFlags.taskContinuity
 import android.companion.datatransfer.continuity.TaskContinuityManager
 import android.util.Log
 import com.android.launcher3.dagger.LauncherComponentProvider.appComponent

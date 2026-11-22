@@ -283,6 +283,13 @@ constructor(
     fun getShortcutInfoBadge(shortcutInfo: ShortcutInfo, lookupFlags: CacheLookupFlag): BitmapInfo =
         getShortcutInfoBadgeItem(shortcutInfo, lookupFlags).bitmap
 
+    /** LC-Note: Returns the package icon to use as the badge for a legacy shortcut. */
+    fun getShortcutInfoBadge(packageName: String, user: UserHandle): BitmapInfo {
+        val pkgInfo = PackageItemInfo(packageName, user)
+        getTitleAndIconForApp(pkgInfo, CacheLookupFlag.DEFAULT_LOOKUP_FLAG)
+        return pkgInfo.bitmap
+    }
+
     @VisibleForTesting
     fun getShortcutInfoBadgeItem(
         shortcutInfo: ShortcutInfo,

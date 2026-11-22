@@ -258,7 +258,7 @@ object StaticObjectModule {
 
     @Provides
     fun provideUiLatencyStatsManager(@ApplicationContext context: Context): UiLatencyStatsManager? =
-        if (com.android.server.ui_latency_stats.Flags.uiLatencyStatsService()) {
+        if (com.android.launcher3.util.HiddenPlatformFlags.uiLatencyStatsService()) {
             context.getSystemService(UiLatencyStatsManager::class.java)
         } else {
             null

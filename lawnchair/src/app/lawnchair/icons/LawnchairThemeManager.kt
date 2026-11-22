@@ -22,7 +22,8 @@ import com.android.launcher3.graphics.theme.ThemePreference
 import com.android.launcher3.icons.mono.MonoIconThemeController
 import com.android.launcher3.icons.mono.ThemedIconDelegate
 import com.android.launcher3.util.DaggerSingletonTracker
-import com.android.launcher3.util.DisplayController
+import com.android.launcher3.display.DisplayController
+import com.android.launcher3.display.LauncherDisplayInfo.Companion.CHANGE_NIGHT_MODE
 import com.android.launcher3.util.LooperExecutor
 import javax.inject.Inject
 import javax.inject.Named
@@ -108,20 +109,18 @@ constructor(
         }
         themeProvider.addListener(colorSchemeChangeListener)
 
-        val displayController = DisplayController.INSTANCE.get(context)
-        val displayInfoChangeListener = DisplayController.DisplayInfoChangeListener { _, _, flags ->
-            if (flags and DisplayController.CHANGE_NIGHT_MODE != 0) {
-                uiExecutor.execute { verifyIconState() }
+        val nightModeCloseable = DisplayController.INSTANCE.get(context).listenable
+            ?.changes
+            ?.forEach(uiExecutor) { flags ->
+                if (flags and CHANGE_NIGHT_MODE != 0) verifyIconState()
             }
-        }
-        displayController.addChangeListener(displayInfoChangeListener)
 
         statePrefs1.forEach { it.addListener(prefListener) }
 
         lifecycle.addCloseable {
             colorSchemeChangeListener.destroy()
             scope.cancel()
-            displayController.removeChangeListener(displayInfoChangeListener)
+            nightModeCloseable?.close()
             statePrefs1.forEach { it.removeListener(prefListener) }
         }
     }

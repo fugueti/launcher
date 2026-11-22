@@ -1400,12 +1400,12 @@ constructor(
                 } finally {
                     transaction?.close()
                 }
+                // AOSP 17 dropped minimizedHomeBounds; it is still read to consume the parcel
                 onAnimationStart(
                     controller,
                     apps,
                     wallpapers,
                     homeContentInsets,
-                    minimizedHomeBounds,
                     extras,
                     transitionInfo,
                 )

@@ -1,13 +1,17 @@
 package app.lawnchair.overview
 
-import android.content.Context
 import androidx.annotation.Keep
+import android.content.Context
 import com.android.quickstep.TaskOverlayFactory
+import com.android.quickstep.TaskShortcutFactory
+import javax.inject.Inject
 import com.android.quickstep.views.TaskContainer
 import com.android.systemui.shared.recents.model.Task
 
 @Keep
-class TaskOverlayFactoryImpl(@Suppress("UNUSED_PARAMETER") context: Context) : TaskOverlayFactory() {
+class TaskOverlayFactoryImpl @Inject constructor(
+    perTaskShortcutFactories: List<@JvmSuppressWildcards TaskShortcutFactory>,
+) : TaskOverlayFactory(perTaskShortcutFactories) {
 
     override fun createOverlay(thumbnailView: TaskContainer) = TaskOverlay(thumbnailView)
 

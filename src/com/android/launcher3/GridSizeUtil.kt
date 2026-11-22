@@ -57,7 +57,7 @@ class GridSizeUtil(private val context: Context) {
             val columns = rootEl.getAsInt(COLUMN_ATTR)
 
             val idp = InvariantDeviceProfile.INSTANCE.get(context)
-            val gridOptions = idp.parseAllGridOptions(context)
+            val gridOptions = InvariantDeviceProfile.parseAllGridOptions(context)
 
             if (gridOptions.isEmpty()) {
                 Log.w(TAG, "no grid options, can't set grid size to [columns=$columns,rows=$rows]")

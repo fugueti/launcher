@@ -37,6 +37,8 @@ public class LauncherApplication extends Application implements AppFunctionConfi
     @Override
     public void onCreate() {
         super.onCreate();
+        // Lawnchair: unseal hidden APIs before creating the Dagger graph
+        MainProcessInitializer.initialize(this);
         LauncherComponentProvider.get(this).getMainProcessInitializer().init(this);
     }
 

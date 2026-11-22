@@ -47,7 +47,7 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.components.layout.PreferenceTemplate
 import app.lawnchair.ui.util.addIf
 import com.android.launcher3.R
-import com.android.launcher3.util.painterResource
+import com.android.launcher3.util.compose.painterResource
 
 enum class ThemedIconsState(
     @StringRes val labelResourceId: Int,

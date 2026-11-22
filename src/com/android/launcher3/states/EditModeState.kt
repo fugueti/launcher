@@ -41,7 +41,7 @@ class EditModeState(id: Int) : LauncherState(id, StatsLogManager.LAUNCHER_STATE_
 
         private fun getEditModeWorkspaceVerticalBounds(launcher: Launcher): Pair<Float, Float> {
             val grid = launcher.deviceProfile
-            val top = (grid.getInsets().top + grid.workspacePadding.top).toFloat()
+            val top = (grid.getInsets().top + grid.workspaceProfile.workspacePadding.top).toFloat()
 
             val stripHeightPx = getEditModePageStripHeightPx(launcher)
             val bottomGap =
@@ -70,7 +70,7 @@ class EditModeState(id: Int) : LauncherState(id, StatsLogManager.LAUNCHER_STATE_
             val workspaceWidth = grid.deviceProperties.availableWidthPx
             val scaledWorkspaceWidth = workspaceWidth * scale
             val maxAvailableWidth =
-                workspaceWidth - (2 * grid.workspaceSpringLoadedMinNextPageVisiblePx)
+                workspaceWidth - (2 * grid.workspaceProfile.workspaceSpringLoadedMinNextPageVisiblePx)
             if (scaledWorkspaceWidth > maxAvailableWidth) {
                 scale *= maxAvailableWidth / scaledWorkspaceWidth
             }
