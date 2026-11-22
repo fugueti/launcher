@@ -163,12 +163,22 @@ object PerDisplayRepositoriesModule {
     @LauncherAppSingleton
     @DisplaysWithDecorations
     fun provideDisplaysWithDecorationsLifecycleManager(
-        displaysWithDecorationsRepository: DisplaysWithDecorationsRepository
-    ) =
-        object : DisplayInstanceLifecycleManager {
+        displaysWithDecorationsRepository: dagger.Lazy<DisplaysWithDecorationsRepository>
+    ): DisplayInstanceLifecycleManager {
+        // Lawnchair: the repository listens to WindowManager with INTERNAL_SYSTEM_WINDOW, which a
+        // non-system launcher does not hold. Fall back to the default display only.
+        val displayIds: StateFlow<Set<Int>> =
+            try {
+                displaysWithDecorationsRepository.get().displayIdsWithSystemDecorations
+            } catch (e: SecurityException) {
+                Log.w("PerDisplayModule", "Displays with decorations unavailable", e)
+                kotlinx.coroutines.flow.MutableStateFlow(setOf(android.view.Display.DEFAULT_DISPLAY))
+            }
+        return object : DisplayInstanceLifecycleManager {
             override val displayIds: StateFlow<Set<Int>>
-                get() = displaysWithDecorationsRepository.displayIdsWithSystemDecorations
+                get() = displayIds
         }
+    }
 }
 
 /**

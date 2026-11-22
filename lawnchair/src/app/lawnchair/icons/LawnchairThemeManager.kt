@@ -72,9 +72,15 @@ constructor(
         uiExecutor.execute { verifyIconState() }
     }
 
-    override var iconState = parseIconStateV2(null)
+    // Set once this class is constructed: ThemeManager's constructor can call verifyIconState
+    // (overlay/theme callbacks) before the fields below exist.
+    @Volatile
+    private var initialized = false
 
     init {
+        // Lawnchair: replace the AOSP icon state. Not an override of iconState: the base
+        // constructor reads it before a subclass backing field would be assigned.
+        iconState = parseIconStateV2(iconState)
         val scope = MainScope() + CoroutineName("LawnchairThemeManager")
         merge(
             prefs2.iconShape.get(),
@@ -117,6 +123,8 @@ constructor(
 
         statePrefs1.forEach { it.addListener(prefListener) }
 
+        initialized = true
+
         lifecycle.addCloseable {
             colorSchemeChangeListener.destroy()
             scope.cancel()
@@ -126,6 +134,7 @@ constructor(
     }
 
     override fun verifyIconState() {
+        if (!initialized) return
         val newState = parseIconStateV2(iconState)
         if (newState == iconState) return
         iconState = newState

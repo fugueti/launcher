@@ -156,8 +156,8 @@ public class TaskStackChangeListeners {
 
         private final Handler mHandler;
         private boolean mRegistered;
-        private final TaskSnapshotListenerImpl mTaskSnapshotListener =
-                new TaskSnapshotListenerImpl();
+        // Lawnchair: created on registration; TaskSnapshotListener only exists on Android 17+
+        private TaskSnapshotListenerImpl mTaskSnapshotListener;
         private class TaskSnapshotListenerImpl extends TaskSnapshotListener {
             @Override
             protected void onTaskSnapshotChanged(int taskId, TaskSnapshot snapshot) {
@@ -194,8 +194,16 @@ public class TaskStackChangeListeners {
                     // pE-TODO(CompatTier2): Find a way to deal with LawnchairQuickstepCompat instead of NoClassDefFoundError | ExceptionInInitializerError catch
                     Log.w(TAG, "Failed to call registerTaskStackListener", e);
                 }
-                TaskSnapshotManager.getInstance()
-                        .registerTaskSnapshotListener(mTaskSnapshotListener);
+                // Lawnchair: Android 17+ API that needs MANAGE_ACTIVITY_TASKS/READ_FRAME_BUFFER
+                try {
+                    if (mTaskSnapshotListener == null) {
+                        mTaskSnapshotListener = new TaskSnapshotListenerImpl();
+                    }
+                    TaskSnapshotManager.getInstance()
+                            .registerTaskSnapshotListener(mTaskSnapshotListener);
+                } catch (Throwable t) {
+                    Log.w(TAG, "Failed to register task snapshot listener", t);
+                }
             }
         }
 
@@ -215,8 +223,14 @@ public class TaskStackChangeListeners {
                     // pE-TODO(CompatTier2): Find a way to deal with LawnchairQuickstepCompat instead of NoClassDefFoundError | ExceptionInInitializerError catch
                     Log.w(TAG, "Failed to call unregisterTaskStackListener", e);
                 }
-                TaskSnapshotManager.getInstance()
-                        .unregisterTaskSnapshotListener(mTaskSnapshotListener);
+                try {
+                    if (mTaskSnapshotListener != null) {
+                        TaskSnapshotManager.getInstance()
+                                .unregisterTaskSnapshotListener(mTaskSnapshotListener);
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "Failed to unregister task snapshot listener", t);
+                }
             }
         }
 

@@ -48,9 +48,9 @@ constructor(
 
     private val displayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
     private val displayResourceArray = SparseArray<RESOURCE_TYPE>()
-    private val useDisplayDecorationListener: Boolean =
-        DesktopExperienceFlags.ENABLE_SYS_DECORS_CALLBACKS_VIA_WM.isTrue() &&
-            DesktopExperienceFlags.ENABLE_DISPLAY_CONTENT_MODE_MANAGEMENT.isTrue()
+    // Lawnchair: the WindowManager decorations listener needs system permissions, and all
+    // Android desktop flags are disabled; use SystemDecorationChangeObserver.
+    private val useDisplayDecorationListener: Boolean = false
 
     private var closed = false
 

@@ -680,7 +680,12 @@ public class InvariantDeviceProfile {
      */
     // Lawnchair: static, DeviceProfileOverrides parses the grid options without an instance
     public static List<GridOption> parseAllGridOptions(Context context) {
-        return GridOption.parseAllValid(context, displayInfo, deviceType, isFixedLandscape);
+        // The static display info is only set by initGrid; DeviceProfileOverrides asks for the
+        // grid options while the first InvariantDeviceProfile is still being created.
+        LauncherDisplayInfo info = displayInfo != null
+                ? displayInfo : DisplayController.INSTANCE.get(context).getInfo();
+        int type = displayInfo != null ? deviceType : info.getDeviceType();
+        return GridOption.parseAllValid(context, info, type, isFixedLandscape);
     }
 
     private int getLauncherIconDensity(int requiredSize) {
