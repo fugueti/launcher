@@ -87,17 +87,9 @@ fun rememberMotionBuilderContext(): MotionBuilderContext {
     return remember(density, motionScheme) { ComposeMotionBuilderContext(motionScheme, density) }
 }
 
-/**
- * [MotionBuilderContext] for building motion specs in a [androidx.compose.ui.Modifier.Node].
- *
- * This should be read when the node is attached.
- */
-fun CompositionLocalConsumerModifierNode.motionBuilderContext(): ComposeMotionBuilderContext {
-    return ComposeMotionBuilderContext(
-        motionScheme = currentValueOf(MaterialTheme.LocalMotionScheme),
-        density = currentValueOf(LocalDensity),
-    )
-}
+// Fugueti: motionBuilderContext() for Modifier.Node removed; it needs
+// MaterialTheme.LocalMotionScheme, which the released material3 library doesn't expose, and
+// only the (disabled) mechanics compose modifiers use it.
 
 /**
  * [MotionBuilderContext] based on Material 3 MotionScheme.

@@ -690,7 +690,7 @@ public class InsetsSource implements Parcelable {
      */
     public void dumpDebug(ProtoOutputStream proto, long fieldId) {
         final long token = proto.start(fieldId);
-        if (!android.os.Flags.androidOsBuildVanillaIceCream()) {
+        if (android.os.Build.VERSION.SDK_INT < 35) { // Fugueti: android.os.Flags is not in the SDK jar
             // Deprecated since V.
             proto.write(TYPE, WindowInsets.Type.toString(mType));
         }

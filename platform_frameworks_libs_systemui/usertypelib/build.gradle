@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    alias(libs.plugins.kotlin.parcelize)
+}
+
+android {
+    namespace "com.android.users"
+    sourceSets {
+        main {
+            java.srcDirs = ['src']
+            kotlin.directories.add('src')
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+    }
+}
