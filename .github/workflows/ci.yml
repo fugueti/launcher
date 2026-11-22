@@ -1,15 +1,16 @@
 name: CI
 
-# Pull requests and pushes to main or a *-dev branch (e.g. 17-dev): unit tests.
+# Pull requests and pushes to main: unit tests. The Android 17 line (17-dev) is built
+# locally for now, so *-dev branches are not built here.
 # Pushes to main also build the signed nightly, which replaces the "nightly" release
 # (the in-app updater of app.fugueti.launcher.nightly reads that release).
 
 on:
   pull_request:
-    branches: [main, '*-dev']
+    branches: [main]
     paths-ignore: ['**.md', 'docs/**', 'art/**', 'LICENSE.txt', 'COPYING']
   push:
-    branches: [main, '*-dev']
+    branches: [main]
     paths-ignore: ['**.md', 'docs/**', 'art/**', 'LICENSE.txt', 'COPYING']
   workflow_dispatch:
 

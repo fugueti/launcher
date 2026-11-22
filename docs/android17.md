@@ -33,6 +33,27 @@ JARs the options are, in order: keep the Android 16 JARs if the Android 17 code 
 against them; the AOSP-only emulator image (no Google apps); or building the modules from the
 Android 17 sources (`prebuilts/libs/README.md`).
 
+## framework-17.jar: decision
+
+The JAR used for the local builds so far came from the **Google APIs** emulator image (it ships
+`DocumentsUIGoogle`, `GooglePackageInstaller`, ...). Google system images are distributed under
+the Android SDK License, so that JAR is not committed (it is kept out of git through
+`.git/info/exclude`).
+
+What goes into the repository instead, so anyone (and CI later) can build the 17 line:
+
+1. **Source**: the AOSP-only emulator image (`system-images;android-37.0;default;x86_64`, no
+   Google apps). The framework there is built from AOSP sources (Apache 2.0).
+2. **Stub JAR**: method bodies are replaced by `throw new RuntimeException("Stub!")`, like the
+   SDK's `android.jar` and AOSP's turbine header JARs. Compiling only needs signatures and
+   constants, the JAR gets much smaller, and no implementation code is redistributed.
+3. **Reproducible**: the script and the bytecode tools (class version 52, InnerClasses entries,
+   body stripping) live in the repository, and `prebuilts/libs/README.md` records the image
+   build, the commands and the SHA-256 of the result.
+
+Building `framework` from the AOSP 17 sources (`prebuilts/libs/README.md`) stays the reference
+method; the image route avoids a several-hundred-GB checkout and gives the same API surface.
+
 ## Merge measurement
 
 Trial merge of `aosp/android17-release` (Launcher3, `c612e6e`, 2026-04-16) into `17-dev`.
