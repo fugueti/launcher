@@ -43,7 +43,7 @@ class NightlyBuildsRepository(
                 val nightly = releases.firstOrNull { it.tagName == "nightly" }
                 val asset = nightly?.assets?.firstOrNull()
 
-                // Fugueti: nightlies are built from this repository's main branch.
+                // Fugueti: nightlies are built from 17-dev (Launcher3 from Android 17), see nightly.yml.
                 val expectedBranch = NIGHTLY_BRANCH
 
                 if (nightly != null && nightly.targetCommitish != expectedBranch) {
@@ -260,4 +260,4 @@ private fun Context.isApkMajorVersionNewer(apkFile: File): Boolean {
 private const val MAX_FALLBACK_COMMITS = 30
 
 /** Fugueti: branch the nightly builds are made from. */
-private const val NIGHTLY_BRANCH = "main"
+private const val NIGHTLY_BRANCH = "17-dev"
