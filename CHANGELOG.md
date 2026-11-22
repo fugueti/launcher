@@ -1,5 +1,21 @@
 # Fugueti Launcher changelog
 
+## 17.0.0 (unreleased)
+
+Fugueti on Launcher3 from Android 17, published as the nightly.
+
+* Home screen pages reordered in edit mode keep their new order after a restart; before, they
+  went back to the old order and the home page moved to another page (Android 16 has the same
+  bug).
+* Fixes from testing the Android 17 nightly:
+  * App drawer side padding matches Android 16 again; the drawer was much narrower and cut app
+    labels short.
+  * Restoring a Fugueti backup or importing a Nova backup restores the home screen layout
+    instead of falling back to the default one.
+  * Themed icons apply as soon as they are turned on, and the setting stays in sync with the
+    themed icons switch of the system wallpaper picker.
+  * Undo in a snackbar (for example after **Hide**) no longer crashes the launcher.
+
 ## 16.0.2 (2026-11-22)
 
 * **Updates:** the release app now updates itself like the nightly. Every day at 10:00 it looks
