@@ -28,6 +28,7 @@ import app.lawnchair.FeedBridge.BridgeInfo;
 import java.lang.ref.WeakReference;
 
 public class LauncherClient {
+    private static final String TAG = "FuguetiFeed";
     private static int apiVersion = -1;
 
     private ILauncherOverlay mOverlay;
@@ -156,6 +157,7 @@ public class LauncherClient {
 
     public final void onAttachedToWindow() {
         if (!mDestroyed) {
+            restoreOverlayIfLost();
             setLayoutParams(mActivity.getWindow().getAttributes());
         }
     }
@@ -199,11 +201,10 @@ public class LauncherClient {
     }
 
     public final void onStart() {
-        Log.i("FEED", "1");
         if (!mDestroyed) {
-            Log.i("FEED", "2");
             mLauncherService.setStopped(false);
             connect();
+            restoreOverlayIfLost();
             mActivityState |= 1;
             if (mOverlay != null && mLayoutParams != null) {
                 try {
@@ -263,6 +264,8 @@ public class LauncherClient {
     public final void setLayoutParams(LayoutParams layoutParams) {
         if (mLayoutParams != layoutParams) {
             mLayoutParams = layoutParams;
+            Log.i(TAG, "Launcher window " + (layoutParams != null ? "attached" : "detached")
+                    + ", feed " + (mOverlay != null ? "connected" : "not connected"));
             if (mLayoutParams != null) {
                 exchangeConfig();
             } else if (mOverlay != null) {
@@ -402,7 +405,24 @@ public class LauncherClient {
         }
     }
 
+    /**
+     * Fugueti: a detached window drops {@link #mOverlay}, and it only came back when the overlay
+     * service reconnected. If the service stayed connected, the feed stopped working until the
+     * launcher restarted. Take the service's overlay back (and make this the client it notifies)
+     * whenever the launcher starts or its window is attached again.
+     */
+    private void restoreOverlayIfLost() {
+        if (mLauncherService.getClient() != this) {
+            mLauncherService.mClient = new WeakReference<>(this);
+        }
+        if (mOverlay == null && mLauncherService.mOverlay != null) {
+            Log.i(TAG, "Feed connection lost by the launcher: restoring it");
+            setOverlay(mLauncherService.mOverlay);
+        }
+    }
+
     final void setOverlay(ILauncherOverlay overlay) {
+        Log.i(TAG, "Feed " + (overlay != null ? "connected" : "disconnected"));
         mOverlay = overlay;
         if (mOverlay == null) {
             setServiceState(0);
@@ -413,6 +433,7 @@ public class LauncherClient {
 
     void setServiceState(int serviceState) {
         if (mServiceState != serviceState) {
+            Log.i(TAG, "Feed state " + mServiceState + " -> " + serviceState);
             mServiceState = serviceState;
             mScrollCallback.onServiceStateChanged((serviceState & 1) != 0);
         }

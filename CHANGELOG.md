@@ -16,6 +16,12 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
     themed icons switch of the system wallpaper picker.
   * Undo in a snackbar (for example after **Hide**) no longer crashes the launcher.
 
+## 16.0.3 (2026-11-22)
+
+* **Google feed:** the feed could stop opening until the launcher was restarted. The launcher now
+  takes the feed connection back whenever it comes to the foreground or its window is attached
+  again, and logs feed connection changes (tag `FuguetiFeed`) to help track the problem.
+
 ## 16.0.2 (2026-11-22)
 
 * **Updates:** the release app now updates itself like the nightly. Every day at 10:00 it looks
