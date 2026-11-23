@@ -1,5 +1,15 @@
 # Fugueti Launcher changelog
 
+## 16.0.3 (2026-11-22)
+
+* **Google feed:** the feed could stop opening until Fugueti was restarted.
+  * The Google app keeps one feed window for all Fugueti apps, since they all reach it through
+    Fugueti Feed. After another Fugueti app (such as the nightly) was used, the feed opened in
+    that app's hidden window and ignored swipes. Fugueti now attaches its window to the feed
+    again whenever it comes to the foreground.
+  * Fugueti also takes the feed connection back if it lost it while the connection itself
+    stayed up, and logs feed connection changes (tag `FuguetiFeed`).
+
 ## 16.0.2 (2026-11-22)
 
 * **Updates:** the release app now updates itself like the nightly. Every day at 10:00 it looks
