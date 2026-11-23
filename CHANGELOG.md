@@ -18,9 +18,13 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
 
 ## 16.0.3 (2026-11-22)
 
-* **Google feed:** the feed could stop opening until the launcher was restarted. The launcher now
-  takes the feed connection back whenever it comes to the foreground or its window is attached
-  again, and logs feed connection changes (tag `FuguetiFeed`) to help track the problem.
+* **Google feed:** the feed could stop opening until Fugueti was restarted.
+  * The Google app keeps one feed window for all Fugueti apps, since they all reach it through
+    Fugueti Feed. After another Fugueti app (such as the nightly) was used, the feed opened in
+    that app's hidden window and ignored swipes. Fugueti now attaches its window to the feed
+    again whenever it comes to the foreground.
+  * Fugueti also takes the feed connection back if it lost it while the connection itself
+    stayed up, and logs feed connection changes (tag `FuguetiFeed`).
 
 ## 16.0.2 (2026-11-22)
 

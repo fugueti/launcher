@@ -207,10 +207,13 @@ public class LauncherClient {
             restoreOverlayIfLost();
             mActivityState |= 1;
             if (mOverlay != null && mLayoutParams != null) {
-                try {
-                    mOverlay.setActivityState(mActivityState);
-                } catch (RemoteException ignored) {
-                }
+                // Fugueti: attach this window again instead of only sending the activity state.
+                // The Google app keeps one feed window per client app, and all Fugueti builds
+                // reach it through the same Fugueti Feed bridge: the last launcher that attached
+                // owns the feed. Without this, using another Fugueti build (e.g. the nightly) left
+                // the feed opening in that app's hidden window. exchangeConfig() also sends the
+                // activity state.
+                exchangeConfig();
             }
         }
     }
