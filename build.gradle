@@ -304,6 +304,9 @@ android {
             applicationId "app.fugueti.launcher.play"
             dimension "channel"
             isDefault true
+            // -Pfugueti.playRebuild=N: a new Play upload of the same version (Play never reuses a
+            // versionCode); uses the free last two digits.
+            versionCode fuguetiVersionCode + ((findProperty("fugueti.playRebuild") ?: "0") as int)
         }
 
         configureEach {
@@ -359,6 +362,12 @@ android {
 
         lawnWithQuickstepPlay {
             manifest.srcFile "quickstep/AndroidManifest-launcher.xml"
+        }
+
+        // Fugueti: the full variant's manifest has the highest merge priority, so its
+        // tools:node="remove" also reaches lawnchair/AndroidManifest.xml (the "lawn" flavor's).
+        lawnWithQuickstepPlayRelease {
+            manifest.srcFile "play/AndroidManifest.xml"
         }
 
         // Fugueti tests

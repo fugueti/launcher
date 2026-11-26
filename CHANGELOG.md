@@ -7,6 +7,9 @@
   not on Google Play.
 * Android's accessibility settings describe Fugueti's service with Fugueti's name; the text still
   said Lawnchair.
+* The Google Play version no longer asks Android for photo and video access, which it never used
+  (file search and the wallpaper preview are off there), and has no crash log upload: Google Play
+  reports crashes itself. Google Play does not accept either without a policy exception.
 
 ## 16.0.4 (2026-11-26)
 

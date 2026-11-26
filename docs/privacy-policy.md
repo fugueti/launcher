@@ -1,6 +1,6 @@
 # Fugueti privacy policy
 
-*Last updated: November 25, 2026. [Versão em português abaixo](#política-de-privacidade-do-fugueti).*
+*Last updated: November 26, 2026. [Versão em português abaixo](#política-de-privacidade-do-fugueti).*
 
 Fugueti is a home screen app (launcher) for Android. It is open source:
 [github.com/fugueti/launcher](https://github.com/fugueti/launcher).
@@ -43,9 +43,10 @@ Fugueti connects to the internet only for these features:
 - **Google feed** (when turned on): the feed to the left of the home screen is provided by the
   Google app, under Google's own privacy policy.
 - **Live information** (off by default): downloads announcements from the Lawnchair project.
-- **Crash reports**: only when you tap *Upload crash log*, the crash log is uploaded to
-  katb.in so you can share the link. It contains technical data about the crash and your device
-  model and Android version.
+- **Crash reports** (GitHub version): only when you tap *Upload crash log*, the crash log is
+  uploaded to katb.in so you can share the link. It contains technical data about the crash and
+  your device model and Android version. The Google Play version has no upload; Google Play
+  reports crashes to the developer under Google's privacy policy.
 
 These services receive your IP address as part of any internet connection and handle it under
 their own privacy policies.
@@ -63,7 +64,7 @@ Changes to this policy are published in this file. Questions: open an issue at
 
 # Política de privacidade do Fugueti
 
-*Atualizada em 25 de novembro de 2026.*
+*Atualizada em 26 de novembro de 2026.*
 
 O Fugueti é um app de tela inicial (launcher) para Android, de código aberto:
 [github.com/fugueti/launcher](https://github.com/fugueti/launcher).
@@ -106,9 +107,10 @@ O Fugueti só se conecta à internet para estes recursos:
 - **Feed do Google** (quando ligado): o feed à esquerda da tela inicial é fornecido pelo app do
   Google, sob a política de privacidade do Google.
 - **Informações ao vivo** (desligado por padrão): baixa avisos do projeto Lawnchair.
-- **Relatórios de erro**: apenas quando você toca em *Enviar log de erro*, o log é enviado ao
-  katb.in para você compartilhar o link. Ele contém dados técnicos do erro e o modelo e a versão
-  do Android do aparelho.
+- **Relatórios de erro** (versão do GitHub): apenas quando você toca em *Enviar log de erro*, o
+  log é enviado ao katb.in para você compartilhar o link. Ele contém dados técnicos do erro e o
+  modelo e a versão do Android do aparelho. A versão da Google Play não tem esse envio; a Google
+  Play informa os erros ao desenvolvedor, sob a política de privacidade do Google.
 
 Esses serviços recebem seu endereço IP, como em qualquer conexão com a internet, e o tratam
 conforme as próprias políticas de privacidade.

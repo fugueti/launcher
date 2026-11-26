@@ -14,6 +14,7 @@ import android.graphics.drawable.Icon
 import android.net.Uri
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import app.lawnchair.ui.util.isPlayStoreFlavor
 import app.lawnchair.util.requireSystemService
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
@@ -146,7 +147,8 @@ class BugReportReceiver : BroadcastReceiver() {
             if (uploading) {
                 builder.setOngoing(true)
                 builder.setProgress(0, 0, true)
-            } else if (report.link == null && UploaderUtils.IS_ALIVE_AVAILABLE) {
+            } else if (report.link == null && UploaderUtils.IS_ALIVE_AVAILABLE && !isPlayStoreFlavor()) {
+                // Fugueti: no uploader on Google Play (Play collects crashes); Copy stays
                 val uploadIntent = Intent(UPLOAD_ACTION)
                     .setPackage(BuildConfig.APPLICATION_ID)
                     .putExtra("report", report)
