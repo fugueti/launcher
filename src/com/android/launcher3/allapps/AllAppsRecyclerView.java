@@ -354,9 +354,25 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
         super.onChildAttachedToWindow(child);
     }
 
+    /** Fugueti: space at the top of the list that the scroll bar stays below. */
+    private int mScrollBarTopOffset;
+
+    /** Fugueti: keeps the scroll bar below the space at the top of the list. */
+    public void setScrollBarTopOffset(int offset) {
+        if (mScrollBarTopOffset == offset) return;
+        mScrollBarTopOffset = offset;
+        if (mLetterList != null) {
+            mLetterList.setPadding(0, getScrollBarTop(), 0, getScrollBarMarginBottom());
+        }
+        if (getScrollbar() != null) {
+            getScrollbar().invalidate();
+        }
+    }
+
     @Override
     public int getScrollBarTop() {
-        return getResources().getDimensionPixelOffset(R.dimen.all_apps_header_top_padding);
+        return getResources().getDimensionPixelOffset(R.dimen.all_apps_header_top_padding)
+                + mScrollBarTopOffset;
     }
 
     @Override

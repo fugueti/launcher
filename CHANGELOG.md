@@ -7,6 +7,32 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
 * Home screen pages reordered in edit mode keep their new order after a restart; before, they
   went back to the old order and the home page moved to another page (Android 16 has the same
   bug).
+* With the status bar hidden, the apps in the drawer scroll up to the top of the screen, as in
+  Nova, instead of stopping below an empty band. The drawer still opens with that space above
+  the first row, and the scroll bar stays below it.
+* The app drawer shows only the wallpaper behind it, as in Nova: the home screen icons and
+  widgets no longer show through and mix with the apps. **App drawer > Show home screen behind**
+  brings them back.
+* **App drawer > Background opacity** at 0% is fully transparent, and the setting says what
+  its ends mean (0% is transparent, 100% is solid). A gray scrim behind the drawer ignored the
+  setting, so the wallpaper always looked dimmed.
+* The wallpaper stays sharp behind the app drawer, as in Nova; it used to be blurred and
+  zoomed. **App drawer > Blur wallpaper** brings the blur back.
+* Themed icons no longer turn themselves off when an app is uninstalled or hidden. An old
+  Lawnchair migration turned them off at every launcher start unless a themed icon pack was
+  installed, although apps' own monochrome icons need none.
+* With the status bar hidden, a swipe from the top edge shows it only for a moment; before, it
+  could stay on the home screen.
+* Widgets no longer disappear from the home screen when Android stops recognizing their id
+  (seen after a restore): if the widget's app is still installed, Fugueti gets a new id for it.
+  A widget with settings may ask to be set up again.
+* Apps in the private space show a single uninstall option, Android's **Uninstall app**. A second
+  **Uninstall** failed with "app not installed".
+* Importing a Nova backup also brings icon sizes and labels (home screen and app drawer), the app
+  drawer's columns, background transparency, search bar, suggested apps and keyboard on open, the
+  status bar setting and screen rotation.
+* The private space appears in the app drawer after Fugueti becomes the default home app;
+  before, it stayed missing until Fugueti was restarted.
 * Fixes from testing the Android 17 nightly:
   * App drawer side padding matches Android 16 again; the drawer was much narrower and cut app
     labels short.

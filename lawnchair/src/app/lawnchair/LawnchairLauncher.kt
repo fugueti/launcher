@@ -50,7 +50,6 @@ import app.lawnchair.root.RootNotAvailableException
 import app.lawnchair.theme.ThemeProvider
 import app.lawnchair.ui.popup.LauncherOptionsPopup
 import app.lawnchair.ui.popup.LawnchairShortcut
-import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
 import app.lawnchair.views.LawnchairFloatingSurfaceView
 import com.android.launcher3.AbstractFloatingView
@@ -76,6 +75,7 @@ import com.android.launcher3.uioverrides.states.AllAppsState
 import com.android.launcher3.uioverrides.states.BackgroundAppState
 import com.android.launcher3.uioverrides.states.OverviewState
 import com.android.launcher3.util.ActivityOptionsWrapper
+import com.android.launcher3.pm.UserCache
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.RunnableList
 import com.android.launcher3.util.SystemUiController.UI_STATE_BASE_WINDOW
@@ -104,7 +104,11 @@ class LawnchairLauncher : QuickstepLauncher() {
     private val insetsController: WindowInsetsControllerCompat by lazy {
         val window = launcher.window
             ?: throw Exception("WindowInsetsControllerCompat not available.")
-        WindowInsetsControllerCompat(window, rootView)
+        WindowInsetsControllerCompat(window, rootView).apply {
+            // Fugueti: a hidden status bar shown by a swipe from the top edge hides again by
+            // itself; by default it stayed on the home screen until the next state change.
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
     }
     private val themeProvider by unsafeLazy { ThemeProvider.INSTANCE.get(this) }
     private val noStatusBarStateListener = object : StateManager.StateListener<LauncherState> {
@@ -187,6 +191,8 @@ class LawnchairLauncher : QuickstepLauncher() {
                     hide(WindowInsetsCompat.Type.statusBars())
                 }
             }
+            // Fugueti: the drawer leaves room for the status bar only while it is shown.
+            mAppsView?.setStatusBarShown(it)
             with(launcher.stateManager) {
                 if (it) {
                     removeStateListener(noStatusBarStateListener)
@@ -239,13 +245,8 @@ class LawnchairLauncher : QuickstepLauncher() {
             LauncherOptionsPopup.migrateLegacyPreferences(launcher)
         }
 
-        // Handle update from version 12 Alpha 4 to version 12 Alpha 5.
-        if (
-            prefs.themedIcons.get() &&
-            packageManager.getThemedIconPacksInstalled(this).isEmpty()
-        ) {
-            prefs.themedIcons.set(newValue = false)
-        }
+        // Fugueti: no "12 Alpha 4" migration here. It turned themed icons off at every start
+        // without a themed icon pack installed, although apps' own monochrome icons need none.
 
         colorScheme = themeProvider.colorScheme
 
@@ -472,12 +473,25 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callback)
     }
 
+    /**
+     * Fugueti: the private space is only visible to the default home app, so profiles read
+     * before Fugueti became the default one miss it. Re-read them and reload the apps if needed.
+     */
+    private fun refreshUserProfiles() {
+        Executors.MODEL_EXECUTOR.execute {
+            if (UserCache.INSTANCE.get(this).refreshUsers()) {
+                LauncherAppState.getInstance(this).model.forceReload("FuguetiUserProfiles")
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         restartIfPending()
         // Fugueti: asks once, so the daily update check can notify.
         FuguetiUpdates.maybeRequestNotificationPermission(this)
         refreshPredictionContainersFromModel()
+        refreshUserProfiles()
 
         dragLayer.viewTreeObserver.addOnDrawListener(
             object : ViewTreeObserver.OnDrawListener {

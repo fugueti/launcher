@@ -106,6 +106,20 @@ constructor(
         }
     }
 
+    /**
+     * Fugueti: rebuilds the cache and returns whether the profiles or their types changed. The
+     * platform hides the private space from a launcher that is not the default home app, so a
+     * cache built before Fugueti became the default one lacks it (or, on Android 15, sees it as
+     * a work profile) until it is rebuilt.
+     */
+    @WorkerThread
+    fun refreshUsers(): Boolean {
+        fun UserManagerState?.types() =
+            this?.getAllCachedInfos()?.map { it.iconInfo.user to it.iconInfo.type }?.toSet()
+        val old = _userInfoMap.types()
+        return rebuildUserCache().types() != old
+    }
+
     @WorkerThread
     private fun rebuildUserCache(): UserManagerState =
         UserManagerState(

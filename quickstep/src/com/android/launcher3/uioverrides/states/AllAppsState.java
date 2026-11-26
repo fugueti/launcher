@@ -15,6 +15,7 @@
  */
 package com.android.launcher3.uioverrides.states;
 
+import static com.android.app.animation.Interpolators.DECELERATE_2;
 import static com.android.launcher3.Utilities.shouldReduceWorkspaceBlurUsage;
 import static com.android.launcher3.logging.StatsLogManager.LAUNCHER_STATE_ALLAPPS;
 
@@ -35,6 +36,7 @@ import com.android.systemui.shared.system.InteractionJankMonitorWrapper;
 
 import java.util.concurrent.TimeUnit;
 
+import app.lawnchair.LawnchairApp;
 import app.lawnchair.util.LawnchairUtilsKt;
 
 /**
@@ -127,6 +129,10 @@ public class AllAppsState extends LauncherState {
 
     @Override
     protected float getDepthUnchecked(ActivityContext context) {
+        // Fugueti: the depth blurs and zooms the wallpaper; keep it sharp unless asked to blur.
+        if (!LawnchairUtilsKt.isWallpaperBlurredBehindDrawer(context.asContext())) {
+            return 0f;
+        }
         return shouldReduceWorkspaceBlurUsage(context.asContext())
                 ? 0f
                 : context.getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth();
@@ -140,8 +146,31 @@ public class AllAppsState extends LauncherState {
 
     @Override
     public int getVisibleElements(LauncherUiState launcherUiState) {
-        return Flags.allAppsSurface() ? HOTSEAT_ICONS
-                : ALL_APPS_CONTENT | FLOATING_SEARCH_BAR | HOTSEAT_ICONS;
+        // Fugueti: without blur the dock would show through the drawer; show it only on request.
+        int hotseat = isHomeScreenVisible() ? HOTSEAT_ICONS : 0;
+        return Flags.allAppsSurface() ? hotseat
+                : ALL_APPS_CONTENT | FLOATING_SEARCH_BAR | hotseat;
+    }
+
+    @Override
+    public PageAlphaProvider getWorkspacePageAlphaProvider(Launcher launcher) {
+        // Fugueti: hide the home screen pages behind the drawer unless asked to show them.
+        if (isHomeScreenVisible()) {
+            return super.getWorkspacePageAlphaProvider(launcher);
+        }
+        return new PageAlphaProvider(DECELERATE_2) {
+            @Override
+            public float getPageAlpha(int pageIndex) {
+                return 0;
+            }
+        };
+    }
+
+    /** Fugueti: large screens keep the home screen behind the drawer, as in AOSP. */
+    private static boolean isHomeScreenVisible() {
+        LawnchairApp app = LawnchairApp.getInstance();
+        return LawnchairUtilsKt.isHomeScreenShownBehindDrawer(app)
+                || app.getResources().getConfiguration().smallestScreenWidthDp >= 600;
     }
 
     @Override
@@ -173,7 +202,9 @@ public class AllAppsState extends LauncherState {
             // No scrim.
             return super.getWorkspaceScrimColor(launcher);
         }
-        int backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
+        // Fugueti: the scrim follows the drawer background opacity, so 0% is fully transparent.
+        int backgroundColor = LawnchairUtilsKt.scaleByDrawerOpacity(launcher,
+                ColorTokens.AllAppsScrimColor.resolveColor(launcher));
         return new ScrimColors(backgroundColor, /* foregroundColor */ Color.TRANSPARENT);
     }
 }

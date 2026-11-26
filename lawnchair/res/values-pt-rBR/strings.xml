@@ -109,6 +109,11 @@
     <string name="wallpaper">Papel de Parede</string>
     <string name="style">Estilo</string>
     <string name="background_opacity">Opacidade do fundo</string>
+    <string name="drawer_opacity_description">0% é transparente, 100% é sólido</string>
+    <string name="drawer_blur_wallpaper_label">Desfocar o papel de parede</string>
+    <string name="drawer_blur_wallpaper_description">Desfoca o papel de parede atrás da gaveta de aplicativos</string>
+    <string name="drawer_show_home_screen_label">Mostrar a tela inicial atrás</string>
+    <string name="drawer_show_home_screen_description">Desligado, só o papel de parede aparece atrás da gaveta de aplicativos</string>
     <!-- Toast text and tips -->
     <string name="copied_toast">Copiado para a área de transferência</string>
     <string name="calculator_search_result_copied_toast">Resultado copiado para a área de transferência</string>
