@@ -126,6 +126,11 @@
     <string name="wallpaper">Wallpaper</string>
     <string name="style">Style</string>
     <string name="background_opacity">Background opacity</string>
+    <string name="drawer_opacity_description">0% is transparent, 100% is solid</string>
+    <string name="drawer_blur_wallpaper_label">Blur wallpaper</string>
+    <string name="drawer_blur_wallpaper_description">Blurs the wallpaper behind the app drawer</string>
+    <string name="drawer_show_home_screen_label">Show home screen behind</string>
+    <string name="drawer_show_home_screen_description">When off, only the wallpaper shows behind the app drawer</string>
 
     <!-- Toast text and tips -->
     <string name="copied_toast">Copied to clipboard</string>

@@ -2,6 +2,7 @@
 package app.lawnchair.backup
 
 import app.fugueti.nova.NovaGestureImporter
+import app.fugueti.nova.NovaSettingsImporter
 
 import android.content.Context
 import android.content.Intent
@@ -154,6 +155,8 @@ class NovaBackupConverter(
             val novaXmlFile = File(tempDir, NOVA_XML)
             if (novaXmlFile.exists()) {
                 NovaGestureImporter.apply(context, NovaGestureImporter.parse(novaXmlFile))
+                // Fugueti: and the settings Fugueti has too (labels, icon sizes, drawer...)
+                NovaSettingsImporter.apply(context, NovaSettingsImporter.parse(novaXmlFile))
             }
 
             val novaDbFile = File(tempDir, NOVA_DB)

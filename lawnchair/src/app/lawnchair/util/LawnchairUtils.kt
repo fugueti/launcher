@@ -31,6 +31,7 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
@@ -246,6 +247,23 @@ private fun getAllAppsBaseColor(context: Context, defaultColor: Int): Int {
     val color = colorOptions.colorPreferenceEntry.lightColor.invoke(context)
     val baseColor = if (color != 0) color else defaultColor
     return ColorUtils.setAlphaComponent(baseColor, 255)
+}
+
+/** Fugueti: whether the wallpaper is blurred (and zoomed) behind the app drawer. */
+fun isWallpaperBlurredBehindDrawer(context: Context): Boolean =
+    PreferenceManager.getInstance(context).drawerBlurWallpaper.get()
+
+/** Fugueti: whether the home screen pages and dock stay visible behind the app drawer. */
+fun isHomeScreenShownBehindDrawer(context: Context): Boolean =
+    PreferenceManager.getInstance(context).drawerShowHomeScreen.get()
+
+/**
+ * Fugueti: scales a scrim drawn behind the app drawer by the drawer's background opacity, so 0%
+ * shows the wallpaper as is.
+ */
+fun scaleByDrawerOpacity(context: Context, color: Int): Int {
+    val opacity = PreferenceManager.getInstance(context).drawerOpacity.get()
+    return ColorUtils.setAlphaComponent(color, (Color.alpha(color) * opacity).roundToInt())
 }
 
 /** Apply Lawnchair custom allapps opacity and colour to the provided colour */

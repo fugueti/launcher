@@ -50,7 +50,7 @@ constructor(
         }
         if (isSafeModeEnabled) return InflationResult(TYPE_PENDING)
 
-        val appWidgetInfo: LauncherAppWidgetProviderInfo?
+        var appWidgetInfo: LauncherAppWidgetProviderInfo?
         var removalReason = ""
         @RestoreError var logReason = RestoreError.OTHER_WIDGET_INFLATION_FAIL
         var update = false
@@ -75,6 +75,26 @@ constructor(
         } else {
             appWidgetInfo =
                 widgetHelper.getLauncherAppWidgetInfo(item.appWidgetId, item.targetComponent)
+            // Fugueti: the id no longer belongs to Fugueti (for example after a restore), but the
+            // widget's app is still installed. Bind a new id, as a restore does, instead of
+            // deleting the widget from the home screen.
+            if (
+                appWidgetInfo == null &&
+                    item.appWidgetId > LauncherAppWidgetInfo.CUSTOM_WIDGET_ID &&
+                    item.restoreStatus == LauncherAppWidgetInfo.RESTORE_COMPLETED &&
+                    item.providerName != null
+            ) {
+                appWidgetInfo = widgetHelper.findProvider(item.providerName, item.user)
+                if (appWidgetInfo != null) {
+                    FileLog.w(
+                        Launcher.TAG,
+                        "Rebinding widget with invalid id=${item.appWidgetId} " +
+                            "of ${item.providerName}",
+                    )
+                    item.restoreStatus = LauncherAppWidgetInfo.FLAG_ID_NOT_VALID
+                    update = true
+                }
+            }
             if (appWidgetInfo == null) {
                 if (item.appWidgetId <= LauncherAppWidgetInfo.CUSTOM_WIDGET_ID) {
                     removalReason = "CustomWidgetManager cannot find provider from that widget id."

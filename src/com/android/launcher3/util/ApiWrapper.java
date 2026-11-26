@@ -102,8 +102,16 @@ public class ApiWrapper {
         UserManager um = mContext.getSystemService(UserManager.class);
         Map<UserHandle, UserIconInfo> users = new ArrayMap<>();
         List<UserHandle> usersActual = um.getUserProfiles();
+        // Fugueti: profiles hidden from this launcher (the private space while Fugueti is not
+        // the default home app). Left out, they would show up as a work profile.
+        LauncherApps visibleApps = mContext.getSystemService(LauncherApps.class);
+        List<UserHandle> visibleProfiles = Utilities.ATLEAST_V && visibleApps != null
+                ? visibleApps.getProfiles() : null;
         if (usersActual != null) {
             for (UserHandle user : usersActual) {
+                if (visibleProfiles != null && !visibleProfiles.contains(user)) {
+                    continue;
+                }
                 long serial = um.getSerialNumberForUser(user);
 
                 // Simple check to check if the provided user is work profile

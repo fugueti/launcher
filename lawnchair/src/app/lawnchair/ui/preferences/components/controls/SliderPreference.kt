@@ -17,6 +17,7 @@
 package app.lawnchair.ui.preferences.components.controls
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -96,6 +97,7 @@ fun SliderPreference(
     showAsPercentage: Boolean = false,
     showUnit: String = "",
     enabled: Boolean = true,
+    description: String? = null,
 ) {
     var adapterValue by adapter
 
@@ -111,6 +113,7 @@ fun SliderPreference(
         showAsPercentage = showAsPercentage,
         showUnit = showUnit,
         enabled = enabled,
+        description = description,
     )
 }
 
@@ -125,6 +128,7 @@ private fun SliderPreference(
     showAsPercentage: Boolean = false,
     showUnit: String = "",
     enabled: Boolean = true,
+    description: String? = null,
 ) {
     var sliderValue by remember { mutableFloatStateOf(value) }
     var thresholdReached by remember { mutableStateOf<SliderThreshold?>(null) }
@@ -175,49 +179,55 @@ private fun SliderPreference(
         },
         modifier = modifier,
         description = {
-            Slider(
-                value = sliderValue,
-                onValueChange = { newValue ->
-                    sliderValue = newValue
-                    val threshold = when {
-                        newValue <= valueRange.start -> SliderThreshold.START
-                        newValue >= valueRange.endInclusive -> SliderThreshold.END
-                        else -> null
-                    }
-                    if (threshold != null) {
-                        if (threshold != thresholdReached) {
-                            thresholdReached = threshold
-                            mMSDLPlayerWrapper.playToken(
-                                MSDLToken.DRAG_THRESHOLD_INDICATOR_LIMIT,
-                            )
+            Column {
+                Slider(
+                    value = sliderValue,
+                    onValueChange = { newValue ->
+                        sliderValue = newValue
+                        val threshold = when {
+                            newValue <= valueRange.start -> SliderThreshold.START
+                            newValue >= valueRange.endInclusive -> SliderThreshold.END
+                            else -> null
                         }
-                    } else {
-                        thresholdReached = null
-                        val range = valueRange.endInclusive - valueRange.start
-                        val scale = if (range == 0f) {
-                            1f
+                        if (threshold != null) {
+                            if (threshold != thresholdReached) {
+                                thresholdReached = threshold
+                                mMSDLPlayerWrapper.playToken(
+                                    MSDLToken.DRAG_THRESHOLD_INDICATOR_LIMIT,
+                                )
+                            }
                         } else {
-                            ((newValue - valueRange.start) / range).coerceIn(0f, 1f)
+                            thresholdReached = null
+                            val range = valueRange.endInclusive - valueRange.start
+                            val scale = if (range == 0f) {
+                                1f
+                            } else {
+                                ((newValue - valueRange.start) / range).coerceIn(0f, 1f)
+                            }
+                            if (Utilities.ATLEAST_S) {
+                                playScaledSliderHaptic(
+                                    mMSDLPlayerWrapper,
+                                    getAppropriateHaptic,
+                                    scale,
+                                )
+                            } else {
+                                mMSDLPlayerWrapper.playToken(getAppropriateHaptic)
+                            }
                         }
-                        if (Utilities.ATLEAST_S) {
-                            playScaledSliderHaptic(
-                                mMSDLPlayerWrapper,
-                                getAppropriateHaptic,
-                                scale,
-                            )
-                        } else {
-                            mMSDLPlayerWrapper.playToken(getAppropriateHaptic)
-                        }
-                    }
-                },
-                onValueChangeFinished = { onValueChangeFinished(sliderValue) },
-                valueRange = valueRange,
-                steps = getSteps(valueRange, step),
-                modifier = Modifier
-                    .padding(top = 2.dp, bottom = 8.dp)
-                    .height(24.dp),
-                enabled = enabled,
-            )
+                    },
+                    onValueChangeFinished = { onValueChangeFinished(sliderValue) },
+                    valueRange = valueRange,
+                    steps = getSteps(valueRange, step),
+                    modifier = Modifier
+                        .padding(top = 2.dp, bottom = 8.dp)
+                        .height(24.dp),
+                    enabled = enabled,
+                )
+                // Fugueti: optional hint below the slider, such as what 0% and 100% mean.
+                if (description != null) {
+                    Text(text = description, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
         },
     )
 }

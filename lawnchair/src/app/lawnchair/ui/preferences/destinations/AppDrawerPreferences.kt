@@ -103,6 +103,17 @@ fun AppDrawerPreferences(
                 step = 0.1f,
                 valueRange = 0F..1F,
                 showAsPercentage = true,
+                description = stringResource(id = R.string.drawer_opacity_description),
+            )
+            SwitchPreference(
+                label = stringResource(id = R.string.drawer_show_home_screen_label),
+                description = stringResource(id = R.string.drawer_show_home_screen_description),
+                adapter = prefs.drawerShowHomeScreen.getAdapter(),
+            )
+            SwitchPreference(
+                label = stringResource(id = R.string.drawer_blur_wallpaper_label),
+                description = stringResource(id = R.string.drawer_blur_wallpaper_description),
+                adapter = prefs.drawerBlurWallpaper.getAdapter(),
             )
             ColorPreference(preference = prefs2.workProfileTabBackgroundColor)
             SwitchPreference(

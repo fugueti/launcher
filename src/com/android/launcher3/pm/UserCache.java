@@ -47,8 +47,10 @@ import com.android.launcher3.util.UserIconInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import javax.inject.Inject;
@@ -134,6 +136,25 @@ public class UserCache {
     private void updateCache() {
         mUserToSerialMap = mApiWrapper.queryAllUsers();
         mUserToPreInstallAppMap = fetchPreInstallApps();
+    }
+
+    /**
+     * Fugueti: rebuilds the cache and returns whether the profiles or their types changed. The
+     * platform hides the private space from a launcher that is not the default home app, so a
+     * cache built before Fugueti became the default one sees it as a work profile until it is
+     * rebuilt.
+     */
+    @WorkerThread
+    public boolean refreshUsers() {
+        Set<String> old = describeUsers(mUserToSerialMap);
+        updateCache();
+        return !old.equals(describeUsers(mUserToSerialMap));
+    }
+
+    private static Set<String> describeUsers(Map<UserHandle, UserIconInfo> users) {
+        Set<String> result = new HashSet<>();
+        users.forEach((user, info) -> result.add(user + ":" + info.type + ":" + info.userSerial));
+        return result;
     }
 
     @WorkerThread

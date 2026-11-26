@@ -240,7 +240,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         pref2 = PreferenceManager2.getInstance(mActivityContext);
         pref = PreferenceManager.getInstance(mActivityContext);
         
-        mScrimColor = ColorTokens.AllAppsScrimColor.resolveColor(context);
+        // Fugueti: follows the drawer background opacity, like the sheet background.
+        mScrimColor = LawnchairUtilsKt.scaleByDrawerOpacity(context,
+                ColorTokens.AllAppsScrimColor.resolveColor(context));
         mHeaderThreshold = getResources().getDimensionPixelSize(
                 R.dimen.dynamic_grid_cell_border_spacing);
         mHeaderProtectionColor = ColorTokens.AllAppsHeaderProtectionColor.resolveColor(context);
@@ -869,6 +871,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         boolean hasHeaderContent = mUsingTabs || (!hideSearchBar && mHeader.hasVisibleContent());
         mHeader.setVisibility(hasHeaderContent ? View.VISIBLE : View.GONE);
 
+        if (mHeaderHasContent != hasHeaderContent) {
+            mHeaderHasContent = hasHeaderContent;
+            setInsets(new Rect(mInsets));
+        }
+
         int padding = hasHeaderContent ? mHeader.getMaxTranslation() : 0;
         mAH.forEach(adapterHolder -> {
             adapterHolder.mPadding.top = padding;
@@ -1389,12 +1396,25 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     @Override
     public void onDropCompleted(View target, DragObject d, boolean success) {}
 
+    /** Fugueti: whether the status bar is shown, so the drawer leaves room for it. */
+    private boolean mStatusBarShown = PreferenceCacheExtensionsKt.firstCached(
+            PreferenceManager2.INSTANCE.get(getContext()).getShowStatusBar());
+    /** Fugueti: whether the search bar, tabs or header rows sit above the apps. */
+    private boolean mHeaderHasContent = true;
+    /** Fugueti: top space kept inside the app lists, so apps can scroll up into it. */
+    private int mListTopGap;
+
+    /** Fugueti: called when the "Show status bar" setting changes. */
+    public void setStatusBarShown(boolean shown) {
+        if (mStatusBarShown == shown) return;
+        mStatusBarShown = shown;
+        setInsets(new Rect(mInsets));
+    }
+
     @Override
     public void setInsets(Rect insets) {
         mInsets.set(insets);
         DeviceProfile grid = mActivityContext.getDeviceProfile();
-
-        applyAdapterSideAndBottomPaddings(grid);
 
         MarginLayoutParams mlp = (MarginLayoutParams) getLayoutParams();
         // Ignore left/right insets on tablet because we are already centered in-screen.
@@ -1408,12 +1428,21 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
         if (!grid.isVerticalBarLayout() || FeatureFlags.enableResponsiveWorkspace()) {
             int topPadding = grid.allAppsPadding.top;
+            // Fugueti: with the status bar hidden and nothing above the apps, the status bar
+            // space moves into the lists (like Nova): the drawer opens with it, and the apps
+            // use the whole screen once scrolled.
+            mListTopGap = 0;
+            if (!mStatusBarShown && !mHeaderHasContent) {
+                mListTopGap = Math.min(insets.top, topPadding);
+                topPadding -= mListTopGap;
+            }
             if (isSearchBarFloating() && !grid.shouldShowAllAppsOnSheet()) {
                 topPadding += getResources().getDimensionPixelSize(
                         R.dimen.all_apps_additional_top_padding_floating_search);
             }
             setPadding(grid.allAppsLeftRightMargin, topPadding, grid.allAppsLeftRightMargin, 0);
         }
+        applyAdapterSideAndBottomPaddings(grid);
         InsettableFrameLayout.dispatchInsets(this, insets);
     }
 
@@ -1899,8 +1928,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 if (isSearchBarFloating()) {
                     bottomOffset += mSearchContainer.getHeight();
                 }
-                mRecyclerView.setPadding(mPadding.left, mPadding.top, mPadding.right,
+                mRecyclerView.setPadding(mPadding.left, mPadding.top + mListTopGap, mPadding.right,
                         mPadding.bottom + bottomOffset);
+                mRecyclerView.setScrollBarTopOffset(mListTopGap);
             }
         }
 

@@ -125,6 +125,10 @@ class PreferenceManager @Inject constructor(
     val folderRows = IdpIntPref("pref_folderRows", { numFolderRows[INDEX_DEFAULT] }, reloadGrid)
 
     val drawerOpacity = FloatPref("pref_drawerOpacity", .5f, recreate)
+    // Fugueti: off shows only the wallpaper behind the app drawer, like Nova.
+    val drawerShowHomeScreen = BoolPref("pref_drawerShowHomeScreen", false)
+    // Fugueti: off keeps the wallpaper sharp (and not zoomed) behind the app drawer, like Nova.
+    val drawerBlurWallpaper = BoolPref("pref_drawerBlurWallpaper", false)
     val coloredBackgroundLightness = FloatPref("pref_coloredBackgroundLightness", 1F)
     val feedProvider = StringPref("pref_feedProvider", "")
     val ignoreFeedWhitelist = BoolPref("pref_ignoreFeedWhitelist", false)

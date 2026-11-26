@@ -36,6 +36,7 @@ import com.android.systemui.shared.system.InteractionJankMonitorWrapper;
 
 import java.util.concurrent.TimeUnit;
 
+import app.lawnchair.LawnchairApp;
 import app.lawnchair.util.LawnchairUtilsKt;
 
 /**
@@ -137,6 +138,10 @@ public class AllAppsState extends LauncherState {
     @Override
     protected <DEVICE_PROFILE_CONTEXT extends Context & ActivityContext>
             float getDepthUnchecked(DEVICE_PROFILE_CONTEXT context) {
+        // Fugueti: the depth blurs and zooms the wallpaper; keep it sharp unless asked to blur.
+        if (!LawnchairUtilsKt.isWallpaperBlurredBehindDrawer(context)) {
+            return 0f;
+        }
         if (context.getDeviceProfile().shouldShowAllAppsOnSheet()) {
             return context.getDeviceProfile().getBottomSheetProfile().getBottomSheetDepth();
         } else {
@@ -180,7 +185,10 @@ public class AllAppsState extends LauncherState {
     }
 
     private static boolean isWorkspaceVisible(DeviceProfile deviceProfile) {
-        return deviceProfile.getDeviceProperties().isTablet() || (Flags.allAppsSheetForHandheld() && Flags.allAppsBlur());
+        // Fugueti: on phones the home screen showed through the drawer, since blur does not
+        // hide it; show it there only when asked to.
+        return deviceProfile.getDeviceProperties().isTablet()
+                || LawnchairUtilsKt.isHomeScreenShownBehindDrawer(LawnchairApp.getInstance());
     }
 
     @Override
@@ -211,13 +219,16 @@ public class AllAppsState extends LauncherState {
         int backgroundColor;
         if (!launcher.getDeviceProfile().shouldShowAllAppsOnSheet()) {
             // Always use an opaque scrim if there's no sheet.
-            backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
+            // Fugueti: unless the drawer background opacity says otherwise.
+            backgroundColor = LawnchairUtilsKt.scaleByDrawerOpacity(launcher,
+                    ColorTokens.AllAppsScrimColor.resolveColor(launcher));
         } else if (!Flags.allAppsBlur()) {
             // If there's a sheet but no blur, use the old scrim color.
             backgroundColor = LawnchairUtilsKt.getAllAppsBackgroundColor(launcher, 
                 ColorTokens.WidgetsPickerScrim.resolveColor(launcher));
         } else {
-            backgroundColor = ColorTokens.AllAppsScrimColor.resolveColor(launcher);
+            backgroundColor = LawnchairUtilsKt.scaleByDrawerOpacity(launcher,
+                    ColorTokens.AllAppsScrimColor.resolveColor(launcher));
         }
         return new ScrimColors(backgroundColor, /* foregroundColor */ Color.TRANSPARENT);
     }

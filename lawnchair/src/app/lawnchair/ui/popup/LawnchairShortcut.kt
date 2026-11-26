@@ -42,6 +42,7 @@ import com.android.launcher3.icons.LauncherIcons
 import com.android.launcher3.logging.StatsLogManager
 import com.android.launcher3.model.data.AppInfo as ModelAppInfo
 import com.android.launcher3.model.data.ItemInfo
+import com.android.launcher3.pm.UserCache
 import com.android.launcher3.popup.SystemShortcut
 import com.android.launcher3.util.ApplicationInfoWrapper
 import com.android.launcher3.util.ComponentKey
@@ -130,6 +131,11 @@ class LawnchairShortcut {
                     return@Factory null
                 }
                 if (itemInfo.targetComponent == null) {
+                    return@Factory null
+                }
+                // Fugueti: private space apps get Android's own "Uninstall app" shortcut
+                // (SystemShortcut.UNINSTALL_APP); this one fails for them with "app not installed".
+                if (UserCache.INSTANCE.get(activity.asContext()).getUserInfo(itemInfo.user).isPrivate) {
                     return@Factory null
                 }
                 if (ApplicationInfoWrapper(
