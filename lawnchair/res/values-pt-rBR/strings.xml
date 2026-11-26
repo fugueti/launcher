@@ -551,8 +551,8 @@ Essa nova versão é atualização Major e pode ser menos estável\".</string>
     <string name="notifications_fallback_a11y_hint">abrir o painel de notificação</string>
     <string name="quick_settings_a11y_hint">abrir o painel de configurações rápidas</string>
     <string name="recents_screen_a11y_hint">abra a tela de recentes</string>
-    <string name="generic_a11y_hint">Para %1$s ative os serviços de acessibilidade do Lawnchair. Toque em \"Abrir configurações\", escolha \"Lawnchair\" e ative a opção \"Usar Lawnchair.\"</string>
-    <string name="generic_a11y_disclaimer">Lawnchair usa o método de acessibilidade `performGlobalAction` para executar essa ação. Essa é uma permissão sensível que permite o monitoramento de outros apps. No entanto Lawnchair não é configurado para essa funcionalidade e não recebe nenhum evento.</string>
+    <string name="generic_a11y_hint">Para %1$s, ative o serviço de acessibilidade do Fugueti. Toque em \"Abrir configurações\", escolha \"Fugueti\" e ative a opção \"Usar Fugueti.\"</string>
+    <string name="generic_a11y_disclaimer">O Fugueti usa o método de acessibilidade `performGlobalAction` para executar essa ação. Essa é uma permissão sensível que permite monitorar outros apps. No entanto, o Fugueti não é configurado para isso e não recebe nenhum evento.</string>
     <string name="sleep_mode_label">Modo Sleep</string>
     <string name="sleep_mode_auto">Automático</string>
     <string name="sleep_mode_root">Root</string>
