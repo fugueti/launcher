@@ -21,11 +21,11 @@ class SupportLinksTest {
     @Test
     fun bugLinkOpensTheFormWithFieldsFilledIn() {
         val url = SupportLinks.newIssueUrl(
-            "victorwalter/fugueti-launcher",
+            "fugueti/launcher",
             IssueKind.BUG,
             mapOf("version" to "16.0.2-nightly.7 (abc1234)", "device" to "Google Pixel 9", "android" to "Android 17 (API 37)"),
         )
-        assertTrue(url.startsWith("https://github.com/victorwalter/fugueti-launcher/issues/new?"))
+        assertTrue(url.startsWith("https://github.com/fugueti/launcher/issues/new?"))
         assertTrue("spaces are %20, not +", !url.contains("+"))
         val q = query(url)
         assertEquals("bug_report.yaml", q["template"])

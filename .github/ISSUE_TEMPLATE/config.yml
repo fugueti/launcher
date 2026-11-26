@@ -4,5 +4,5 @@ contact_links:
     url: mailto:victor.walter+fugueti@gmail.com
     about: Questions or anything that is not a bug report or a feature idea.
   - name: Security vulnerability
-    url: https://github.com/victorwalter/fugueti-launcher/security/advisories/new
+    url: https://github.com/fugueti/launcher/security/advisories/new
     about: Please report security problems privately.

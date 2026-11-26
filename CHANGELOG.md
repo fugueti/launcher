@@ -1,7 +1,10 @@
 # Fugueti Launcher changelog
 
-## 16.0.4 (unreleased)
+## 16.0.4 (2026-11-26)
 
+* Fugueti moved to the Fugueti organization on GitHub: the app, its update check and links now
+  use github.com/fugueti/launcher, and the Fugueti Feed links use github.com/fugueti/feed. The
+  old addresses keep redirecting, so older versions still find updates.
 * With the status bar hidden, the apps in the drawer scroll up to the top of the screen, as in
   Nova, instead of stopping below an empty band. The drawer still opens with that space above
   the first row, and the scroll bar stays below it.

@@ -145,10 +145,10 @@ final def releaseName = "Beta 1"
 // BASE.MINOR.PATCH, where BASE is the Android version Launcher3 comes from (16, 17…).
 // versionCode = major * 1_000_000 + minor * 10_000 + patch * 100 (last two digits free for rebuilds).
 // On main this is the next release; a release bumps it and is tagged v<version>.
-final def fuguetiVersion = "16.0.3"
+final def fuguetiVersion = "16.0.4"
 final def fuguetiVersionParts = fuguetiVersion.tokenize('.').collect { it as int }
 final def fuguetiVersionCode = fuguetiVersionParts[0] * 1_000_000 + fuguetiVersionParts[1] * 10_000 + fuguetiVersionParts[2] * 100
-final def fuguetiGithubRepo = findProperty("fugueti.githubRepo") ?: "victorwalter/fugueti-launcher"
+final def fuguetiGithubRepo = findProperty("fugueti.githubRepo") ?: "fugueti/launcher"
 // Nightly builds (CI on main): <version>-nightly.<CI run>, versionCode = BASE * 1_000_000 + CI run, so
 // every nightly updates the previous one and the "major" (Android base) stays the same.
 final def nightlyNumber = (ciBuild && ciRunNumber ? ciRunNumber : "0") as int

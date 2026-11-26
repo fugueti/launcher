@@ -3,7 +3,7 @@
 *Last updated: November 25, 2026. [Versão em português abaixo](#política-de-privacidade-do-fugueti).*
 
 Fugueti is a home screen app (launcher) for Android. It is open source:
-[github.com/victorwalter/fugueti-launcher](https://github.com/victorwalter/fugueti-launcher).
+[github.com/fugueti/launcher](https://github.com/fugueti/launcher).
 
 ## Summary
 
@@ -57,7 +57,7 @@ Fugueti is not directed at children and does not knowingly collect data from any
 ## Changes and contact
 
 Changes to this policy are published in this file. Questions: open an issue at
-[github.com/victorwalter/fugueti-launcher/issues](https://github.com/victorwalter/fugueti-launcher/issues).
+[github.com/fugueti/launcher/issues](https://github.com/fugueti/launcher/issues).
 
 ---
 
@@ -66,7 +66,7 @@ Changes to this policy are published in this file. Questions: open an issue at
 *Atualizada em 25 de novembro de 2026.*
 
 O Fugueti é um app de tela inicial (launcher) para Android, de código aberto:
-[github.com/victorwalter/fugueti-launcher](https://github.com/victorwalter/fugueti-launcher).
+[github.com/fugueti/launcher](https://github.com/fugueti/launcher).
 
 ## Resumo
 
@@ -120,4 +120,4 @@ O Fugueti não é direcionado a crianças e não coleta dados de ninguém intenc
 ## Alterações e contato
 
 Alterações nesta política são publicadas neste arquivo. Dúvidas: abra uma issue em
-[github.com/victorwalter/fugueti-launcher/issues](https://github.com/victorwalter/fugueti-launcher/issues).
+[github.com/fugueti/launcher/issues](https://github.com/fugueti/launcher/issues).
