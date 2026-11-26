@@ -47,6 +47,27 @@ Google feed without third party bridges, and more reliable backups.
 
 `SHA256SUMS.txt` in each release lets you check the download.
 
+### If Android blocks the install
+
+**"App blocked to protect your device" (Google Play Protect).** In some countries, Brazil
+among them, Play Protect blocks apps installed from a browser or file manager when they declare
+sensitive features. Fugueti declares two, both optional: an accessibility service (only to lock
+the screen or open Quick Settings and Recents from a gesture) and notification access (only for
+notification dots). To install:
+
+1. If the dialog offers **Install anyway**, use it.
+2. Otherwise open *Play Store → profile picture → Play Protect → ⚙ settings*, turn off
+   **Scan apps with Play Protect**, install Fugueti, and turn the option back on right away.
+3. Installing with `adb install` is not affected.
+
+Updates from *Settings → About* go through Android's installer, which can show a "scan
+recommended" prompt that lets you continue.
+
+**"Restricted setting" when turning on accessibility or notification access.** Android 13 and
+later restrict these two permissions for apps installed outside an app store. Open
+*Android Settings → Apps → Fugueti*, tap **⋮** (top right) → **Allow restricted settings**, then
+turn the permission on again.
+
 ### Release channels
 
 | Channel | Branch | Base | How it is published |
