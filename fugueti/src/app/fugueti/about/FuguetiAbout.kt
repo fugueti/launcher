@@ -58,7 +58,7 @@ object FuguetiAbout {
     val githubUrl: String get() = "https://github.com/${BuildConfig.GITHUB_REPO}"
 
     /** Download page of the Fugueti Feed bridge app (separate repository). */
-    const val FEED_RELEASES_URL = "https://github.com/victorwalter/fugueti-feed/releases/latest"
+    const val FEED_RELEASES_URL = "https://github.com/fugueti/feed/releases/latest"
 
     val team = listOf(
         TeamMember(

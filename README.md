@@ -1,9 +1,9 @@
 # Fugueti
 
-[![Release](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml/badge.svg)](https://github.com/victorwalter/fugueti-launcher/actions/workflows/release.yml)
+[![Release](https://github.com/fugueti/launcher/actions/workflows/release.yml/badge.svg)](https://github.com/fugueti/launcher/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](COPYING)
-[![Latest release](https://img.shields.io/github/v/release/victorwalter/fugueti-launcher?include_prereleases&label=release&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases/latest)
-[![GitHub Downloads](https://img.shields.io/github/downloads/victorwalter/fugueti-launcher/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/victorwalter/fugueti-launcher/releases)
+[![Latest release](https://img.shields.io/github/v/release/fugueti/launcher?include_prereleases&label=release&logo=github)](https://github.com/fugueti/launcher/releases/latest)
+[![GitHub Downloads](https://img.shields.io/github/downloads/fugueti/launcher/total.svg?label=GitHub%20Downloads&logo=github)](https://github.com/fugueti/launcher/releases)
 
 <img alt="Fugueti home screen" src="docs/assets/screenshot-home.webp" width="270px">
 
@@ -21,7 +21,7 @@ Google feed without third party bridges, and more reliable backups.
   sensitivity and a gesture test pad. Extra actions: open app shortcut, open activity, launch
   intent. Details: [docs/gestures/README.md](docs/gestures/README.md).
 - **Google feed (Discover)** on the page left of the home screen, through the small
-  [Fugueti Feed](https://github.com/victorwalter/fugueti-feed) app (see below).
+  [Fugueti Feed](https://github.com/fugueti/feed) app (see below).
 - **Backup and restore** that brings everything back (settings, gestures, fonts, saved wallpapers),
   restores Lawnchair backups and imports Nova Launcher backups, including Nova's gestures.
 - **Search bar fixes:** the microphone opens your assistant (Gemini) and the "Google" dock search
@@ -31,7 +31,7 @@ Google feed without third party bridges, and more reliable backups.
 ## Download
 
 <p align="left">
-  <a href="https://github.com/victorwalter/fugueti-launcher/releases/latest">
+  <a href="https://github.com/fugueti/launcher/releases/latest">
     <picture>
       <!-- Avoid image being clickable with slight workaround -->
       <source media="(prefers-color-scheme: dark)" srcset="docs/assets/badge-github.webp" height="60">
@@ -40,7 +40,7 @@ Google feed without third party bridges, and more reliable backups.
   </a>
 </p>
 
-1. Open the [latest release](https://github.com/victorwalter/fugueti-launcher/releases/latest) and
+1. Open the [latest release](https://github.com/fugueti/launcher/releases/latest) and
    download `FuguetiLauncher-<version>.github.release.apk`.
 2. Install it (allow installs from your browser or file manager when Android asks).
 3. Make Fugueti your home app: *Android Settings → Apps → Default apps → Home app → Fugueti*.
@@ -72,8 +72,8 @@ turn the permission on again.
 
 | Channel | Branch | Base | How it is published |
 |---|---|---|---|
-| **Stable** | `main` | Launcher3 from Android 16 | A version tag (`v16.0.x`) builds the signed APK as a [GitHub release](https://github.com/victorwalter/fugueti-launcher/releases/latest) |
-| **Nightly** | `17-dev` | Launcher3 from Android 17 | Every push to `17-dev` builds it, replacing the [`nightly` release](https://github.com/victorwalter/fugueti-launcher/releases/tag/nightly) |
+| **Stable** | `main` | Launcher3 from Android 16 | A version tag (`v16.0.x`) builds the signed APK as a [GitHub release](https://github.com/fugueti/launcher/releases/latest) |
+| **Nightly** | `17-dev` | Launcher3 from Android 17 | Every push to `17-dev` builds it, replacing the [`nightly` release](https://github.com/fugueti/launcher/releases/tag/nightly) |
 
 Stable releases are the version to use day to day: `main` only takes fixes for the Android 16
 line and nothing is published until a version is tagged.
@@ -92,7 +92,7 @@ The Google app only connects its feed to development builds or system apps, so r
 any launcher need a small bridge app. Fugueti's is **Fugueti Feed**, signed with the same key:
 
 1. Download `FuguetiFeed-<version>.release.apk` from the
-   [Fugueti Feed releases](https://github.com/victorwalter/fugueti-feed/releases/latest) and
+   [Fugueti Feed releases](https://github.com/fugueti/feed/releases/latest) and
    install it. It has no permissions and only talks to Fugueti.
 2. In Fugueti: long press the home screen → *Home settings* → *Home screen* → turn on
    **Show feed**.
@@ -125,8 +125,8 @@ Android 17 happens on `17-dev` and becomes the next stable version when it is re
 Requirements: JDK 21 or newer, Android SDK with `platforms;android-37.2` and `build-tools;37.0.0`.
 
 ```bash
-git clone https://github.com/victorwalter/fugueti-launcher
-cd fugueti-launcher
+git clone https://github.com/fugueti/launcher
+cd launcher
 ./gradlew assembleLawnWithQuickstepGithubRelease    # release app
 ./gradlew assembleLawnWithQuickstepNightlyRelease   # nightly app (app.fugueti.launcher.nightly)
 ```

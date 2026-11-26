@@ -41,7 +41,7 @@ class FeedBridge(private val context: Context) {
     private val prefs by lazy { PreferenceManager.getInstance(context) }
     private val bridgePackages by lazy {
         listOf(
-            // Fugueti: our own bridge app (github.com/victorwalter/fugueti-feed), preferred over the others
+            // Fugueti: our own bridge app (github.com/fugueti/feed), preferred over the others
             BridgeInfo(FUGUETI_FEED_PACKAGE, R.integer.fugueti_feed_signature_hash),
             PixelBridgeInfo("com.google.android.apps.nexuslauncher", R.integer.bridge_signature_hash),
             BridgeInfo("app.lawnchair.lawnfeed", R.integer.lawnfeed_signature_hash),

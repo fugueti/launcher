@@ -4,6 +4,9 @@
 
 Fugueti on Launcher3 from Android 17, published as the nightly.
 
+* Fugueti moved to the Fugueti organization on GitHub: the app, its update check and links now
+  use github.com/fugueti/launcher, and the Fugueti Feed links use github.com/fugueti/feed. The
+  old addresses keep redirecting, so older versions still find updates.
 * Home screen pages reordered in edit mode keep their new order after a restart; before, they
   went back to the old order and the home page moved to another page (Android 16 has the same
   bug).

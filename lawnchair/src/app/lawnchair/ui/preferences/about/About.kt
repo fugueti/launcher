@@ -385,4 +385,4 @@ internal fun LazyListScope.aboutContent(
 }
 
 // Fugueti: the app's own privacy policy (also the one listed on Google Play)
-private const val PRIVACY_POLICY = "https://github.com/victorwalter/fugueti-launcher/blob/main/docs/privacy-policy.md"
+private const val PRIVACY_POLICY = "https://github.com/fugueti/launcher/blob/main/docs/privacy-policy.md"
