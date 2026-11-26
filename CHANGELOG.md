@@ -12,6 +12,9 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
   not on Google Play.
 * Android's accessibility settings describe Fugueti's service with Fugueti's name; the text still
   said Lawnchair.
+* The Google Play version no longer asks Android for photo and video access, which it never used
+  (file search and the wallpaper preview are off there), and has no crash log upload: Google Play
+  reports crashes itself. Google Play does not accept either without a policy exception.
 * Home screen pages reordered in edit mode keep their new order after a restart; before, they
   went back to the old order and the home page moved to another page (Android 16 has the same
   bug).
