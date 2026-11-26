@@ -18,6 +18,7 @@
 package app.lawnchair.ui.preferences.destinations
 
 import app.lawnchair.util.isPackageInstalledAndEnabled
+import androidx.compose.material3.Text
 import app.fugueti.about.FuguetiAbout
 import app.lawnchair.FeedBridge
 import android.content.Context
@@ -44,6 +45,8 @@ import app.lawnchair.ui.preferences.components.HomeLayoutSettings
 import app.lawnchair.ui.preferences.components.NavigationActionPreference
 import app.lawnchair.ui.preferences.components.OverlayHandlerPreference
 import app.lawnchair.ui.preferences.components.controls.ClickablePreference
+import app.lawnchair.ui.preferences.components.layout.PreferenceTemplate
+import app.lawnchair.ui.util.isPlayStoreFlavor
 import app.lawnchair.ui.preferences.components.controls.ListPreference
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
@@ -158,17 +161,25 @@ fun HomeScreenPreferences(
             )
             // Fugueti: no "Feed provider" choice (the Google app refuses direct connections from
             // release builds); the feed always goes through the Fugueti Feed bridge app, and this
-            // link shows up while it is missing.
+            // link shows up while it is missing. The Google Play version only explains where to
+            // find it: the Fugueti Feed app is not on Google Play.
             val feedBridgeInstalled =
                 context.packageManager.isPackageInstalledAndEnabled(FeedBridge.FUGUETI_FEED_PACKAGE)
             ExpandAndShrink(visible = enableFeedAdapter.state.value && !feedBridgeInstalled) {
-                ClickablePreference(
-                    label = stringResource(id = R.string.fg_feed_bridge_label),
-                    subtitle = stringResource(id = R.string.fg_feed_bridge_description),
-                    onClick = {
-                        FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL)
-                    },
-                )
+                if (isPlayStoreFlavor()) {
+                    PreferenceTemplate(
+                        title = { Text(text = stringResource(id = R.string.fg_feed_bridge_label_play)) },
+                        description = { Text(text = stringResource(id = R.string.fg_feed_bridge_description_play)) },
+                    )
+                } else {
+                    ClickablePreference(
+                        label = stringResource(id = R.string.fg_feed_bridge_label),
+                        subtitle = stringResource(id = R.string.fg_feed_bridge_description),
+                        onClick = {
+                            FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL)
+                        },
+                    )
+                }
             }
         }
         PreferenceGroup(heading = stringResource(R.string.style)) {

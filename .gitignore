@@ -14,7 +14,7 @@ bin
 local.properties
 build
 .DS_Store
-keystore.properties
+keystore*.properties
 *.jks
 __pycache__
 .vscode

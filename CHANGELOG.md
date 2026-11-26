@@ -1,5 +1,13 @@
 # Fugueti Launcher changelog
 
+## 16.0.5 (unreleased)
+
+* The Google Play version (`app.fugueti.launcher.play`) explains where to get the Fugueti Feed
+  app when the feed is on and it is missing, instead of linking to the download: Fugueti Feed is
+  not on Google Play.
+* Android's accessibility settings describe Fugueti's service with Fugueti's name; the text still
+  said Lawnchair.
+
 ## 16.0.4 (2026-11-26)
 
 * Fugueti moved to the Fugueti organization on GitHub: the app, its update check and links now

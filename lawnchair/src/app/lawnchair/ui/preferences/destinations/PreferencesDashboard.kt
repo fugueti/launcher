@@ -89,6 +89,7 @@ import app.lawnchair.ui.preferences.navigation.Quickstep
 import app.lawnchair.ui.preferences.navigation.Search
 import app.lawnchair.ui.preferences.navigation.Smartspace
 import app.lawnchair.ui.util.addIf
+import app.lawnchair.ui.util.isPlayStoreFlavor
 import app.lawnchair.util.isDefaultLauncher
 import app.lawnchair.util.restartLauncher
 import com.android.launcher3.BuildConfig
@@ -127,18 +128,22 @@ fun PreferencesDashboard(
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        // Fugueti: the feed is on but the Fugueti Feed bridge app is missing
+        // Fugueti: the feed is on but the Fugueti Feed bridge app is missing. The Google Play
+        // version only explains where to find it: the Fugueti Feed app is not on Google Play.
         if (prefs2.enableFeed.getAdapter().state.value &&
             !context.packageManager.isPackageInstalledAndEnabled(FeedBridge.FUGUETI_FEED_PACKAGE)
         ) {
+            val playStore = isPlayStoreFlavor()
             WarningPreference(
-                text = stringResource(id = R.string.fg_feed_bridge_missing_warning),
+                text = stringResource(
+                    id = if (playStore) R.string.fg_feed_bridge_missing_warning_play else R.string.fg_feed_bridge_missing_warning,
+                ),
                 modifier = Modifier.padding(horizontal = 16.dp),
                 standalone = true,
                 colors = ListItemDefaults.segmentedColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                 ),
-                onClick = { FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL) },
+                onClick = if (playStore) null else ({ FuguetiAbout.openUrl(context, FuguetiAbout.FEED_RELEASES_URL) }),
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
