@@ -3,4 +3,7 @@
 <resources>
     <string name="fg_feed_bridge_missing_warning">The feed is on, but the Fugueti Feed app is not installed. Tap to download it.</string>
     <string name="fg_managed_by_fugueti">Managed by Fugueti</string>
+    <string name="fg_feed_bridge_missing_warning_play">The feed is on, but it needs the Fugueti Feed app, which is not on Google Play. You can find it at github.com/fugueti/feed.</string>
+    <string name="fg_feed_bridge_label_play">Fugueti Feed needed</string>
+    <string name="fg_feed_bridge_description_play">The Google feed (Discover) needs the small Fugueti Feed app. It is not on Google Play; you can find it at github.com/fugueti/feed.</string>
 </resources>
