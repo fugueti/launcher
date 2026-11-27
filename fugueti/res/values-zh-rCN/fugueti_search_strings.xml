@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">下拉搜索</string>
+    <string name="drawer_pull_to_search_description">在应用抽屉的下三分之一处向下滑动即可搜索</string>
+    <string name="drawer_pull_to_search_disabled_description">关闭搜索栏后才能使用</string>
+    <string name="drawer_search_bar_position_label">位置</string>
+    <string name="drawer_search_bar_position_top">顶部</string>
+    <string name="drawer_search_bar_position_bottom">底部</string>
+    <string name="home_search_bar_position_dock_below">程序坞中，图标下方</string>
+    <string name="home_search_bar_position_dock_above">程序坞中，图标上方</string>
+    <string name="home_search_bar_position_top">屏幕顶部</string>
+    <string name="dock_search_bar_size_label">大小</string>
+</resources>

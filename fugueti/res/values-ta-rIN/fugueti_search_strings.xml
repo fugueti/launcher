@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">தேட இழுக்கவும்</string>
+    <string name="drawer_pull_to_search_description">தேட, ஆப்ஸ் டிராயரின் கீழ் மூன்றில் ஒரு பகுதியில் கீழே ஸ்வைப் செய்யவும்</string>
+    <string name="drawer_pull_to_search_disabled_description">இதைப் பயன்படுத்த தேடல் பட்டியை முடக்கவும்</string>
+    <string name="drawer_search_bar_position_label">நிலை</string>
+    <string name="drawer_search_bar_position_top">மேலே</string>
+    <string name="drawer_search_bar_position_bottom">கீழே</string>
+    <string name="home_search_bar_position_dock_below">டாக்கில், ஐகான்களுக்குக் கீழே</string>
+    <string name="home_search_bar_position_dock_above">டாக்கில், ஐகான்களுக்கு மேலே</string>
+    <string name="home_search_bar_position_top">திரையின் மேலே</string>
+    <string name="dock_search_bar_size_label">அளவு</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Hae vetämällä</string>
+    <string name="drawer_pull_to_search_description">Pyyhkäise alas sovelluslaatikon alimmassa kolmanneksessa hakeaksesi</string>
+    <string name="drawer_pull_to_search_disabled_description">Poista hakupalkki käytöstä käyttääksesi tätä</string>
+    <string name="drawer_search_bar_position_label">Sijainti</string>
+    <string name="drawer_search_bar_position_top">Ylhäällä</string>
+    <string name="drawer_search_bar_position_bottom">Alhaalla</string>
+    <string name="home_search_bar_position_dock_below">Telakassa, kuvakkeiden alla</string>
+    <string name="home_search_bar_position_dock_above">Telakassa, kuvakkeiden yllä</string>
+    <string name="home_search_bar_position_top">Näytön yläreunassa</string>
+    <string name="dock_search_bar_size_label">Koko</string>
+</resources>

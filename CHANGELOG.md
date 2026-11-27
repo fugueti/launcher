@@ -15,6 +15,32 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
 * The Google Play version no longer asks Android for photo and video access, which it never used
   (file search and the wallpaper preview are off there), and has no crash log upload: Google Play
   reports crashes itself. Google Play does not accept either without a policy exception.
+* Restoring a Lawnchair backup no longer crashes the launcher, and the restored home screen
+  stays: the backup's grid (columns, rows, dock icons) comes along with its layout, and the
+  launcher no longer deleted the database it had just opened nor replaced the restored layout
+  with the default one.
+* Importing a Nova backup works again: it failed with an error as soon as the backup set the app
+  drawer search bar, and its home screen could replace the database the running launcher had
+  open. A Nova backup without a home screen search bar turns the dock search bar off.
+* New installs start with a 5 x 5 home screen and 5 dock icons on phones. Installs that kept
+  the old 7 x 12 default (7 dock icons) keep it.
+* **App drawer > Pull to search**, as in Nova: with the drawer search bar off, a swipe down in
+  the lower third of the app drawer opens the search bar and the keyboard, so one thumb opens
+  the drawer and searches. Back hides the search bar again. A swipe down higher up still closes
+  the drawer. Importing a Nova backup brings this setting too.
+  ([#2](https://github.com/fugueti/launcher/issues/2))
+* **App drawer > Search bar > Position** puts the drawer search bar at the bottom, as in Nova:
+  it rests above the navigation bar and rides just above the keyboard while you type. Importing
+  a Nova backup brings this setting too.
+* **Dock > Search bar > Position** moves the home screen search bar, as in Nova: in the dock below
+  the icons (as before), in the dock above the icons, or at the top of the screen on every page,
+  where the pages start below it and it hides outside the home screen (app drawer, recents,
+  dragging an icon). Importing a Nova backup brings this setting too.
+* **Search bar > Size** (with the Google Search bar) sets the size of Google's bar in the dock
+  or at the top of the screen. The default, 100%, matches Fugueti's own bar; Google's used to
+  fill its whole slot and looked bigger.
+* The drawer search bar at the top sits where Nova puts it, just below the status bar, or just
+  below the camera when the status bar is hidden; it used to leave an empty band above it.
 * Home screen pages reordered in edit mode keep their new order after a restart; before, they
   went back to the old order and the home page moved to another page (Android 16 has the same
   bug).

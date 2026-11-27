@@ -94,7 +94,9 @@ object WorkspaceProfileNonResponsiveFactory {
                     /*Left */
                     desiredWorkspaceHorizontalMarginPx,
                     /*Top */
-                    workspaceTopPadding + (if (isScalableGrid) 0 else edgeMarginPx),
+                    // Fugueti: the pages start below a search bar at the top.
+                    workspaceTopPadding + (if (isScalableGrid) 0 else edgeMarginPx) +
+                        hotseatProfile.lawnchairDock.screenTopQsbSpacePx,
                     /*Right */
                     desiredWorkspaceHorizontalMarginPx,
                     /*Bottom */

@@ -85,7 +85,7 @@ fun HomeScreenGridPreferences(
             }
         }
 
-        val maxGridSize = if (increaseMaxGridSize.state.value) 20 else 12 // Fugueti: 12 fits the 7x12 default
+        val maxGridSize = if (increaseMaxGridSize.state.value) 20 else 12 // Fugueti: 12 fits the 7x12 default of Fugueti up to 16.0.4
 
         BoxWithConstraints(
             modifier = Modifier

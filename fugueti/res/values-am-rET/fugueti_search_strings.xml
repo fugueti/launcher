@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">ለመፈለግ ይጎትቱ</string>
+    <string name="drawer_pull_to_search_description">ለመፈለግ በመተግበሪያ መሳቢያው የታችኛው ሶስተኛ ክፍል ወደ ታች ያንሸራትቱ</string>
+    <string name="drawer_pull_to_search_disabled_description">ለመጠቀም የፍለጋ አሞሌውን ያጥፉ</string>
+    <string name="drawer_search_bar_position_label">አቀማመጥ</string>
+    <string name="drawer_search_bar_position_top">ላይ</string>
+    <string name="drawer_search_bar_position_bottom">ታች</string>
+    <string name="home_search_bar_position_dock_below">በዶክ ውስጥ፣ ከአዶዎቹ በታች</string>
+    <string name="home_search_bar_position_dock_above">በዶክ ውስጥ፣ ከአዶዎቹ በላይ</string>
+    <string name="home_search_bar_position_top">በማያ ገጹ አናት ላይ</string>
+    <string name="dock_search_bar_size_label">መጠን</string>
+</resources>

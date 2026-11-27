@@ -22,12 +22,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.fugueti.qsb.DockSearchBarSize
 import app.lawnchair.hotseat.DisabledHotseat
+import app.lawnchair.hotseat.GoogleSearchHotseat
 import app.lawnchair.hotseat.HotseatMode
 import app.lawnchair.hotseat.LawnchairHotseat
 import app.lawnchair.preferences.PreferenceAdapter
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
+import app.lawnchair.preferences2.PreferenceManager2
 import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.qsb.LawnQsbLayout
 import app.lawnchair.qsb.LawnQsbUi
@@ -68,6 +71,7 @@ fun DockSearchPreference(
     val qsbCornerAdapter = prefs.hotseatQsbCornerRadius.getAdapter()
     val qsbAlphaAdapter = prefs.hotseatQsbAlpha.getAdapter()
     val qsbHotseatStrokeWidth = prefs.hotseatQsbStrokeWidth.getAdapter()
+    val qsbSizeAdapter = prefs.hotseatQsbSizeFactor.getAdapter()
     val strokeColorStyleAdapter = prefs2.strokeColorStyle.getAdapter()
     val hotseatQsbProviderAdapter by prefs2.hotseatQsbProvider.getAdapter()
 
@@ -79,6 +83,20 @@ fun DockSearchPreference(
                     HotseatModePreference(
                         adapter = hotseatModeAdapter,
                     )
+                    // Fugueti: below or above the dock icons, or at the top of the screen (Nova).
+                    ExpandAndShrink(visible = hotseatModeAdapter.state.value != DisabledHotseat) {
+                        HomeSearchBarPositionPreference()
+                    }
+                    // Fugueti: size of Google's widget in any position; 100% is Lawnchair's bar.
+                    ExpandAndShrink(visible = hotseatModeAdapter.state.value == GoogleSearchHotseat) {
+                        SliderPreference(
+                            label = stringResource(id = R.string.dock_search_bar_size_label),
+                            adapter = qsbSizeAdapter,
+                            step = 0.05F,
+                            valueRange = DockSearchBarSize.MIN..DockSearchBarSize.MAX,
+                            showAsPercentage = true,
+                        )
+                    }
                 }
                 ExpandAndShrink(visible = hotseatModeAdapter.state.value != DisabledHotseat) {
                     Column {
@@ -89,6 +107,12 @@ fun DockSearchPreference(
                             transparency = qsbAlphaAdapter.state.value,
                             strokeWidth = qsbHotseatStrokeWidth.state.value,
                             strokeColor = strokeColorStyleAdapter.state.value,
+                            // Fugueti: Search bar > Size only applies to Google's bar.
+                            sizeFactor = if (hotseatModeAdapter.state.value == GoogleSearchHotseat) {
+                                qsbSizeAdapter.state.value
+                            } else {
+                                1f
+                            },
                         )
                     }
                 }
@@ -176,6 +200,7 @@ private fun DockSearchBarPreview(
     strokeWidth: Float,
     strokeColor: ColorOption,
     modifier: Modifier = Modifier,
+    sizeFactor: Float = 1f,
 ) {
     val context = LocalContext.current
     val searchProvider = provider
@@ -224,7 +249,7 @@ private fun DockSearchBarPreview(
                     onQsbClick = {},
                     onEndIconClick = {},
                 ),
-                modifier = Modifier.height(48.dp),
+                modifier = Modifier.height(48.dp * sizeFactor),
             )
         }
     }
@@ -260,5 +285,30 @@ private fun getThemedQsbBackgroundColor(): Int {
     return ColorTokens.ColorBackground.resolveColor(
         LocalContext.current,
         if (isSelectedThemeDark) UiColorMode.Dark else UiColorMode.Light,
+    )
+}
+
+@Composable
+private fun HomeSearchBarPositionPreference(
+    modifier: Modifier = Modifier,
+) {
+    val entries = remember {
+        listOf(
+            ListPreferenceEntry(PreferenceManager2.HOME_SEARCH_BAR_TOP) {
+                stringResource(R.string.home_search_bar_position_top)
+            },
+            ListPreferenceEntry(PreferenceManager2.HOME_SEARCH_BAR_DOCK_ABOVE) {
+                stringResource(R.string.home_search_bar_position_dock_above)
+            },
+            ListPreferenceEntry(PreferenceManager2.HOME_SEARCH_BAR_DOCK_BELOW) {
+                stringResource(R.string.home_search_bar_position_dock_below)
+            },
+        )
+    }
+    ListPreference(
+        adapter = preferenceManager2().homeSearchBarPosition.getAdapter(),
+        entries = entries,
+        label = stringResource(R.string.drawer_search_bar_position_label),
+        modifier = modifier,
     )
 }

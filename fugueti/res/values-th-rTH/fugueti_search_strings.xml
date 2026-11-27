@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">ดึงเพื่อค้นหา</string>
+    <string name="drawer_pull_to_search_description">ปัดลงในหนึ่งในสามส่วนล่างของลิ้นชักแอปเพื่อค้นหา</string>
+    <string name="drawer_pull_to_search_disabled_description">ปิดแถบค้นหาเพื่อใช้ฟีเจอร์นี้</string>
+    <string name="drawer_search_bar_position_label">ตำแหน่ง</string>
+    <string name="drawer_search_bar_position_top">ด้านบน</string>
+    <string name="drawer_search_bar_position_bottom">ด้านล่าง</string>
+    <string name="home_search_bar_position_dock_below">ใน Dock ใต้ไอคอน</string>
+    <string name="home_search_bar_position_dock_above">ใน Dock เหนือไอคอน</string>
+    <string name="home_search_bar_position_top">ด้านบนของหน้าจอ</string>
+    <string name="dock_search_bar_size_label">ขนาด</string>
+</resources>

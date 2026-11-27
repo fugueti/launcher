@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Потягнути для пошуку</string>
+    <string name="drawer_pull_to_search_description">Проведіть униз у нижній третині меню застосунків, щоб шукати</string>
+    <string name="drawer_pull_to_search_disabled_description">Вимкніть рядок пошуку, щоб використовувати це</string>
+    <string name="drawer_search_bar_position_label">Положення</string>
+    <string name="drawer_search_bar_position_top">Угорі</string>
+    <string name="drawer_search_bar_position_bottom">Унизу</string>
+    <string name="home_search_bar_position_dock_below">У доку, під значками</string>
+    <string name="home_search_bar_position_dock_above">У доку, над значками</string>
+    <string name="home_search_bar_position_top">Угорі екрана</string>
+    <string name="dock_search_bar_size_label">Розмір</string>
+</resources>

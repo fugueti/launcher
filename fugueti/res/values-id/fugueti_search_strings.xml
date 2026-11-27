@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Tarik untuk mencari</string>
+    <string name="drawer_pull_to_search_description">Geser ke bawah di sepertiga bagian bawah laci aplikasi untuk mencari</string>
+    <string name="drawer_pull_to_search_disabled_description">Nonaktifkan bilah penelusuran untuk menggunakannya</string>
+    <string name="drawer_search_bar_position_label">Posisi</string>
+    <string name="drawer_search_bar_position_top">Atas</string>
+    <string name="drawer_search_bar_position_bottom">Bawah</string>
+    <string name="home_search_bar_position_dock_below">Di dock, di bawah ikon</string>
+    <string name="home_search_bar_position_dock_above">Di dock, di atas ikon</string>
+    <string name="home_search_bar_position_top">Bagian atas layar</string>
+    <string name="dock_search_bar_size_label">Ukuran</string>
+</resources>

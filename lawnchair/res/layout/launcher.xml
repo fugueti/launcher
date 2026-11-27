@@ -59,6 +59,15 @@
             android:layout_gravity="bottom|center_horizontal"
             android:theme="@style/HomeScreenElementTheme" />
 
+        <!-- Fugueti: home screen search bar at the top of the screen (Search bar > Position) -->
+        <app.fugueti.home.ScreenTopSearchBar
+            android:id="@+id/fugueti_screen_top_search_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:theme="@style/HomeScreenElementTheme"
+            android:visibility="gone" />
+
         <app.lawnchair.views.EditModePageStrip
             android:id="@+id/edit_mode_page_strip"
             android:layout_width="match_parent"

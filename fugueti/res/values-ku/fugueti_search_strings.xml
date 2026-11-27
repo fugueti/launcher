@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Ji bo lêgerînê bikişîne</string>
+    <string name="drawer_pull_to_search_description">Ji bo lêgerînê di sêyeka jêrîn a çekmeceya sepanan de ber bi jêr ve bişemitîne</string>
+    <string name="drawer_pull_to_search_disabled_description">Ji bo bikaranînê darika lêgerînê vemirîne</string>
+    <string name="drawer_search_bar_position_label">Cih</string>
+    <string name="drawer_search_bar_position_top">Jor</string>
+    <string name="drawer_search_bar_position_bottom">Jêr</string>
+    <string name="home_search_bar_position_dock_below">Di dokê de, li bin îkonan</string>
+    <string name="home_search_bar_position_dock_above">Di dokê de, li ser îkonan</string>
+    <string name="home_search_bar_position_top">Li jorê ekranê</string>
+    <string name="dock_search_bar_size_label">Mezinahî</string>
+</resources>

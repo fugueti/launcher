@@ -161,11 +161,28 @@ class LawnchairApp : LauncherApplication() {
         }
     }
 
-    fun renameRestoredDb(dbName: String) {
+    /**
+     * Whether there is a restored backup database this process may move into place. A backup
+     * restore stages it with an owner file naming its own process, which restarts right away: only
+     * the next process takes it (the restoring one, killed mid-way, lost RestoreDbTask's work).
+     * The Nova import stages it without one and reopens the database in its own process.
+     */
+    fun hasRestoredDbToTake(): Boolean {
+        if (!getDatabasePath(LawnchairBackup.RESTORED_DB_FILE_NAME).exists()) return false
+        val owner = getDatabasePath(LawnchairBackup.RESTORED_DB_OWNER_FILE_NAME)
+        val ownerPid = runCatching { owner.readText().trim().toInt() }.getOrNull()
+        return ownerPid == null || ownerPid != android.os.Process.myPid()
+    }
+
+    /** Moves a restored backup database in place of [dbName]; returns whether there was one. */
+    fun renameRestoredDb(dbName: String): Boolean {
         val restoredDbFile = getDatabasePath(LawnchairBackup.RESTORED_DB_FILE_NAME)
-        if (!restoredDbFile.exists()) return
+        if (!hasRestoredDbToTake()) return false
+        getDatabasePath(LawnchairBackup.RESTORED_DB_OWNER_FILE_NAME).delete()
         val dbFile = getDatabasePath(dbName)
-        restoredDbFile.renameTo(dbFile)
+        // Fugueti: drop the replaced database's journal files, which would not match the new one.
+        listOf("", "-journal", "-wal", "-shm").forEach { File(dbFile.path + it).delete() }
+        return restoredDbFile.renameTo(dbFile)
     }
 
     fun migrateDbName(dbName: String) {
@@ -185,13 +202,16 @@ class LawnchairApp : LauncherApplication() {
         }
     }
 
-    fun cleanUpDatabases() {
+    /** Deletes the launcher databases of other grids; keeps the grid's one and [openDbName]. */
+    fun cleanUpDatabases(openDbName: String?) {
         val idp = InvariantDeviceProfile.INSTANCE.get(this)
         val dbName = idp.dbFile
         val dbFile = getDatabasePath(dbName)
         dbFile?.parentFile?.listFiles()?.forEach { file ->
             val name = file.name
-            if (name.startsWith("launcher") && !name.startsWith(dbName)) {
+            if (name.startsWith("launcher") && !name.startsWith(dbName) &&
+                (openDbName == null || !name.startsWith(openDbName))
+            ) {
                 file.delete()
             }
         }

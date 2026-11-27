@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Patraukite, kad ieškotumėte</string>
+    <string name="drawer_pull_to_search_description">Norėdami ieškoti, perbraukite žemyn apatiniame programų stalčiaus trečdalyje</string>
+    <string name="drawer_pull_to_search_disabled_description">Norėdami tai naudoti, išjunkite paieškos juostą</string>
+    <string name="drawer_search_bar_position_label">Padėtis</string>
+    <string name="drawer_search_bar_position_top">Viršuje</string>
+    <string name="drawer_search_bar_position_bottom">Apačioje</string>
+    <string name="home_search_bar_position_dock_below">Doke, po piktogramomis</string>
+    <string name="home_search_bar_position_dock_above">Doke, virš piktogramų</string>
+    <string name="home_search_bar_position_top">Ekrano viršuje</string>
+    <string name="dock_search_bar_size_label">Dydis</string>
+</resources>

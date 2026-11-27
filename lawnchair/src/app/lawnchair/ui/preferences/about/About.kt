@@ -63,6 +63,7 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceGroupItem
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayoutLazyColumn
 import app.lawnchair.ui.preferences.components.layout.preferenceGroupItems
 import app.lawnchair.ui.preferences.navigation.AboutLicenses
+import app.lawnchair.ui.util.isPlayStoreFlavor
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.R
 import java.io.File
@@ -136,7 +137,14 @@ fun About(
                 }
             },
             onSupport = { showSupportSheet = true },
-            onDonate = { showDonateSheet = true },
+            onDonate = {
+                // Fugueti: the Google Play version opens fugueti.app's donation sheet instead.
+                if (isPlayStoreFlavor()) {
+                    FuguetiAbout.openUrl(context, FuguetiAbout.DONATE_URL)
+                } else {
+                    showDonateSheet = true
+                }
+            },
             onInstall = { viewModel.installUpdate(it) },
             onForceInstall = { viewModel.installUpdate(it, forceInstall = true) },
             onViewChanges = {

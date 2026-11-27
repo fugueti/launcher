@@ -151,6 +151,17 @@ class PreferenceManager2 @Inject constructor(
         save = { it.toString() },
     )
 
+    /**
+     * Fugueti: where the home screen search bar goes, like Nova's search bar placement:
+     * "dock_below" (below the dock icons), "dock_above" (above them) or "top" (top of the
+     * screen, on every page).
+     */
+    val homeSearchBarPosition = preference(
+        key = stringPreferencesKey(name = "home_search_bar_position"),
+        defaultValue = HOME_SEARCH_BAR_DOCK_BELOW,
+        onSet = { reloadHelper.restart() },
+    )
+
     val iconShape = preference(
         key = stringPreferencesKey(name = "icon_shape"),
         defaultValue = IconShape.fromString(
@@ -453,6 +464,19 @@ class PreferenceManager2 @Inject constructor(
         key = booleanPreferencesKey(name = "hide_app_drawer_search_bar"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_hide_app_drawer_search_bar),
         onSet = { reloadHelper.recreate() },
+    )
+
+    /** Fugueti: the drawer search bar sits at the bottom and rides above the keyboard. */
+    val drawerSearchBarAtBottom = preference(
+        key = booleanPreferencesKey(name = "drawer_search_bar_at_bottom"),
+        defaultValue = false,
+        onSet = { reloadHelper.recreate() },
+    )
+
+    /** Fugueti: swipe down in the lower part of the app drawer to search (Nova's pull to search). */
+    val drawerPullToSearch = preference(
+        key = booleanPreferencesKey(name = "drawer_pull_to_search"),
+        defaultValue = false,
     )
 
     val appDrawerHapticFeedback = preference(
@@ -1054,6 +1078,11 @@ class PreferenceManager2 @Inject constructor(
         }
 
     companion object {
+        /** Values of [homeSearchBarPosition]. */
+        const val HOME_SEARCH_BAR_DOCK_BELOW = "dock_below"
+        const val HOME_SEARCH_BAR_DOCK_ABOVE = "dock_above"
+        const val HOME_SEARCH_BAR_TOP = "top"
+
         private val Context.preferencesDataStore by preferencesDataStore(
             name = "preferences",
             produceMigrations = { listOf(SharedPreferencesMigration(context = it).produceMigration()) },

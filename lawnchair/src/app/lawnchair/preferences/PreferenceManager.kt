@@ -96,8 +96,9 @@ class PreferenceManager @Inject constructor(
     val calculatedGridSpec = when {
         // This grid configuration is perfect for Phone, tested against Pixel 7,
         // alternative dense configuration can be 5x5x7
-        // Fugueti: 7 columns x 12 rows and 7 dock icons by default on phones
-        isPhone -> LayoutConfig(7, 7, 12)
+        // Fugueti: 5 columns x 5 rows and 5 dock icons by default on phones. Until 16.0.4 it
+        // was 7 x 12 with 7 dock icons; installs from then keep it (see the migration in init).
+        isPhone -> LayoutConfig(5, 5, 5)
 
         // This grid configuration is perfect for Tablet, tested against Pixel Tablet
         isTablet -> LayoutConfig(6, 6, 5)
@@ -112,7 +113,7 @@ class PreferenceManager @Inject constructor(
         isDesktop -> LayoutConfig(6, 6, 5)
 
         // This grid configuration is the fallback for all devices type, this shouldn't be possible
-        else -> LayoutConfig(7, 7, 12)
+        else -> LayoutConfig(5, 5, 5)
     }
 
     val hotseatColumns = IntPref("pref_hotseatColumns", calculatedGridSpec.hotseatColumns, reloadGrid)
@@ -184,6 +185,9 @@ class PreferenceManager @Inject constructor(
     val hotseatQsbCornerRadius = FloatPref("pref_hotseatQsbCornerRadius", 1F, recreate)
     val hotseatQsbAlpha = IntPref("pref_searchHotseatTranparency", 100, recreate)
     val hotseatQsbStrokeWidth = FloatPref("pref_searchStrokeWidth", 0F, recreate)
+
+    /** Fugueti: size of Google's search bar widget, 1 = Lawnchair's bar (see DockSearchBarSize). */
+    val hotseatQsbSizeFactor = FloatPref("pref_hotseatQsbSize", 1F, recreate)
     val hotseatBG = BoolPref("pref_hotseatBG", false, recreate)
     val hotseatBGHorizontalInsetLeft = IntPref("pref_hotseatBGHRinsetLeft", 0, recreate)
     val hotseatBGVerticalInsetTop = IntPref("pref_hotseatBGVRinsetTop", 0, recreate)
@@ -233,6 +237,17 @@ class PreferenceManager @Inject constructor(
     }
 
     init {
+        // Fugueti: the phone default grid went from 7 x 12 (7 dock icons) to 5 x 5 (5 dock
+        // icons). Installs that never changed it keep the old one instead of having their home
+        // screen squeezed into the new grid. Fresh installs have no version yet (9999). Written
+        // before our listener is registered: its grid reload would need this very instance.
+        if (sp.getInt("version", 9999) < 3 && !isTablet && !isFoldable && !isDesktop) {
+            val editor = sp.edit()
+            if (!sp.contains(workspaceColumns.key)) editor.putInt(workspaceColumns.key, 7)
+            if (!sp.contains(workspaceRows.key)) editor.putInt(workspaceRows.key, 12)
+            if (!sp.contains(hotseatColumns.key)) editor.putInt(hotseatColumns.key, 7)
+            editor.commit()
+        }
         sp.registerOnSharedPreferenceChangeListener(this)
         migratePrefs(CURRENT_VERSION) { oldVersion ->
             if (oldVersion < 2) {
@@ -249,7 +264,7 @@ class PreferenceManager @Inject constructor(
     }
 
     companion object {
-        private const val CURRENT_VERSION = 2
+        private const val CURRENT_VERSION = 3
 
         @JvmField
         val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getPreferenceManager)

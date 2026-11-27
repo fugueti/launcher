@@ -335,8 +335,10 @@ data class WorkspaceProfile(
                     val padding =
                         Rect(
                             /* left */ desiredWorkspaceHorizontalMarginPx,
+                            // Fugueti: the pages start below a search bar at the top.
                             /* top */ (workspaceTopPadding +
-                                (if (isScalableGrid) 0 else edgeMarginPx)),
+                                (if (isScalableGrid) 0 else edgeMarginPx) +
+                                hotseatProfile.lawnchairDock.screenTopQsbSpacePx),
                             /* right */ desiredWorkspaceHorizontalMarginPx,
                             /* bottom */ (hotseatBarSizePx + workspaceBottomPadding - insets.bottom),
                         )

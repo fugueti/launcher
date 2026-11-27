@@ -52,6 +52,7 @@ import com.android.launcher3.provider.LauncherDbUtils.tableExists
 import com.android.launcher3.provider.RestoreDbTask
 import com.android.launcher3.provider.RestoreDbTask.Companion.sendMetricsForFailedMigration
 import com.android.launcher3.util.SQLiteTable
+import com.android.launcher3.util.SandboxContext
 import com.android.launcher3.util.WriteProtectedSQLiteTable
 import com.android.launcher3.widget.LauncherWidgetHolder
 import javax.inject.Inject
@@ -80,11 +81,25 @@ internal constructor(
         if (!::openHelper.isInitialized) {
             // Initialize the restore task before opening the DB
             val restoreTask = RestoreDbTask.createRestoreTask(context)
-            val dbFile = prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
+            val dbFile = currentDbFile()
             prepareLawnchairDbFile(dbFile)
             openHelper = createDatabaseHelper(forMigration = false, dbFile)
             restoreTask.accept(this)
+            performPendingRestore()
         }
+    }
+
+    /** Fugueti: restored.db became the database just opened (see prepareLawnchairDbFile). */
+    private var restoredDbPending = false
+
+    /**
+     * Fugueti: applies a restored backup (RestoreDbTask) right after it was moved into place,
+     * before anything else reads the database.
+     */
+    private fun performPendingRestore() {
+        if (!restoredDbPending) return
+        restoredDbPending = false
+        RestoreDbTask.performRestore(context, this)
     }
 
     /**
@@ -97,9 +112,27 @@ internal constructor(
         if (::openHelper.isInitialized) {
             openHelper.close()
         }
-        val dbFile = prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
+        val dbFile = currentDbFile()
         prepareLawnchairDbFile(dbFile)
         openHelper = createDatabaseHelper(forMigration = false, dbFile)
+        performPendingRestore()
+    }
+
+    /**
+     * The database file to open. Fugueti: a restored backup (restored.db) becomes the database of
+     * the current grid (the backup's), and the grid state says so; otherwise the loader would
+     * "migrate" to that grid and reset the restored layout.
+     */
+    private fun currentDbFile(): String {
+        val app = context.applicationContext as? app.lawnchair.LawnchairApp
+        if (context !is SandboxContext && app != null && app.hasRestoredDbToTake()) {
+            // Written to disk now: a restore restarts the launcher right after (exitProcess), and
+            // an async write left the old grid there, so the next start "migrated" it.
+            DeviceGridState(idp).writeToPrefs(context, true)
+            prefs.putSync(LauncherPrefs.DB_FILE.to(idp.dbFile))
+            return idp.dbFile
+        }
+        return prefs.get(LauncherPrefs.DB_FILE).ifEmpty { idp.dbFile }
     }
 
     /**
@@ -113,7 +146,12 @@ internal constructor(
             val app = context.applicationContext as? app.lawnchair.LawnchairApp ?: return
             app.migrateDbName(idp.dbFile)
             // After migrateDbName, which would otherwise move a restored launcher.db to dbFile.
-            app.renameRestoredDb(dbFile)
+            if (app.renameRestoredDb(dbFile)) {
+                // Fugueti: the restored database is not an empty one, whatever was created
+                // before; otherwise the default layout replaces it.
+                prefs.removeSync(getEmptyDbCreatedKey(dbFile))
+                restoredDbPending = true
+            }
         } catch (t: Throwable) {
             Log.w(TAG, "Could not prepare the launcher database file", t)
         }

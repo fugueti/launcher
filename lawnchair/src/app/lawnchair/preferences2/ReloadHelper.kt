@@ -17,6 +17,7 @@
 package app.lawnchair.preferences2
 
 import android.content.Context
+import android.os.Looper
 import app.lawnchair.LawnchairLauncher
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.LauncherAppState
@@ -29,14 +30,27 @@ class ReloadHelper(private val context: Context) {
     private val idp: InvariantDeviceProfile
         get() = InvariantDeviceProfile.INSTANCE.get(context)
 
-    fun reloadGrid() {
+    fun reloadGrid() = onMainThread {
         // The grid reads the preferences from the cache of PreferenceManager2, which may not have
         // the value just set yet.
         PreferenceManager2.getInstance(context).withFreshCache { idp.onPreferencesChanged(context) }
     }
 
-    fun recreate() {
+    fun recreate() = onMainThread {
         LawnchairLauncher.instance?.recreateIfNotScheduled()
+    }
+
+    /**
+     * Fugueti: preferences are also set from background threads (Nova and backup imports run on
+     * Dispatchers.IO), and Activity.recreate() throws "Must be called from main thread" there,
+     * which made the Nova backup restore fail. Reloads always run on the main thread.
+     */
+    private fun onMainThread(block: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            block()
+        } else {
+            Executors.MAIN_EXECUTOR.execute(block)
+        }
     }
 
     fun restart() {

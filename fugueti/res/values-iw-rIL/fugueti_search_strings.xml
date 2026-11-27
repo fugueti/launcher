@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">משיכה לחיפוש</string>
+    <string name="drawer_pull_to_search_description">יש להחליק למטה בשליש התחתון של מגירת האפליקציות כדי לחפש</string>
+    <string name="drawer_pull_to_search_disabled_description">יש לכבות את סרגל החיפוש כדי להשתמש בזה</string>
+    <string name="drawer_search_bar_position_label">מיקום</string>
+    <string name="drawer_search_bar_position_top">למעלה</string>
+    <string name="drawer_search_bar_position_bottom">למטה</string>
+    <string name="home_search_bar_position_dock_below">במעגן, מתחת לסמלים</string>
+    <string name="home_search_bar_position_dock_above">במעגן, מעל הסמלים</string>
+    <string name="home_search_bar_position_top">בראש המסך</string>
+    <string name="dock_search_bar_size_label">גודל</string>
+</resources>

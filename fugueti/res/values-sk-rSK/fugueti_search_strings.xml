@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Hľadať potiahnutím</string>
+    <string name="drawer_pull_to_search_description">Na vyhľadávanie potiahnite nadol v dolnej tretine zásuvky aplikácií</string>
+    <string name="drawer_pull_to_search_disabled_description">Na použitie vypnite vyhľadávací panel</string>
+    <string name="drawer_search_bar_position_label">Poloha</string>
+    <string name="drawer_search_bar_position_top">Hore</string>
+    <string name="drawer_search_bar_position_bottom">Dole</string>
+    <string name="home_search_bar_position_dock_below">V docku, pod ikonami</string>
+    <string name="home_search_bar_position_dock_above">V docku, nad ikonami</string>
+    <string name="home_search_bar_position_top">Hore na obrazovke</string>
+    <string name="dock_search_bar_size_label">Veľkosť</string>
+</resources>

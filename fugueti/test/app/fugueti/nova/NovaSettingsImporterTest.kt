@@ -50,6 +50,8 @@ class NovaSettingsImporterTest {
                 boolean("show_notification_bar", false),
                 boolean("drawer_show_keyboard_by_default", true),
                 string("drawer_searchbar_position", "TOP"),
+                boolean("drawer_pull_to_search", true),
+                string("searchbar_placement", "PERSISTENT"),
                 boolean("drawer_predictive_apps", false),
                 string("screen_orientation", "NOSENSOR"),
             ),
@@ -67,6 +69,10 @@ class NovaSettingsImporterTest {
                 showStatusBar = false,
                 showKeyboardInDrawer = true,
                 hideDrawerSearchBar = false,
+                drawerSearchBarAtBottom = false,
+                pullToSearch = true,
+                homeSearchBarPosition = "top",
+                homeSearchBarOff = false,
                 showSuggestedApps = false,
                 allowRotation = false,
             ),
@@ -104,6 +110,36 @@ class NovaSettingsImporterTest {
         assertEquals(1.5f, settings.homeLabelSize)
         assertEquals(10, settings.drawerColumns)
         assertEquals(true, settings.hideDrawerSearchBar)
+        assertEquals(null, settings.drawerSearchBarAtBottom)
+    }
+
+    @Test
+    fun searchBarAtTheBottom() {
+        val settings = NovaSettingsImporter.parse(
+            novaXml(string("drawer_searchbar_position", "BOTTOM")),
+        )
+        assertEquals(false, settings.hideDrawerSearchBar)
+        assertEquals(true, settings.drawerSearchBarAtBottom)
+    }
+
+    @Test
+    fun homeSearchBarInTheDock() {
+        assertEquals(
+            "dock_below",
+            NovaSettingsImporter.parse(novaXml(string("searchbar_placement", "DOCK_BELOW_ICONS"))).homeSearchBarPosition,
+        )
+        assertEquals(
+            "dock_above",
+            NovaSettingsImporter.parse(novaXml(string("searchbar_placement", "DOCK_ABOVE_ICONS"))).homeSearchBarPosition,
+        )
+        assertEquals(null, NovaSettingsImporter.parse(novaXml(string("searchbar_placement", "PAGE"))).homeSearchBarPosition)
+    }
+
+    @Test
+    fun noHomeSearchBar() {
+        val settings = NovaSettingsImporter.parse(novaXml(string("searchbar_placement", "NONE")))
+        assertEquals(true, settings.homeSearchBarOff)
+        assertEquals(null, settings.homeSearchBarPosition)
     }
 
     @Test

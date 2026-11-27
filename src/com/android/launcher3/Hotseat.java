@@ -155,6 +155,11 @@ public class Hotseat extends FrameLayout implements Insettable {
             com.patrykmichalik.opto.core.PreferenceExtensionsKt.setBlocking(preferenceManager2.getHotseatMode(), hotseatMode);
         }
         int layoutId = hotseatMode.getLayoutResourceId();
+        // Fugueti: Home screen > Search bar > Position "top": the bar leaves the dock.
+        if (PreferenceManager2.HOME_SEARCH_BAR_TOP.equals(PreferenceCacheExtensionsKt.firstCached(
+                preferenceManager2.getHomeSearchBarPosition()))) {
+            layoutId = R.layout.empty_view;
+        }
 
         mIconsContainer = new FrameLayout(context);
         mIconsContainer.setLayoutParams(new LayoutParams(

@@ -72,11 +72,10 @@
     <string name="fg_about_based_on">Based on</string>
     <string name="fg_about_support_subject">Fugueti %1$s support</string>
     <string name="fg_about_no_email_app">No email app found</string>
-    <string name="fg_about_donate_title">Donate with crypto</string>
-    <string name="fg_about_donate_description">Send tokens to this address on Ethereum or any EVM compatible network (Base, Polygon, Arbitrum, Optimism…).</string>
-    <string name="fg_about_donate_qr_description">QR code of the donation address</string>
-    <string name="fg_about_donate_address_label">Wallet address</string>
-    <string name="fg_about_copy_address">Copy address</string>
+    <string name="fg_about_donate_title">Support Fugueti Launcher</string>
+    <string name="fg_about_donate_description">Official donation addresses</string>
+    <string name="fg_about_donate_hint">Tap %1$s to copy any wallet or PIX address to your clipboard.</string>
+    <string name="fg_about_copy">Copy</string>
     <string name="fg_about_address_copied">Address copied</string>
 
     <!-- Feed -->

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Qidirish uchun torting</string>
+    <string name="drawer_pull_to_search_description">Qidirish uchun ilovalar menyusining pastki uchdan birida pastga suring</string>
+    <string name="drawer_pull_to_search_disabled_description">Foydalanish uchun qidiruv panelini o\'chiring</string>
+    <string name="drawer_search_bar_position_label">Joylashuv</string>
+    <string name="drawer_search_bar_position_top">Yuqorida</string>
+    <string name="drawer_search_bar_position_bottom">Pastda</string>
+    <string name="home_search_bar_position_dock_below">Dokda, belgilar ostida</string>
+    <string name="home_search_bar_position_dock_above">Dokda, belgilar ustida</string>
+    <string name="home_search_bar_position_top">Ekranning yuqorisida</string>
+    <string name="dock_search_bar_size_label">O\'lcham</string>
+</resources>

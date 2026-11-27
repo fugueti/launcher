@@ -7,8 +7,11 @@
 package app.fugueti.nova
 
 import android.content.Context
+import app.lawnchair.hotseat.DisabledHotseat
+import app.lawnchair.hotseat.LawnchairHotseat
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.preferences2.firstCached
 import com.android.launcher3.InvariantDeviceProfile
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -28,8 +31,11 @@ import kotlin.math.roundToInt
  *   alpha (Nova shows it as transparency: alpha 0 is "100%"). The old `drawer_transparency` key
  *   no longer follows Nova's setting and is ignored.
  * - `drawer_grid` (`rows`x`columns`), `show_notification_bar`, `drawer_show_keyboard_by_default`,
- *   `drawer_searchbar_position` (`NONE` hides it), `drawer_predictive_apps` and
- *   `screen_orientation`.
+ *   `drawer_searchbar_position` (`NONE` hides it, `BOTTOM` puts it at the bottom),
+ *   `drawer_pull_to_search`, `searchbar_placement` (home screen search bar: `DOCK_BELOW_ICONS`,
+ *   `DOCK_ABOVE_ICONS` or `PERSISTENT` at the top of the screen; `NONE` turns the dock search
+ *   bar off and the others turn it back on if it was off; Nova's other places are left alone),
+ *   `drawer_predictive_apps` and `screen_orientation`.
  */
 object NovaSettingsImporter {
     private const val DESKTOP_CELLSPECS = "desktop_cellspecs"
@@ -40,6 +46,8 @@ object NovaSettingsImporter {
     private const val SHOW_NOTIFICATION_BAR = "show_notification_bar"
     private const val DRAWER_SHOW_KEYBOARD = "drawer_show_keyboard_by_default"
     private const val DRAWER_SEARCH_BAR_POSITION = "drawer_searchbar_position"
+    private const val DRAWER_PULL_TO_SEARCH = "drawer_pull_to_search"
+    private const val SEARCHBAR_PLACEMENT = "searchbar_placement"
     private const val DRAWER_PREDICTIVE_APPS = "drawer_predictive_apps"
     private const val SCREEN_ORIENTATION = "screen_orientation"
 
@@ -74,6 +82,12 @@ object NovaSettingsImporter {
         val showStatusBar: Boolean? = null,
         val showKeyboardInDrawer: Boolean? = null,
         val hideDrawerSearchBar: Boolean? = null,
+        val drawerSearchBarAtBottom: Boolean? = null,
+        val pullToSearch: Boolean? = null,
+        /** One of PreferenceManager2's HOME_SEARCH_BAR_* values. */
+        val homeSearchBarPosition: String? = null,
+        /** Whether Nova has no home screen search bar (`searchbar_placement` = `NONE`). */
+        val homeSearchBarOff: Boolean? = null,
         val showSuggestedApps: Boolean? = null,
         val allowRotation: Boolean? = null,
     )
@@ -106,6 +120,16 @@ object NovaSettingsImporter {
             showStatusBar = values[SHOW_NOTIFICATION_BAR]?.toBooleanStrictOrNull(),
             showKeyboardInDrawer = values[DRAWER_SHOW_KEYBOARD]?.toBooleanStrictOrNull(),
             hideDrawerSearchBar = values[DRAWER_SEARCH_BAR_POSITION]?.let { it == "NONE" },
+            drawerSearchBarAtBottom = values[DRAWER_SEARCH_BAR_POSITION]
+                ?.takeIf { it != "NONE" }?.let { it == "BOTTOM" },
+            pullToSearch = values[DRAWER_PULL_TO_SEARCH]?.toBooleanStrictOrNull(),
+            homeSearchBarPosition = when (values[SEARCHBAR_PLACEMENT]) {
+                "DOCK_BELOW_ICONS" -> PreferenceManager2.HOME_SEARCH_BAR_DOCK_BELOW
+                "DOCK_ABOVE_ICONS" -> PreferenceManager2.HOME_SEARCH_BAR_DOCK_ABOVE
+                "PERSISTENT" -> PreferenceManager2.HOME_SEARCH_BAR_TOP
+                else -> null
+            },
+            homeSearchBarOff = values[SEARCHBAR_PLACEMENT]?.let { it == "NONE" },
             showSuggestedApps = values[DRAWER_PREDICTIVE_APPS]?.toBooleanStrictOrNull(),
             allowRotation = when (values[SCREEN_ORIENTATION]) {
                 in fixedOrientations -> false
@@ -168,6 +192,15 @@ object NovaSettingsImporter {
         settings.showStatusBar?.let { prefs2.showStatusBar.set(it) }
         settings.showKeyboardInDrawer?.let { prefs2.autoShowKeyboardInDrawer.set(it) }
         settings.hideDrawerSearchBar?.let { prefs2.hideAppDrawerSearchBar.set(it) }
+        settings.drawerSearchBarAtBottom?.let { prefs2.drawerSearchBarAtBottom.set(it) }
+        settings.homeSearchBarPosition?.let { prefs2.homeSearchBarPosition.set(it) }
+        when (settings.homeSearchBarOff) {
+            true -> prefs2.hotseatMode.set(DisabledHotseat)
+            // Nova has one: bring the dock bar back if it is off (keeps Google's bar if chosen).
+            false -> if (prefs2.hotseatMode.firstCached() == DisabledHotseat) prefs2.hotseatMode.set(LawnchairHotseat)
+            null -> Unit
+        }
+        settings.pullToSearch?.let { prefs2.drawerPullToSearch.set(it) }
         settings.showSuggestedApps?.let { prefs2.showSuggestedAppsInDrawer.set(it) }
         settings.allowRotation?.let { prefs.allowRotation.set(it) }
     }

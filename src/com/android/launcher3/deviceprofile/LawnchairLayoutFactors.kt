@@ -132,6 +132,13 @@ data class LawnchairDock(
     val qsbOnTop: Boolean = false,
     /** Minimum touch target when labels are hidden. */
     val minTouchPx: Int = 0,
+    /** Fugueti: room a search bar at the top of the screen takes above the workspace. */
+    val screenTopQsbSpacePx: Int = 0,
+    /**
+     * Fugueti: search bar above the dock icons on a phone: its slot plus the gap above the icons
+     * (0 otherwise). The dock is then that, the dock rows and the bottom space, as on Android 16.
+     */
+    val qsbAboveIconsSpacePx: Int = 0,
 ) {
     /** Dock cell height: room for the label when shown, else the icon/folder footprint. */
     fun cellHeightPx(iconSizePx: Int): Int =
@@ -178,6 +185,9 @@ data class LawnchairDock(
             isVerticalBarLayout -> iconSizePx + barEdgePaddingPx + barWorkspaceSpacePx + space
             isQsbInline ->
                 kotlin.math.max(iconSizePx, qsbVisualHeight) + barBottomSpacePx + extraRowsHeight
+            qsbOnTop && qsbAboveIconsSpacePx > 0 ->
+                qsbAboveIconsSpacePx + cellHeight + extraRowsHeight +
+                    barBottomSpacePx - kotlin.math.abs(cellHeight - iconSizePx) / 2
             qsbOnTop ->
                 iconSizePx + qsbSpace + qsbVisualHeight + barBottomSpacePx + extraRowsHeight
             else ->
@@ -194,6 +204,8 @@ data class LawnchairDock(
             labelHeightPx: Int,
             qsbOnTop: Boolean,
             minTouchPx: Int,
+            screenTopQsbSpacePx: Int,
+            qsbAboveIconsSpacePx: Int,
         ) =
             LawnchairDock(
                 active = true,
@@ -202,9 +214,12 @@ data class LawnchairDock(
                 rows = factors.hotseatRows,
                 bottomFactor = factors.hotseatBottom,
                 enabled = factors.hotseatEnabled,
-                qsb = factors.hotseatQsb,
+                // Fugueti: a search bar at the top of the screen leaves the dock.
+                qsb = factors.hotseatQsb && screenTopQsbSpacePx == 0,
                 qsbOnTop = qsbOnTop,
                 minTouchPx = minTouchPx,
+                screenTopQsbSpacePx = screenTopQsbSpacePx,
+                qsbAboveIconsSpacePx = qsbAboveIconsSpacePx,
             )
     }
 }

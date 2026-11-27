@@ -828,9 +828,15 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             mViewPager = null;
         }
 
+        applySearchContainerRules(rvContainer, showTabs);
+    }
+
+    /** Places the app lists below the search bar, or at the top when the bar is hidden. */
+    private void applySearchContainerRules(View rvContainer, boolean showTabs) {
         removeCustomRules(rvContainer);
         removeCustomRules(getSearchRecyclerView());
-        if (isAppDrawerSearchBarHidden()) {
+        applySearchBarAtBottom();
+        if (isSearchBarOffTop()) {
             layoutWithoutSearchContainer(rvContainer, showTabs);
             layoutWithoutSearchContainer(getSearchRecyclerView(), /* tabs= */ false);
         } else if (isSearchBarFloating()) {
@@ -851,7 +857,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     void setupHeader() {
         mAdditionalHeaderRows.forEach(row -> mHeader.onPluginDisconnected(row));
 
-        boolean hideSearchBar = isAppDrawerSearchBarHidden();
+        boolean hideSearchBar = isSearchBarOffTop();
         boolean tabsHidden = !mUsingTabs;
         mHeader.setup(
                 mAH.get(AdapterHolder.MAIN).mRecyclerView,
@@ -914,7 +920,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     protected void updateHeaderScroll(int scrolledOffset) {
-        if (isAppDrawerSearchBarHidden() && !mUsingTabs)
+        if (isSearchBarOffTop() && !mUsingTabs)
             return;
         
         // Check if tab container background should be shown
@@ -1061,7 +1067,66 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     private boolean isAppDrawerSearchBarHidden() {
-        return PreferenceCacheExtensionsKt.firstCached(pref2.getHideAppDrawerSearchBar());
+        return !mHiddenSearchBarRevealed
+                && PreferenceCacheExtensionsKt.firstCached(pref2.getHideAppDrawerSearchBar());
+    }
+
+    /** Fugueti: the search bar sits at the bottom of the drawer ("Search bar position"). */
+    public boolean isSearchBarAtBottom() {
+        // The pref, not isAppDrawerSearchBarHidden(): pull to search always shows the bar on top.
+        return !PreferenceCacheExtensionsKt.firstCached(pref2.getHideAppDrawerSearchBar())
+                && PreferenceCacheExtensionsKt.firstCached(pref2.getDrawerSearchBarAtBottom());
+    }
+
+    /** Fugueti: nothing sits above the apps: the search bar is hidden or at the bottom. */
+    private boolean isSearchBarOffTop() {
+        return isAppDrawerSearchBarHidden() || isSearchBarAtBottom();
+    }
+
+    /**
+     * Fugueti: pins the search bar to the bottom of the drawer and keeps the fast scroller above
+     * it. The bar's own margins and its keyboard offset are set by the bar.
+     */
+    private void applySearchBarAtBottom() {
+        if (!(mSearchContainer.getLayoutParams() instanceof RelativeLayout.LayoutParams lp)) {
+            return;
+        }
+        boolean atBottom = isSearchBarAtBottom();
+        if (atBottom) {
+            lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        } else {
+            lp.removeRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        }
+        if (mFastScroller.getLayoutParams() instanceof RelativeLayout.LayoutParams scrollerLp) {
+            scrollerLp.bottomMargin = atBottom ? getSearchBarAtBottomSpace() : 0;
+        }
+    }
+
+    /** Fugueti: room the bottom search bar takes above the navigation bar. */
+    private int getSearchBarAtBottomSpace() {
+        if (!isSearchBarAtBottom()) return 0;
+        return getResources().getDimensionPixelSize(R.dimen.search_box_container_height)
+                + getResources().getDimensionPixelSize(R.dimen.fugueti_drawer_search_bar_gap);
+    }
+
+    /** Fugueti: pull to search shows the hidden search bar until the search ends. */
+    private boolean mHiddenSearchBarRevealed;
+
+    /**
+     * Fugueti: shows or hides again the search bar that the "Show search bar" setting hides, and
+     * lays the app lists out around it. Used by pull to search.
+     */
+    public void setHiddenSearchBarRevealed(boolean revealed) {
+        if (mHiddenSearchBarRevealed == revealed) return;
+        mHiddenSearchBarRevealed = revealed;
+        applySearchContainerRules(getAppsRecyclerViewContainer(), mUsingTabs);
+        setupHeader();
+        setInsets(new Rect(mInsets));
+        requestLayout();
+    }
+
+    public boolean isHiddenSearchBarRevealed() {
+        return mHiddenSearchBarRevealed;
     }
 
     private void layoutBelowSearchContainer(View v, boolean includeTabsMargin) {
@@ -1379,6 +1444,18 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     /** Fugueti: top space kept inside the app lists, so apps can scroll up into it. */
     private int mListTopGap;
 
+    /** Fugueti: top margin of a search bar at the top, or -1 for the default one. */
+    private int mSearchBarTopMargin = -1;
+
+    public int getSearchBarTopMargin() {
+        return mSearchBarTopMargin;
+    }
+
+    /** Fugueti: screen y of the top of the search bar at the top of the drawer. */
+    private int computeSearchBarTop(Rect insets) {
+        return app.fugueti.util.ScreenTop.searchBarTop(this, mStatusBarShown, insets.top);
+    }
+
     /** Fugueti: called when the "Show status bar" setting changes. */
     public void setStatusBarShown(boolean shown) {
         if (mStatusBarShown == shown) return;
@@ -1410,6 +1487,14 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             if (!mStatusBarShown && !mHeaderHasContent) {
                 mListTopGap = Math.min(insets.top, topPadding);
                 topPadding -= mListTopGap;
+            }
+            // Fugueti: a search bar at the top sits where Nova puts it, just below the status
+            // bar, or just below the camera when the status bar is hidden.
+            mSearchBarTopMargin = -1;
+            if (!isSearchBarOffTop()) {
+                int barTop = computeSearchBarTop(insets);
+                topPadding = Math.min(topPadding, barTop);
+                mSearchBarTopMargin = barTop - topPadding;
             }
             setPadding(grid.getAllAppsProfile().getLeftRightMargin(), topPadding,
                     grid.getAllAppsProfile().getLeftRightMargin(), 0);
@@ -1465,7 +1550,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
             getAppsRecyclerViewContainer().setVisibility(VISIBLE);
             // Keep personal/work tabs or visible rows active; hide the empty header shell.
             boolean hasHeaderContent = mUsingTabs
-                    || (!isAppDrawerSearchBarHidden() && mHeader.hasVisibleContent());
+                    || (!isSearchBarOffTop() && mHeader.hasVisibleContent());
             mHeader.setVisibility(hasHeaderContent ? View.VISIBLE : View.GONE);
         }
         if (mHeader.isSetUp()) {
@@ -1474,7 +1559,9 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
     }
 
     private void applyAdapterSideAndBottomPaddings(DeviceProfile grid) {
-        int bottomPadding = Math.max(mInsets.bottom, mNavBarScrimHeight);
+        // Fugueti: the last rows scroll up above a search bar at the bottom.
+        int bottomPadding = Math.max(mInsets.bottom, mNavBarScrimHeight)
+                + getSearchBarAtBottomSpace();
         mAH.forEach(adapterHolder -> {
             adapterHolder.mPadding.bottom = bottomPadding;
             adapterHolder.mPadding.left = grid.getAllAppsProfile().getPadding().left;

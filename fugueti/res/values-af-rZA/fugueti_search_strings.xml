@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Trek om te soek</string>
+    <string name="drawer_pull_to_search_description">Swiep af in die onderste derde van die toepassinglaai om te soek</string>
+    <string name="drawer_pull_to_search_disabled_description">Skakel die soekbalk af om dit te gebruik</string>
+    <string name="drawer_search_bar_position_label">Posisie</string>
+    <string name="drawer_search_bar_position_top">Bo</string>
+    <string name="drawer_search_bar_position_bottom">Onder</string>
+    <string name="home_search_bar_position_dock_below">In die dok, onder die ikone</string>
+    <string name="home_search_bar_position_dock_above">In die dok, bo die ikone</string>
+    <string name="home_search_bar_position_top">Bo-aan die skerm</string>
+    <string name="dock_search_bar_size_label">Grootte</string>
+</resources>

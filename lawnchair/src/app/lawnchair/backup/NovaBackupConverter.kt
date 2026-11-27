@@ -3,7 +3,6 @@ package app.lawnchair.backup
 
 import app.fugueti.nova.NovaGestureImporter
 import app.fugueti.nova.NovaSettingsImporter
-
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
@@ -14,15 +13,13 @@ import android.os.Process
 import android.util.Log
 import app.lawnchair.DeviceProfileOverrides
 import app.lawnchair.preferences.PreferenceManager
-import com.android.launcher3.LauncherAppState
 import com.android.launcher3.GridType
 import com.android.launcher3.InvariantDeviceProfile
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.LauncherSettings.Favorites
 import com.android.launcher3.model.DatabaseHelper
 import com.android.launcher3.model.DeviceGridState
-import com.android.launcher3.model.ModelDbController
 import com.android.launcher3.pm.UserCache
-import com.android.launcher3.provider.RestoreDbTask
 import com.android.launcher3.shortcuts.ShortcutKey
 import com.android.launcher3.shortcuts.ShortcutRequest
 import java.io.File
@@ -185,19 +182,30 @@ class NovaBackupConverter(
                 )
                 gridState.writeToPrefs(context, true)
                 gridState.writeToPrefs(context)
+                // Fugueti: on disk now, the launcher restarts (exitProcess) right after the import
+                LauncherPrefs.get(context).putSync(LauncherPrefs.DB_FILE.to(gridInfo.dbFile))
                 InvariantDeviceProfile.INSTANCE.get(context).dbFile = gridInfo.dbFile
             }
             writeGridToLawnchairPrefs(info)
 
+            // Fugueti: staged like a backup restore (see docs/backup-restore.md). The next process
+            // moves restored.db in place of the grid's database and runs RestoreDbTask on it.
+            // Taking it here instead left this process's model, still on the old grid, writing the
+            // old grid state back before the restart, and the next start "migrated" the old
+            // layout over Nova's.
             val restoredDbFile = context.getDatabasePath(LawnchairBackup.RESTORED_DB_FILE_NAME)
             restoredDbFile.parentFile?.mkdirs()
+            context.getDatabasePath(LawnchairBackup.RESTORED_DB_OWNER_FILE_NAME)
+                .writeText(android.os.Process.myPid().toString())
             stagedDbFile.copyTo(restoredDbFile, overwrite = true)
 
-            val dbController = LauncherAppState.getInstance(context).model.modelDbController
-            dbController.reopenDb()
-            RestoreDbTask.performRestore(context, dbController)
-
             pinImportedDeepShortcuts(importedDeepShortcuts)
+        } catch (t: Throwable) {
+            // Fugueti: a failed import must not leave restored.db to be applied at a later start.
+            context.getDatabasePath(LawnchairBackup.RESTORED_DB_FILE_NAME).parentFile?.listFiles()
+                ?.filter { it.name.startsWith(LawnchairBackup.RESTORED_DB_FILE_NAME) }
+                ?.forEach { it.delete() }
+            throw t
         } finally {
             tempDir.deleteRecursively()
         }

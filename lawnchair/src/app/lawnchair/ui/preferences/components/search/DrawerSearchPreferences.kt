@@ -47,6 +47,18 @@ fun DrawerSearchPreference(
         modifier = modifier,
     ) {
         PreferenceGroup(heading = stringResource(R.string.general_label)) {
+            // Fugueti: top or bottom of the drawer, like Nova's search bar placement.
+            val positionEntries = remember {
+                listOf(
+                    ListPreferenceEntry(false) { stringResource(R.string.drawer_search_bar_position_top) },
+                    ListPreferenceEntry(true) { stringResource(R.string.drawer_search_bar_position_bottom) },
+                )
+            }
+            ListPreference(
+                adapter = prefs2.drawerSearchBarAtBottom.getAdapter(),
+                entries = positionEntries,
+                label = stringResource(R.string.drawer_search_bar_position_label),
+            )
             if (hiddenApps.isNotEmpty()) {
                 HiddenAppsInSearchPreference()
             }

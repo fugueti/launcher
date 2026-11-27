@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Tõmba otsimiseks</string>
+    <string name="drawer_pull_to_search_description">Otsimiseks pühi rakendusesahtli alumises kolmandikus alla</string>
+    <string name="drawer_pull_to_search_disabled_description">Selle kasutamiseks lülita otsinguriba välja</string>
+    <string name="drawer_search_bar_position_label">Asukoht</string>
+    <string name="drawer_search_bar_position_top">Üleval</string>
+    <string name="drawer_search_bar_position_bottom">All</string>
+    <string name="home_search_bar_position_dock_below">Dokis, ikoonide all</string>
+    <string name="home_search_bar_position_dock_above">Dokis, ikoonide kohal</string>
+    <string name="home_search_bar_position_top">Ekraani ülaosas</string>
+    <string name="dock_search_bar_size_label">Suurus</string>
+</resources>

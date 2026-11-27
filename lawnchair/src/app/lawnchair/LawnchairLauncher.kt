@@ -32,6 +32,7 @@ import android.window.SplashScreen
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
+import app.fugueti.drawer.PullToSearchTouchController
 import app.fugueti.gestures.GestureTouchController
 import app.fugueti.update.FuguetiUpdates
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
@@ -314,7 +315,9 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun createTouchControllers(): Array<TouchController> {
         // Fugueti: the gesture engine replaces upstream's VerticalSwipeTouchController.
         val gestureTouchController = GestureTouchController(this, gestureController)
-        return arrayOf<TouchController>(gestureTouchController) + super.createTouchControllers()
+        // Fugueti: before the state controller, which would close the drawer on a swipe down.
+        val pullToSearch = PullToSearchTouchController(this)
+        return arrayOf(gestureTouchController, pullToSearch) + super.createTouchControllers()
     }
 
     override fun handleHomeTap() {

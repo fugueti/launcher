@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Kéo để tìm kiếm</string>
+    <string name="drawer_pull_to_search_description">Vuốt xuống ở một phần ba dưới của ngăn ứng dụng để tìm kiếm</string>
+    <string name="drawer_pull_to_search_disabled_description">Tắt thanh tìm kiếm để sử dụng</string>
+    <string name="drawer_search_bar_position_label">Vị trí</string>
+    <string name="drawer_search_bar_position_top">Trên cùng</string>
+    <string name="drawer_search_bar_position_bottom">Dưới cùng</string>
+    <string name="home_search_bar_position_dock_below">Trong dock, bên dưới biểu tượng</string>
+    <string name="home_search_bar_position_dock_above">Trong dock, bên trên biểu tượng</string>
+    <string name="home_search_bar_position_top">Đầu màn hình</string>
+    <string name="dock_search_bar_size_label">Kích thước</string>
+</resources>
