@@ -19,6 +19,18 @@ Fugueti on Launcher3 from Android 17, published as the nightly.
   stays: the backup's grid (columns, rows, dock icons) comes along with its layout, and the
   launcher no longer deleted the database it had just opened nor replaced the restored layout
   with the default one.
+* Restoring a Lawnchair backup keeps At a Glance, the app drawer search bar and the icon sizes as
+  they were in Lawnchair: a Lawnchair backup leaves out settings at Lawnchair's defaults, and
+  Fugueti's defaults differ (At a Glance was always turned off).
+* At a Glance is on by default on new installs, as in Lawnchair. Installs and backups from
+  earlier versions that never turned it on keep it off: turning it on frees the first row of the
+  first page, so the items there would be removed. Its first cards say "Welcome to Fugueti!" and
+  "Set up Fugueti" instead of naming Lawnchair.
+* The launcher no longer closes now and then when the Google feed (through Fugueti Feed)
+  reconnects: its connection messages were handled on another thread than the launcher's.
+* At a Glance shows again, and turning it on no longer leaves the home screen empty (icons,
+  widgets and dock disappeared): the Android 17 port lost a step that moves it to the new first
+  page.
 * Importing a Nova backup works again: it failed with an error as soon as the backup set the app
   drawer search bar, and its home screen could replace the database the running launcher had
   open. A Nova backup without a home screen search bar turns the dock search bar off.

@@ -97,7 +97,8 @@ class LawnchairBackup(
                     stagedDb.copyTo(restoredDb, overwrite = true)
                 }
                 BackupStore.applySharedPrefs(context, File(staging, PREFS_FILE_NAME))
-                BackupStore.applyDataStore(context, File(staging, PREFS_DATASTORE_FILE_NAME))
+                val restoredKeys = BackupStore.applyDataStore(context, File(staging, PREFS_DATASTORE_FILE_NAME))
+                BackupStore.applyBackupDefaults(context, info.lawnchairVersion, restoredKeys)
                 BackupStore.importAppDatabase(context, File(staging, PREFS_DB_FILE_NAME))
             }
             if (contents.hasFlag(INCLUDE_WALLPAPER)) {

@@ -101,6 +101,18 @@ was still on the old grid and wrote the old grid state back in its last moments,
   preference's `onSet` may reload the launcher. `ReloadHelper.reloadGrid/recreate` post to the
   main thread; `Activity.recreate()` elsewhere throws "Must be called from main thread", which made
   every Nova import fail as soon as it set the drawer search bar.
+- **Backups from Lawnchair.** A setting left at its default is not stored, so a Lawnchair
+  backup has no entry for it and the restore applied Fugueti's default. Where Fugueti's default
+  differs or differed (At a Glance on, drawer search bar shown, icon sizes 100%),
+  `BackupStore.applyBackupDefaults` sets Lawnchair's for the settings the backup leaves out. A
+  Lawnchair backup is told apart by `BackupInfo.lawnchair_version`: 10 digits for Lawnchair, 8
+  for Fugueti. When changing another default that Lawnchair also has, add it there.
+- **At a Glance default (16.0.5).** It was off until 16.0.4 and is on since, like Lawnchair.
+  Turning it on reserves the first row of the first page and the loader removes what is there,
+  so an existing setup must not get it by the new default: `AtAGlanceDefaultMigration` (a
+  DataStore migration) stores "off" once for an updated install that never set it and marks the
+  store (`fugueti_at_a_glance_default_migrated`). A Fugueti backup without that mark is from
+  before: `applyBackupDefaults` keeps At a Glance off when the backup has no value for it.
 - **Defaults are not stored.** An `IntPref` default that changes (the phone grid went from 7 x 12
   to 5 x 5 in 16.0.5) changes the grid of every install that never touched it; the
   `PreferenceManager` migration writes the old values for existing installs. Write such migrations

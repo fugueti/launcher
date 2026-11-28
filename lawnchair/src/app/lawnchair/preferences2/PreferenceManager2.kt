@@ -1085,7 +1085,13 @@ class PreferenceManager2 @Inject constructor(
 
         private val Context.preferencesDataStore by preferencesDataStore(
             name = "preferences",
-            produceMigrations = { listOf(SharedPreferencesMigration(context = it).produceMigration()) },
+            produceMigrations = {
+                listOf(
+                    SharedPreferencesMigration(context = it).produceMigration(),
+                    // Fugueti: At a Glance became on by default; existing installs keep it off.
+                    app.fugueti.prefs.AtAGlanceDefaultMigration(it),
+                )
+            },
         )
 
         @JvmField

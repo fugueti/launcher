@@ -703,6 +703,11 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                 tracer.close()
                 emptyList<Void>()
             }
+            // Fugueti: a failing step left the home screen empty without a trace.
+            .exceptionally { e ->
+                Log.e(TAG, "Binding the model failed ($reason)", e)
+                emptyList()
+            }
     }
 
     override fun bindExtraContainerItems(item: FixedContainerItems) {

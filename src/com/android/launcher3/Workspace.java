@@ -820,6 +820,14 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         // transition animations competing with us changing the scroll when we add pages
         disableLayoutTransitions();
 
+        // Lawnchair: recycle the first page pinned item (At a Glance). Fugueti: the AOSP 17 merge
+        // dropped this; the item stayed in the old first page, adding it to the new one threw
+        // "The specified child already has a parent" inside the async bind chain, and nothing on
+        // the home screen was bound while At a Glance was on.
+        if (mFirstPagePinnedItem != null && mFirstPagePinnedItem.getParent() instanceof ViewGroup) {
+            ((ViewGroup) mFirstPagePinnedItem.getParent()).removeView(mFirstPagePinnedItem);
+        }
+
         // Remove the pages and clear the screen models
         removeAllViews();
         mScreenOrder.clear();

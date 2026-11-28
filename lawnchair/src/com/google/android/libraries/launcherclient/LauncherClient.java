@@ -282,7 +282,9 @@ public class LauncherClient {
     }
 
     public final void exchangeConfig() {
-        if (mOverlay != null) {
+        // Fugueti: one reference for the whole exchange; the connection may be dropped meanwhile.
+        ILauncherOverlay overlay = mOverlay;
+        if (overlay != null) {
             try {
                 if (mOverlayCallback == null) {
                     mOverlayCallback = new OverlayCallback();
@@ -295,7 +297,7 @@ public class LauncherClient {
                 overlayCallback.mWindowShift = -Math.max(point.x, point.y);
                 overlayCallback.mWindow = mActivity.getWindow();
                 if (apiVersion < 3) {
-                    mOverlay.windowAttached(mLayoutParams, mOverlayCallback, mFlags);
+                    overlay.windowAttached(mLayoutParams, mOverlayCallback, mFlags);
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putParcelable("layout_params", mLayoutParams);
@@ -304,14 +306,14 @@ public class LauncherClient {
                     if (mLayoutBundle != null) {
                         bundle.putAll(mLayoutBundle);
                     }
-                    mOverlay.windowAttached2(bundle, mOverlayCallback);
+                    overlay.windowAttached2(bundle, mOverlayCallback);
                 }
                 if (apiVersion >= 4) {
-                    mOverlay.setActivityState(mActivityState);
+                    overlay.setActivityState(mActivityState);
                 } else if ((mActivityState & 2) != 0) {
-                    mOverlay.onResume();
+                    overlay.onResume();
                 } else {
-                    mOverlay.onPause();
+                    overlay.onPause();
                 }
             } catch (RemoteException ignored) {
             }
