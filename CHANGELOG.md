@@ -1,6 +1,6 @@
 # Fugueti Launcher changelog
 
-## 16.0.5 (unreleased)
+## 16.0.5 (2026-11-27)
 
 * The Google Play version (`app.fugueti.launcher.play`) explains where to get the Fugueti Feed
   app when the feed is on and it is missing, instead of linking to the download: Fugueti Feed is
