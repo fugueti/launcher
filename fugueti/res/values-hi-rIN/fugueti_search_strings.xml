@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">खोजने के लिए खींचें</string>
+    <string name="drawer_pull_to_search_description">खोजने के लिए ऐप ड्रॉअर के निचले एक-तिहाई हिस्से में नीचे स्वाइप करें</string>
+    <string name="drawer_pull_to_search_disabled_description">इसका इस्तेमाल करने के लिए सर्च बार बंद करें</string>
+    <string name="drawer_search_bar_position_label">स्थिति</string>
+    <string name="drawer_search_bar_position_top">ऊपर</string>
+    <string name="drawer_search_bar_position_bottom">नीचे</string>
+    <string name="home_search_bar_position_dock_below">डॉक में, आइकॉन के नीचे</string>
+    <string name="home_search_bar_position_dock_above">डॉक में, आइकॉन के ऊपर</string>
+    <string name="home_search_bar_position_top">स्क्रीन के ऊपर</string>
+    <string name="dock_search_bar_size_label">आकार</string>
+</resources>

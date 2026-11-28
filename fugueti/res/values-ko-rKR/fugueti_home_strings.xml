@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: home screen (GPL-3.0-or-later). -->
+<resources>
+    <!-- At a Glance onboarding cards: Lawnchair's onboarding_* strings, naming Fugueti. -->
+    <string name="fugueti_onboarding_open_settings_title">Fugueti 설정하기</string>
+    <string name="fugueti_onboarding_welcome">Fugueti에 오신것을 환영합니다!</string>
+    <string name="fugueti_onboarding_major_upgrade_title">새 Fugueti를 만나세요</string>
+</resources>

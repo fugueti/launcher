@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Vuta ili utafute</string>
+    <string name="drawer_pull_to_search_description">Telezesha chini katika theluthi ya chini ya droo ya programu ili utafute</string>
+    <string name="drawer_pull_to_search_disabled_description">Zima upau wa kutafutia ili uitumie</string>
+    <string name="drawer_search_bar_position_label">Mahali</string>
+    <string name="drawer_search_bar_position_top">Juu</string>
+    <string name="drawer_search_bar_position_bottom">Chini</string>
+    <string name="home_search_bar_position_dock_below">Kwenye gati, chini ya aikoni</string>
+    <string name="home_search_bar_position_dock_above">Kwenye gati, juu ya aikoni</string>
+    <string name="home_search_bar_position_top">Juu ya skrini</string>
+    <string name="dock_search_bar_size_label">Ukubwa</string>
+</resources>

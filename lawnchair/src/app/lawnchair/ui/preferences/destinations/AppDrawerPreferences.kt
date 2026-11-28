@@ -89,6 +89,20 @@ fun AppDrawerPreferences(
                 subtitle = resources.getQuantityString(R.plurals.apps_count, hiddenApps.size, hiddenApps.size),
             )
             SearchBarPreference(SearchRoute.DRAWER_SEARCH, showLabel = false)
+            // Fugueti: like Nova, pull to search only works without the search bar.
+            val searchBarHidden = prefs2.hideAppDrawerSearchBar.getAdapter().state.value
+            SwitchPreference(
+                label = stringResource(id = R.string.drawer_pull_to_search_label),
+                description = stringResource(
+                    id = if (searchBarHidden) {
+                        R.string.drawer_pull_to_search_description
+                    } else {
+                        R.string.drawer_pull_to_search_disabled_description
+                    },
+                ),
+                adapter = prefs2.drawerPullToSearch.getAdapter(),
+                enabled = searchBarHidden,
+            )
             NavigationActionPreference(
                 label = stringResource(R.string.suggestion_pref_screen_title),
                 destination = Predictions,

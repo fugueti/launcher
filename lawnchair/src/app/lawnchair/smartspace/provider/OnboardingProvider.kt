@@ -97,7 +97,7 @@ class OnboardingProvider(context: Context) :
                     headerAction = SmartspaceAction(
                         id = "onboarding-swipe-action",
                         icon = null,
-                        title = context.getString(R.string.onboarding_welcome),
+                        title = context.getString(R.string.fugueti_onboarding_welcome),
                         subtitle = context.getString(R.string.onboarding_swipe_up),
                         pendingIntent = null,
                     ),
@@ -112,7 +112,8 @@ class OnboardingProvider(context: Context) :
                     headerAction = SmartspaceAction(
                         id = "onboarding-settings-action",
                         icon = Icon.createWithResource(context, R.drawable.ic_lightbulb),
-                        title = context.getString(R.string.onboarding_open_settings_title),
+                        // Fugueti: the onboarding titles name Fugueti (fugueti_home_strings.xml).
+                        title = context.getString(R.string.fugueti_onboarding_open_settings_title),
                         subtitle = context.getString(R.string.onboarding_open_settings_subtitle),
                         pendingIntent = lawnSettingsPendingIntent,
                     ),
@@ -129,7 +130,7 @@ class OnboardingProvider(context: Context) :
                     headerAction = SmartspaceAction(
                         id = "onboarding-upgrade-action",
                         icon = Icon.createWithResource(context, R.drawable.ic_lightbulb),
-                        title = context.getString(R.string.onboarding_major_upgrade_title),
+                        title = context.getString(R.string.fugueti_onboarding_major_upgrade_title),
                         subtitle = context.getString(R.string.onboarding_major_upgrade_subtitle),
                         pendingIntent = lawnOnboardingPendingIntent,
                     ),

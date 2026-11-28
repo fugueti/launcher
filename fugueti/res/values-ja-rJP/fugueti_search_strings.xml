@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">引き下げて検索</string>
+    <string name="drawer_pull_to_search_description">アプリドロワーの下3分の1を下にスワイプして検索</string>
+    <string name="drawer_pull_to_search_disabled_description">使用するには検索バーをオフにしてください</string>
+    <string name="drawer_search_bar_position_label">位置</string>
+    <string name="drawer_search_bar_position_top">上</string>
+    <string name="drawer_search_bar_position_bottom">下</string>
+    <string name="home_search_bar_position_dock_below">ドック内、アイコンの下</string>
+    <string name="home_search_bar_position_dock_above">ドック内、アイコンの上</string>
+    <string name="home_search_bar_position_top">画面の上部</string>
+    <string name="dock_search_bar_size_label">サイズ</string>
+</resources>

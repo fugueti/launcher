@@ -149,8 +149,9 @@
     <bool name="config_default_show_icon_labels_on_home_screen">true</bool>
     <bool name="config_default_show_icon_labels_in_drawer">true</bool>
     <bool name="config_default_enable_fuzzy_search">false</bool>
-    <!-- Fugueti: At a Glance (smartspace) is off by default; users can turn it on in settings. -->
-    <bool name="config_default_enable_smartspace">false</bool>
+    <!-- Fugueti: At a Glance is on by default, like Lawnchair (off until 16.0.4; existing installs
+         keep it off, see AtAGlanceDefaultMigration). -->
+    <bool name="config_default_enable_smartspace">true</bool>
     <bool name="config_default_enable_feed">false</bool>
     <bool name="config_default_enable_icon_selection">false</bool>
     <bool name="config_default_show_component_names">false</bool>

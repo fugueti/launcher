@@ -72,11 +72,10 @@
     <string name="fg_about_based_on">Baseado em</string>
     <string name="fg_about_support_subject">Suporte Fugueti %1$s</string>
     <string name="fg_about_no_email_app">Nenhum app de e-mail encontrado</string>
-    <string name="fg_about_donate_title">Doe com cripto</string>
-    <string name="fg_about_donate_description">Envie tokens para este endereço na Ethereum ou em qualquer rede compatível com EVM (Base, Polygon, Arbitrum, Optimism…).</string>
-    <string name="fg_about_donate_qr_description">QR code do endereço de doação</string>
-    <string name="fg_about_donate_address_label">Endereço da carteira</string>
-    <string name="fg_about_copy_address">Copiar endereço</string>
+    <string name="fg_about_donate_title">Apoie o Fugueti Launcher</string>
+    <string name="fg_about_donate_description">Endereços oficiais de doação</string>
+    <string name="fg_about_donate_hint">Toque em %1$s para copiar qualquer carteira ou chave PIX para a área de transferência.</string>
+    <string name="fg_about_copy">Copiar</string>
     <string name="fg_about_address_copied">Endereço copiado</string>
 
     <!-- Feed -->

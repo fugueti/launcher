@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">당겨서 검색</string>
+    <string name="drawer_pull_to_search_description">앱 서랍 아래쪽 3분의 1 영역에서 아래로 스와이프하여 검색</string>
+    <string name="drawer_pull_to_search_disabled_description">사용하려면 검색창을 끄세요</string>
+    <string name="drawer_search_bar_position_label">위치</string>
+    <string name="drawer_search_bar_position_top">위</string>
+    <string name="drawer_search_bar_position_bottom">아래</string>
+    <string name="home_search_bar_position_dock_below">독, 아이콘 아래</string>
+    <string name="home_search_bar_position_dock_above">독, 아이콘 위</string>
+    <string name="home_search_bar_position_top">화면 상단</string>
+    <string name="dock_search_bar_size_label">크기</string>
+</resources>

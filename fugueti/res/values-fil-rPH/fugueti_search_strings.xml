@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Hilahin para maghanap</string>
+    <string name="drawer_pull_to_search_description">Mag-swipe pababa sa ibabang ikatlong bahagi ng app drawer para maghanap</string>
+    <string name="drawer_pull_to_search_disabled_description">I-off ang search bar para magamit ito</string>
+    <string name="drawer_search_bar_position_label">Posisyon</string>
+    <string name="drawer_search_bar_position_top">Itaas</string>
+    <string name="drawer_search_bar_position_bottom">Ibaba</string>
+    <string name="home_search_bar_position_dock_below">Sa dock, sa ilalim ng mga icon</string>
+    <string name="home_search_bar_position_dock_above">Sa dock, sa itaas ng mga icon</string>
+    <string name="home_search_bar_position_top">Itaas ng screen</string>
+    <string name="dock_search_bar_size_label">Laki</string>
+</resources>

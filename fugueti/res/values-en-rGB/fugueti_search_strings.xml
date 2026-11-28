@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Pull to search</string>
+    <string name="drawer_pull_to_search_description">Swipe down in the lower third of the app drawer to search</string>
+    <string name="drawer_pull_to_search_disabled_description">Turn off the search bar to use it</string>
+    <string name="drawer_search_bar_position_label">Position</string>
+    <string name="drawer_search_bar_position_top">Top</string>
+    <string name="drawer_search_bar_position_bottom">Bottom</string>
+    <string name="home_search_bar_position_dock_below">Dock, below the icons</string>
+    <string name="home_search_bar_position_dock_above">Dock, above the icons</string>
+    <string name="home_search_bar_position_top">Top of the screen</string>
+    <string name="dock_search_bar_size_label">Size</string>
+</resources>

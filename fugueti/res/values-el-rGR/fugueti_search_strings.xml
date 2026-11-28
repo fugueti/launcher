@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Τράβηγμα για αναζήτηση</string>
+    <string name="drawer_pull_to_search_description">Σύρετε προς τα κάτω στο κάτω τρίτο του συρταριού εφαρμογών για αναζήτηση</string>
+    <string name="drawer_pull_to_search_disabled_description">Απενεργοποιήστε τη γραμμή αναζήτησης για να το χρησιμοποιήσετε</string>
+    <string name="drawer_search_bar_position_label">Θέση</string>
+    <string name="drawer_search_bar_position_top">Πάνω</string>
+    <string name="drawer_search_bar_position_bottom">Κάτω</string>
+    <string name="home_search_bar_position_dock_below">Στη βάση, κάτω από τα εικονίδια</string>
+    <string name="home_search_bar_position_dock_above">Στη βάση, πάνω από τα εικονίδια</string>
+    <string name="home_search_bar_position_top">Στο πάνω μέρος της οθόνης</string>
+    <string name="dock_search_bar_size_label">Μέγεθος</string>
+</resources>

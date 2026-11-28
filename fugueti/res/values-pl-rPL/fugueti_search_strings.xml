@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Przeciągnij, aby wyszukać</string>
+    <string name="drawer_pull_to_search_description">Przesuń w dół w dolnej jednej trzeciej szuflady aplikacji, aby wyszukać</string>
+    <string name="drawer_pull_to_search_disabled_description">Wyłącz pasek wyszukiwania, aby z tego korzystać</string>
+    <string name="drawer_search_bar_position_label">Położenie</string>
+    <string name="drawer_search_bar_position_top">U góry</string>
+    <string name="drawer_search_bar_position_bottom">Na dole</string>
+    <string name="home_search_bar_position_dock_below">W docku, pod ikonami</string>
+    <string name="home_search_bar_position_dock_above">W docku, nad ikonami</string>
+    <string name="home_search_bar_position_top">U góry ekranu</string>
+    <string name="dock_search_bar_size_label">Rozmiar</string>
+</resources>

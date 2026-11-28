@@ -192,6 +192,16 @@ public class WorkspaceStateTransitionAnimation {
         propertySetter.setFloat(mWorkspace.getPageIndicator(), VIEW_TRANSLATE_Y,
                 hotseatScaleAndTranslation.translationY, hotseatTranslationInterpolator);
 
+        // Fugueti: the search bar at the top of the screen shows only on the plain home screen;
+        // it would sit under the drop targets while dragging and clutter the other states.
+        View topSearchBar = mLauncher.findViewById(R.id.fugueti_screen_top_search_bar);
+        if (topSearchBar != null && topSearchBar.getVisibility() != View.GONE) {
+            float topSearchBarAlpha = state == NORMAL || state == HINT_STATE ? 1 : 0;
+            propertySetter.setViewAlpha(topSearchBar, topSearchBarAlpha, workspaceFadeInterpolator);
+            propertySetter.setFloat(topSearchBar, VIEW_TRANSLATE_Y,
+                    scaleAndTranslation.translationY, translationInterpolator);
+        }
+
         if (!config.hasAnimationFlag(SKIP_SCRIM)) {
             setScrim(propertySetter, state, config);
         }

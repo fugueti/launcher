@@ -15,6 +15,7 @@ import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowInsets
 import android.view.ViewTreeObserver
 import android.view.ViewTreeObserver.OnGlobalFocusChangeListener
 import android.view.animation.DecelerateInterpolator
@@ -30,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -123,6 +126,10 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
     private var initialPaddingRight: Int = 0
     private var paddingAnimator: ValueAnimator? = null
     private var hideSearchBar = false
+
+    /** Fugueti: pull to search is showing the hidden search bar. */
+    private var hiddenBarRevealed = false
+    private var shownHeight = 0
 
     override fun onFinishInflate() {
         super.onFinishInflate()
@@ -302,6 +309,8 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
                 if (input.text.isNullOrEmpty()) {
                     animatePadding(initialPaddingLeft, initialPaddingRight)
+                    // Fugueti: an empty pulled search ends when it loses focus.
+                    if (hiddenBarRevealed) post { endPulledSearch() }
                 }
                 focusedResultTitle = ""
                 input.setHint("")
@@ -339,6 +348,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
         hideSearchBar = prefs2.hideAppDrawerSearchBar.firstCached()
         if (hideSearchBar) {
             // GONE so top margin/height do not reserve empty space above the app list.
+            shownHeight = layoutParams.height
             isGone = true
             layoutParams.height = 0
         }
@@ -429,6 +439,7 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        ViewCompat.setWindowInsetsAnimationCallback(this, keyboardAnimationCallback)
         launcher.deviceProfile.inv.addOnChangeListener(this)
         launcher.addOnDeviceProfileChangeListener(this)
         if (::appsView.isInitialized) {
@@ -464,10 +475,52 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
             this,
         )
         input.initialize(appsView)
+        // Fugueti: back leaves a pulled search at once, query or not (like Nova).
+        input.setOnBackKeyListener {
+            if (hiddenBarRevealed) {
+                searchBarController.reset()
+                endPulledSearch()
+                true
+            } else {
+                searchBarController.onBackKey()
+            }
+        }
     }
 
     override fun resetSearch() {
         searchBarController.reset()
+        concealHiddenSearchBar()
+    }
+
+    /**
+     * Fugueti: pull to search. Shows the search bar hidden by the "Show search bar" setting,
+     * focused and with the keyboard, until the search ends.
+     */
+    fun pullToSearch() {
+        if (!hideSearchBar || !::appsView.isInitialized) return
+        if (!hiddenBarRevealed) {
+            hiddenBarRevealed = true
+            isVisible = true
+            layoutParams.height = shownHeight
+            appsView.setHiddenSearchBarRevealed(true)
+        }
+        setDirectFocus(true)
+        input.showKeyboard()
+    }
+
+    /** Hides the pulled search bar again once it has no focus and no query. */
+    private fun endPulledSearch() {
+        if (!hiddenBarRevealed || input.hasFocus() || !input.text.isNullOrEmpty()) return
+        concealHiddenSearchBar()
+        if (appsView.isSearching) appsView.reset(true, true)
+    }
+
+    private fun concealHiddenSearchBar() {
+        if (!hiddenBarRevealed) return
+        hiddenBarRevealed = false
+        isGone = true
+        layoutParams.height = 0
+        if (::appsView.isInitialized) appsView.setHiddenSearchBarRevealed(false)
     }
 
     override fun setDirectFocus(directFocus: Boolean) {
@@ -528,9 +581,19 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
     }
 
     override fun setInsets(insets: Rect) {
+        navBarInset = insets.bottom
+        val atBottom = ::appsView.isInitialized && appsView.isSearchBarAtBottom
         (layoutParams as MarginLayoutParams).apply {
+            // Fugueti: a bar at the bottom rests just above the navigation bar.
+            bottomMargin = if (atBottom) insets.bottom + barGap else 0
             topMargin = when {
-                hideSearchBar -> 0
+                hideSearchBar && !hiddenBarRevealed -> 0
+
+                atBottom -> 0
+
+                // Fugueti: below the status bar or the camera, as the drawer computed.
+                ::appsView.isInitialized && appsView.searchBarTopMargin >= 0 ->
+                    appsView.searchBarTopMargin
 
                 // Sheet mode already pads the container with status-bar insets; only clear the
                 // drag handle. Re-applying insets.top here created the large empty band under it.
@@ -540,7 +603,50 @@ class AllAppsSearchInput(context: Context, attrs: AttributeSet?) :
                 else -> max(-allAppsSearchVerticalOffset, insets.top - qsbMarginTopAdjusting)
             }
         }
+        updateKeyboardOffset()
         requestLayout()
+    }
+
+    /** Fugueti: keyboard height, navigation bar included, while it shows. */
+    private var imeInset = 0
+    private var navBarInset = 0
+    private val barGap = resources.getDimensionPixelSize(R.dimen.fugueti_drawer_search_bar_gap)
+
+    /** Fugueti: a bar at the bottom of the drawer rides just above the keyboard. */
+    private fun updateKeyboardOffset() {
+        val atBottom = ::appsView.isInitialized && appsView.isSearchBarAtBottom
+        translationY = if (atBottom) -max(0, imeInset - navBarInset).toFloat() else 0f
+    }
+
+    private fun imeInsetOf(insets: WindowInsetsCompat): Int = if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+        insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+    } else {
+        0
+    }
+
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        imeInset = imeInsetOf(WindowInsetsCompat.toWindowInsetsCompat(insets, this))
+        updateKeyboardOffset()
+        return super.onApplyWindowInsets(insets)
+    }
+
+    private val keyboardAnimationCallback = object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
+        override fun onProgress(
+            insets: WindowInsetsCompat,
+            runningAnimations: MutableList<WindowInsetsAnimationCompat>,
+        ): WindowInsetsCompat {
+            if (runningAnimations.any { (it.typeMask and WindowInsetsCompat.Type.ime()) != 0 }) {
+                imeInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+                updateKeyboardOffset()
+            }
+            return insets
+        }
+
+        override fun onEnd(animation: WindowInsetsAnimationCompat) {
+            val root = rootWindowInsets ?: return
+            imeInset = imeInsetOf(WindowInsetsCompat.toWindowInsetsCompat(root, this@AllAppsSearchInput))
+            updateKeyboardOffset()
+        }
     }
 
     override fun getEditText() = input

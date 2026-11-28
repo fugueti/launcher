@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.edit
+import app.fugueti.prefs.AtAGlanceDefaultMigration
 import app.lawnchair.data.AppDatabase
 import app.lawnchair.preferences2.PreferenceManager2
 import com.android.launcher3.LauncherPrefs
@@ -125,9 +126,13 @@ object BackupStore {
         }.onFailure { Log.w(TAG, "Skipping pref $name", it) }
     }
 
-    /** Replaces Fugueti's DataStore settings with the ones of a backed up `.preferences_pb`. */
-    suspend fun applyDataStore(context: Context, pbFile: File) {
-        if (!pbFile.exists()) return
+    /**
+     * Replaces Fugueti's DataStore settings with the ones of a backed up `.preferences_pb`.
+     * Returns the names of the settings the backup has (a setting left at its default is not
+     * saved, so it is missing).
+     */
+    suspend fun applyDataStore(context: Context, pbFile: File): Set<String> {
+        if (!pbFile.exists()) return emptySet()
         val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         try {
             val restored = PreferenceDataStoreFactory.create(scope = scope, produceFile = { pbFile }).data.first()
@@ -135,11 +140,38 @@ object BackupStore {
                 prefs.clear()
                 prefs += restored
             }
+            return restored.asMap().keys.map { it.name }.toSet()
         } catch (t: Throwable) {
             Log.w(TAG, "Unreadable settings backup", t)
+            return emptySet()
         } finally {
             scope.cancel()
         }
+    }
+
+    /** Lawnchair's own builds have 10 digit version codes (16_00_02_01_00); Fugueti's have 8. */
+    fun isLawnchairBackup(backupVersionCode: Int): Boolean = backupVersionCode >= 100_000_000
+
+    /**
+     * A backup has no entry for a setting left at its app's default. Where that default differs
+     * from today's Fugueti one, write the old default for the settings the backup leaves out, so
+     * the setup looks as it did:
+     * - Lawnchair backups: At a Glance on, drawer search bar shown, icon sizes 100%;
+     * - Fugueti backups from before 16.0.5 (no At a Glance migration mark): At a Glance off.
+     */
+    suspend fun applyBackupDefaults(context: Context, backupVersionCode: Int, restoredKeys: Set<String>) {
+        val prefs2 = PreferenceManager2.getInstance(context)
+        if (isLawnchairBackup(backupVersionCode)) {
+            if (prefs2.enableSmartspace.key.name !in restoredKeys) prefs2.enableSmartspace.set(true)
+            if (prefs2.hideAppDrawerSearchBar.key.name !in restoredKeys) prefs2.hideAppDrawerSearchBar.set(false)
+            if (prefs2.homeIconSizeFactor.key.name !in restoredKeys) prefs2.homeIconSizeFactor.set(1f)
+            if (prefs2.drawerIconSizeFactor.key.name !in restoredKeys) prefs2.drawerIconSizeFactor.set(1f)
+        } else if (AtAGlanceDefaultMigration.MIGRATED.name !in restoredKeys &&
+            prefs2.enableSmartspace.key.name !in restoredKeys
+        ) {
+            prefs2.enableSmartspace.set(false)
+        }
+        prefs2.preferencesDataStore.edit { it[AtAGlanceDefaultMigration.MIGRATED] = true }
     }
 
     /**

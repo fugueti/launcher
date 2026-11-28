@@ -10,7 +10,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.graphics.drawable.toBitmap
+import app.lawnchair.DeviceProfileOverrides
+import app.lawnchair.LawnchairProto
 import app.lawnchair.LawnchairProto.BackupInfo
+import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.util.hasFlag
 import app.lawnchair.util.scaleDownTo
 import app.lawnchair.util.scaleDownToDisplaySize
@@ -19,10 +22,9 @@ import app.lawnchair.wallpaper.WallpaperManagerCompat
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherFiles
+import com.android.launcher3.LauncherPrefs
 import com.android.launcher3.R
 import com.android.launcher3.model.DeviceGridState
-import com.android.launcher3.model.ModelDbController
-import com.android.launcher3.provider.RestoreDbTask
 import com.google.protobuf.Timestamp
 import java.io.File
 import java.io.FileInputStream
@@ -78,19 +80,25 @@ class LawnchairBackup(
             }
 
             if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
-                // Home screen: staged as restored.db for RestoreDbTask, as upstream does. Only the
-                // launcher's own databases are cleared (not the open settings database).
+                // Home screen: staged as restored.db. The databases the running launcher has open
+                // are left alone (deleting them crashed it with SQLITE_READONLY_DBMOVED); after the
+                // restart ModelDbController moves restored.db in place of the grid's database and
+                // runs RestoreDbTask on it, before anything else reads it.
                 context.getDatabasePath(LAUNCHER_DB_FILE_NAME).parentFile?.listFiles()
-                    ?.filter { it.name.startsWith("launcher") || it.name.startsWith(RESTORED_DB_FILE_NAME) }
+                    ?.filter { it.name.startsWith(RESTORED_DB_FILE_NAME) }
                     ?.forEach { it.delete() }
                 val stagedDb = File(staging, LAUNCHER_DB_FILE_NAME)
                 if (stagedDb.exists()) {
                     val restoredDb = launcherDbFile(context, forRestore = true)
                     restoredDb.parentFile?.mkdirs()
+                    // Owner first: this process restarts right after and must not take it.
+                    context.getDatabasePath(RESTORED_DB_OWNER_FILE_NAME)
+                        .writeText(android.os.Process.myPid().toString())
                     stagedDb.copyTo(restoredDb, overwrite = true)
                 }
                 BackupStore.applySharedPrefs(context, File(staging, PREFS_FILE_NAME))
-                BackupStore.applyDataStore(context, File(staging, PREFS_DATASTORE_FILE_NAME))
+                val restoredKeys = BackupStore.applyDataStore(context, File(staging, PREFS_DATASTORE_FILE_NAME))
+                BackupStore.applyBackupDefaults(context, info.lawnchairVersion, restoredKeys)
                 BackupStore.importAppDatabase(context, File(staging, PREFS_DB_FILE_NAME))
             }
             if (contents.hasFlag(INCLUDE_WALLPAPER)) {
@@ -102,12 +110,46 @@ class LawnchairBackup(
             if (contents.hasFlag(INCLUDE_LAYOUT_AND_SETTINGS)) {
                 // After the preferences: they are now the live values, so this no longer undoes them.
                 DeviceGridState(info.gridState).writeToPrefs(context, true)
-                val dbController = ModelDbController(context)
-                RestoreDbTask.performRestore(context, dbController)
+                // Fugueti: the restored home screen belongs to the backup's grid. A backup of a
+                // default setup has no grid preferences, so Fugueti's own default grid stayed and
+                // the layout was dropped when it did not fit.
+                val backupGrid = applyBackupGrid(context, info.gridState)
+                // The database file of the restored grid, which restored.db becomes on the next
+                // start. A DB_FILE left from the old grid made the launcher open (and then delete)
+                // the wrong one; an empty one made it "migrate" to the restored grid and reset
+                // the restored layout to the default one.
+                val dbFile = (backupGrid ?: DeviceProfileOverrides.DBGridInfo(PreferenceManager.getInstance(context))).dbFile
+                LauncherPrefs.get(context).putSync(LauncherPrefs.DB_FILE.to(dbFile))
             }
+        } catch (t: Throwable) {
+            // Fugueti: a failed restore must not leave restored.db to be applied at a later start.
+            context.getDatabasePath(LAUNCHER_DB_FILE_NAME).parentFile?.listFiles()
+                ?.filter { it.name.startsWith(RESTORED_DB_FILE_NAME) }
+                ?.forEach { it.delete() }
+            throw t
         } finally {
             staging.deleteRecursively()
         }
+    }
+
+    /**
+     * Fugueti: sets the home screen columns, rows and dock icons the backup was made with, and
+     * returns that grid (null when the backup does not say).
+     */
+    private fun applyBackupGrid(context: Context, gridState: LawnchairProto.GridState): DeviceProfileOverrides.DBGridInfo? {
+        val size = gridState.gridSize.split(",").mapNotNull { it.trim().toIntOrNull() }
+        if (size.size != 2 || gridState.hotseatCount <= 0) return null
+        val prefs = PreferenceManager.getInstance(context)
+        prefs.sp.edit()
+            .putInt(prefs.workspaceColumns.key, size[0])
+            .putInt(prefs.workspaceRows.key, size[1])
+            .putInt(prefs.hotseatColumns.key, gridState.hotseatCount)
+            .commit()
+        return DeviceProfileOverrides.DBGridInfo(
+            numHotseatColumns = gridState.hotseatCount,
+            numRows = size[1],
+            numColumns = size[0],
+        )
     }
 
     /** Fugueti: calls [handler] for every entry of the backup zip. */
@@ -158,6 +200,9 @@ class LawnchairBackup(
         const val SCREENSHOT_FILE_NAME = "screenshot.png"
         const val LAUNCHER_DB_FILE_NAME = "launcher.db"
         const val RESTORED_DB_FILE_NAME = "restored.db"
+
+        /** Fugueti: process id of the restore that staged restored.db (see LawnchairApp). */
+        const val RESTORED_DB_OWNER_FILE_NAME = "restored.db.owner"
 
         /** Entries extracted to the staging folder on restore. */
         private val STAGED_ENTRIES = setOf(

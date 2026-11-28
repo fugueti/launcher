@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">തിരയാൻ വലിക്കുക</string>
+    <string name="drawer_pull_to_search_description">തിരയാൻ ആപ്പ് ഡ്രോയറിന്റെ താഴത്തെ മൂന്നിലൊന്നിൽ താഴേക്ക് സ്വൈപ്പ് ചെയ്യുക</string>
+    <string name="drawer_pull_to_search_disabled_description">ഉപയോഗിക്കാൻ തിരയൽ ബാർ ഓഫാക്കുക</string>
+    <string name="drawer_search_bar_position_label">സ്ഥാനം</string>
+    <string name="drawer_search_bar_position_top">മുകളിൽ</string>
+    <string name="drawer_search_bar_position_bottom">താഴെ</string>
+    <string name="home_search_bar_position_dock_below">ഡോക്കിൽ, ഐക്കണുകൾക്ക് താഴെ</string>
+    <string name="home_search_bar_position_dock_above">ഡോക്കിൽ, ഐക്കണുകൾക്ക് മുകളിൽ</string>
+    <string name="home_search_bar_position_top">സ്ക്രീനിന്റെ മുകളിൽ</string>
+    <string name="dock_search_bar_size_label">വലുപ്പം</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Povuci za pretraživanje</string>
+    <string name="drawer_pull_to_search_description">Prijeđite prstom prema dolje u donjoj trećini ladice aplikacija za pretraživanje</string>
+    <string name="drawer_pull_to_search_disabled_description">Isključite traku za pretraživanje da biste ovo koristili</string>
+    <string name="drawer_search_bar_position_label">Položaj</string>
+    <string name="drawer_search_bar_position_top">Gore</string>
+    <string name="drawer_search_bar_position_bottom">Dolje</string>
+    <string name="home_search_bar_position_dock_below">U doku, ispod ikona</string>
+    <string name="home_search_bar_position_dock_above">U doku, iznad ikona</string>
+    <string name="home_search_bar_position_top">Na vrhu zaslona</string>
+    <string name="dock_search_bar_size_label">Veličina</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">برای جستجو بکشید</string>
+    <string name="drawer_pull_to_search_description">برای جستجو در یک‌سوم پایینی کشوی برنامه‌ها به پایین بکشید</string>
+    <string name="drawer_pull_to_search_disabled_description">برای استفاده، نوار جستجو را خاموش کنید</string>
+    <string name="drawer_search_bar_position_label">موقعیت</string>
+    <string name="drawer_search_bar_position_top">بالا</string>
+    <string name="drawer_search_bar_position_bottom">پایین</string>
+    <string name="home_search_bar_position_dock_below">در داک، زیر نمادها</string>
+    <string name="home_search_bar_position_dock_above">در داک، بالای نمادها</string>
+    <string name="home_search_bar_position_top">بالای صفحه</string>
+    <string name="dock_search_bar_size_label">اندازه</string>
+</resources>

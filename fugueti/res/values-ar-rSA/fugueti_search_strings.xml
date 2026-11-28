@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">اسحب للبحث</string>
+    <string name="drawer_pull_to_search_description">اسحب للأسفل في الثلث السفلي من درج التطبيقات للبحث</string>
+    <string name="drawer_pull_to_search_disabled_description">أوقف شريط البحث لاستخدام هذه الميزة</string>
+    <string name="drawer_search_bar_position_label">الموضع</string>
+    <string name="drawer_search_bar_position_top">في الأعلى</string>
+    <string name="drawer_search_bar_position_bottom">في الأسفل</string>
+    <string name="home_search_bar_position_dock_below">في الشريط السفلي، أسفل الأيقونات</string>
+    <string name="home_search_bar_position_dock_above">في الشريط السفلي، فوق الأيقونات</string>
+    <string name="home_search_bar_position_top">أعلى الشاشة</string>
+    <string name="dock_search_bar_size_label">الحجم</string>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Aramak için çek</string>
+    <string name="drawer_pull_to_search_description">Aramak için uygulama çekmecesinin alt üçte birinde aşağı kaydırın</string>
+    <string name="drawer_pull_to_search_disabled_description">Kullanmak için arama çubuğunu kapatın</string>
+    <string name="drawer_search_bar_position_label">Konum</string>
+    <string name="drawer_search_bar_position_top">Üstte</string>
+    <string name="drawer_search_bar_position_bottom">Altta</string>
+    <string name="home_search_bar_position_dock_below">Dock\'ta, simgelerin altında</string>
+    <string name="home_search_bar_position_dock_above">Dock\'ta, simgelerin üstünde</string>
+    <string name="home_search_bar_position_top">Ekranın üstünde</string>
+    <string name="dock_search_bar_size_label">Boyut</string>
+</resources>

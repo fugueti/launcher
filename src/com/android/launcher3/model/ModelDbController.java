@@ -126,10 +126,30 @@ public class ModelDbController {
             if (dbFile.isEmpty()) {
                 dbFile = mIdp.dbFile;
             }
+            // Fugueti: a restored backup becomes the database of the current grid (the backup's),
+            // and the grid state says so; otherwise the loader would "migrate" to that grid and
+            // reset the restored layout.
+            if (!(mContext instanceof SandboxContext)
+                    && LawnchairAppKt.getLawnchairApp(mContext).hasRestoredDbToTake()) {
+                dbFile = mIdp.dbFile;
+                // Written to disk now: a restore restarts the launcher right after (exitProcess),
+                // and an async write left the old grid there, so the next start "migrated" it.
+                new DeviceGridState(mIdp).writeToPrefs(mContext, true /* commit */);
+                mPrefs.putSync(DB_FILE.to(dbFile));
+            }
             mOpenHelper = createDatabaseHelper(false /* forMigration */, dbFile);
             restoreTask.accept(this);
+            // Fugueti: a backup restored by LawnchairBackup is applied here, in a fresh process,
+            // before anything reads the database.
+            if (mRestoredDbPending) {
+                mRestoredDbPending = false;
+                RestoreDbTask.performRestore(mContext, this);
+            }
         }
     }
+
+    /** Fugueti: restored.db became the database just opened (see createDatabaseHelper). */
+    private boolean mRestoredDbPending;
 
     protected DatabaseHelper createDatabaseHelper(boolean forMigration, String dbFile) {
         boolean isSandbox = mContext instanceof SandboxContext;
@@ -142,7 +162,12 @@ public class ModelDbController {
                 // LC-Note: Restore into the file opened below. A restore changes grid prefs, which
                 // can move the IDP to another grid's dbFile before this runs. Rename after
                 // migrateDbName, which would otherwise move a restored launcher.db to dbName.
-                app.renameRestoredDb(dbFile);
+                if (app.renameRestoredDb(dbFile)) {
+                    // Fugueti: the restored database is not an empty one, whatever was created
+                    // before the restart; otherwise the default layout replaces it.
+                    mPrefs.removeSync(getEmptyDbCreatedKey(dbFile));
+                    mRestoredDbPending = true;
+                }
             }
         } catch (Throwable t) {
             // LC-Ignored
@@ -625,7 +650,8 @@ public class ModelDbController {
         createDbIfNotExists();
 
         if (!(mContext instanceof PreviewContext)) {
-            LawnchairAppKt.getLawnchairApp(mContext).cleanUpDatabases();
+            // Fugueti: never delete the database that is open (DB_FILE may differ from the grid's).
+            LawnchairAppKt.getLawnchairApp(mContext).cleanUpDatabases(mOpenHelper.getDatabaseName());
         }
 
         if (mPrefs.get(getEmptyDbCreatedKey())) {

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Húzd le a kereséshez</string>
+    <string name="drawer_pull_to_search_description">Keresés: húzd lefelé az alkalmazásfiók alsó harmadában</string>
+    <string name="drawer_pull_to_search_disabled_description">Kapcsold ki a keresősávot a használatához</string>
+    <string name="drawer_search_bar_position_label">Pozíció</string>
+    <string name="drawer_search_bar_position_top">Felül</string>
+    <string name="drawer_search_bar_position_bottom">Alul</string>
+    <string name="home_search_bar_position_dock_below">A dokkban, az ikonok alatt</string>
+    <string name="home_search_bar_position_dock_above">A dokkban, az ikonok felett</string>
+    <string name="home_search_bar_position_top">A képernyő tetején</string>
+    <string name="dock_search_bar_size_label">Méret</string>
+</resources>

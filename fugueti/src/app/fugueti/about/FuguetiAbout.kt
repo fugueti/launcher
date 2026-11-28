@@ -12,20 +12,25 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -35,11 +40,17 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import app.lawnchair.ui.preferences.about.LawnchairLink
@@ -52,8 +63,23 @@ import com.android.launcher3.R
 object FuguetiAbout {
     const val SUPPORT_EMAIL = "victor.walter+fugueti@gmail.com"
 
-    /** EVM address that receives donations (Ethereum and compatible networks). */
-    const val DONATION_ADDRESS = "0x34260B953eC6e56e62121Aa3913db3ED89C69A2E"
+    /** A donation address and the networks it takes, as fugueti.app lists them. */
+    data class DonationAddress(val label: String, val address: String, val darkColor: Long, val lightColor: Long)
+
+    /**
+     * Donation page of fugueti.app, opened with its donation sheet. The Google Play version links
+     * here instead of showing the addresses (as Lawnchair's Play version does).
+     */
+    const val DONATE_URL = "https://fugueti.app/#donate"
+
+    /** Official donation addresses, in fugueti.app's order. */
+    val donationAddresses = listOf(
+        DonationAddress("BITCOIN (BTC)", "bc1q6mxhcxm8wtgfrph8cs5a7vxewas4sztg00ryz4", 0xFFF08A24, 0xFFC8640A),
+        DonationAddress("LIGHTNING (BTC)", "fugueti@cake.cash", 0xFF9B5CF6, 0xFF7A3FE0),
+        DonationAddress("EVM (ETH/USDC/USDT • POLYGON/BASE/ARB)", "0x34260B953eC6e56e62121Aa3913db3ED89C69A2E", 0xFF7C83F0, 0xFF4F55D6),
+        DonationAddress("SOLANA (SOL/USDC/USDT)", "EQSZYBNCdQ8jK3x78KeYCRQkrDN6dtMauJHpk9am8QES", 0xFF2FC58C, 0xFF14936A),
+        DonationAddress("PIX (BRL)", "pix@fugueti.app", 0xFF2F9E74, 0xFF14805A),
+    )
 
     val githubUrl: String get() = "https://github.com/${BuildConfig.GITHUB_REPO}"
 
@@ -90,11 +116,15 @@ object FuguetiAbout {
         }
     }
 
-    fun copyDonationAddress(context: Context) {
+    fun copyDonationAddress(context: Context, donation: DonationAddress) {
         val clipboard = context.getSystemService(ClipboardManager::class.java) ?: return
-        clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.fg_about_donate_address_label), DONATION_ADDRESS))
+        clipboard.setPrimaryClip(ClipData.newPlainText(donation.label, donation.address))
         Toast.makeText(context, R.string.fg_about_address_copied, Toast.LENGTH_SHORT).show()
     }
+
+    /** Long addresses keep their start and end, as on fugueti.app. */
+    fun shortAddress(address: String): String =
+        if (address.length > 34) "${address.take(16)}...${address.takeLast(14)}" else address
 }
 
 /** Support, GitHub and Donate buttons of the Fugueti header. */
@@ -130,7 +160,7 @@ fun FuguetiLinksRow(
     }
 }
 
-/** Bottom sheet with the donation address as a QR code, plain text and a copy button. */
+/** Bottom sheet with Fugueti's donation addresses, each with a copy button (like fugueti.app). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DonateSheet(
@@ -140,60 +170,108 @@ fun DonateSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
     ) {
-        DonateSheetContent()
+        DonateSheetContent(onClose = onDismiss)
     }
 }
 
-/** Content of [DonateSheet]: title, explanation, QR code, address and copy button. */
+/** Content of [DonateSheet]: header, hint and one card per donation address. */
 @Composable
 fun DonateSheetContent(
+    onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val dark = MaterialTheme.colorScheme.surface.luminance() < 0.5f
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp)
             .padding(bottom = 24.dp)
             .navigationBarsPadding(),
     ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+            ) {
+                Icon(painterResource(R.drawable.ic_donate), contentDescription = null, modifier = Modifier.size(22.dp))
+            }
+            Spacer(Modifier.width(12.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.fg_about_donate_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    text = stringResource(R.string.fg_about_donate_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            FilledTonalIconButton(onClick = onClose) {
+                Icon(
+                    painterResource(R.drawable.ic_close),
+                    contentDescription = stringResource(R.string.action_close),
+                    modifier = Modifier.size(18.dp),
+                )
+            }
+        }
+        val copyLabel = stringResource(R.string.fg_about_copy)
+        val hint = stringResource(R.string.fg_about_donate_hint, copyLabel)
         Text(
-            text = stringResource(R.string.fg_about_donate_title),
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            text = stringResource(R.string.fg_about_donate_description),
+            text = buildAnnotatedString {
+                val start = hint.indexOf(copyLabel)
+                append(hint)
+                if (start >= 0) {
+                    addStyle(
+                        SpanStyle(fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface),
+                        start,
+                        start + copyLabel.length,
+                    )
+                }
+            },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
         )
-        // The QR always sits on white (with its own quiet zone) so it scans in dark mode too.
-        Surface(shape = RoundedCornerShape(20.dp), color = androidx.compose.ui.graphics.Color.White) {
-            Image(
-                painter = painterResource(R.drawable.fg_donate_qr),
-                contentDescription = stringResource(R.string.fg_about_donate_qr_description),
-                modifier = Modifier.padding(12.dp).size(220.dp),
-            )
-        }
-        Text(
-            text = stringResource(R.string.fg_about_donate_address_label),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        SelectionContainer {
-            Text(
-                text = FuguetiAbout.DONATION_ADDRESS,
-                style = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Monospace),
-                textAlign = TextAlign.Center,
-            )
-        }
-        Spacer(Modifier.height(4.dp))
-        FilledTonalButton(onClick = { FuguetiAbout.copyDonationAddress(context) }) {
-            Icon(painterResource(R.drawable.ic_copy), contentDescription = null, modifier = Modifier.size(18.dp))
-            Spacer(Modifier.size(8.dp))
-            Text(stringResource(R.string.fg_about_copy_address))
+        FuguetiAbout.donationAddresses.forEach { donation ->
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(start = 14.dp, end = 12.dp, top = 12.dp, bottom = 12.dp),
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = donation.label,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color(if (dark) donation.darkColor else donation.lightColor),
+                        )
+                        Text(
+                            text = FuguetiAbout.shortAddress(donation.address),
+                            style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    FilledTonalButton(onClick = { FuguetiAbout.copyDonationAddress(context, donation) }) {
+                        Text(copyLabel)
+                    }
+                }
+            }
         }
     }
 }

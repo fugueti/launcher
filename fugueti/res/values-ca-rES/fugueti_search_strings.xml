@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fugueti Launcher strings: search bar settings (GPL-3.0-or-later). -->
+<resources>
+    <string name="drawer_pull_to_search_label">Llisca per cercar</string>
+    <string name="drawer_pull_to_search_description">Llisca cap avall al terç inferior del calaix d\'aplicacions per cercar</string>
+    <string name="drawer_pull_to_search_disabled_description">Desactiva la barra de cerca per fer-ho servir</string>
+    <string name="drawer_search_bar_position_label">Posició</string>
+    <string name="drawer_search_bar_position_top">A dalt</string>
+    <string name="drawer_search_bar_position_bottom">A baix</string>
+    <string name="home_search_bar_position_dock_below">Al dock, sota les icones</string>
+    <string name="home_search_bar_position_dock_above">Al dock, sobre les icones</string>
+    <string name="home_search_bar_position_top">Part superior de la pantalla</string>
+    <string name="dock_search_bar_size_label">Mida</string>
+</resources>

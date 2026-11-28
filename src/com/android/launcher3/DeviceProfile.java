@@ -517,6 +517,24 @@ public class DeviceProfile {
 
         HotseatMode hotseatMode = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getHotseatMode());
         boolean isQsbEnable = hotseatMode.getLayoutResourceId() != R.layout.empty_view;
+        // Fugueti: Home screen > Search bar > Position. Only on phones in portrait; tablets and
+        // foldables keep their own layout, and landscape keeps the bar in the dock.
+        String qsbPosition = PreferenceCacheExtensionsKt.firstCached(
+                preferenceManager2.getHomeSearchBarPosition());
+        boolean phonePortrait = !isVerticalBarLayout() && !isTaskbarPresent
+                && !mDeviceProperties.isTwoPanels() && !mDeviceProperties.isLandscape();
+        isQsbAtScreenTop = isQsbEnable && phonePortrait
+                && PreferenceManager2.HOME_SEARCH_BAR_TOP.equals(qsbPosition);
+        mQsbAboveDockIcons = isQsbEnable && phonePortrait
+                && PreferenceManager2.HOME_SEARCH_BAR_DOCK_ABOVE.equals(qsbPosition);
+        mScreenTopQsbHeight = res.getDimensionPixelSize(R.dimen.qsb_widget_height);
+        mScreenTopQsbGap = res.getDimensionPixelSize(R.dimen.fugueti_drawer_search_bar_gap);
+        mDockQsbGap = res.getDimensionPixelSize(R.dimen.fugueti_dock_search_bar_gap);
+        if (isQsbAtScreenTop) {
+            // The dock is laid out without a search bar; the bar sits at the top of the screen.
+            hotseatMode = app.lawnchair.hotseat.DisabledHotseat.INSTANCE;
+            isQsbEnable = false;
+        }
 
         numShownHotseatIcons = displayOptionSpec.numShownHotseatIcons;
         numHotseatRows = Math.max(1, Math.min(2, PreferenceManager.getInstance(context).getHotseatRows().get()));
@@ -899,7 +917,8 @@ public class DeviceProfile {
         int iconTextHeight = Utilities.calculateTextHeight(iconTextSizePx);
         boolean isLabelInDock = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getEnableLabelInDock());
         HotseatMode hotseatMode = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getHotseatMode());
-        boolean isQsbEnable = hotseatMode.getLayoutResourceId() != R.layout.empty_view;
+        boolean isQsbEnable = hotseatMode.getLayoutResourceId() != R.layout.empty_view
+                && !isQsbAtScreenTop;
         // LC-Note: Hidden dock labels need no text space; keep the minimum touch target.
         hotseatCellHeightPx = app.lawnchair.util.DockCellSize.calculate(
                 hotseatIconSizePx, iconTextHeight, isLabelInDock, pxFromDp(48, mMetrics));
@@ -935,6 +954,14 @@ public class DeviceProfile {
                     + hotseatBarBottomSpacePx
                     + space
                     + extraRowsHeight;
+        }
+        // Fugueti: search bar above the dock icons on a phone: the bar's slot, a fixed gap, the
+        // dock rows and the bottom space, so the bar sits the same distance above the icons
+        // on Android 16 and 17.
+        if (mQsbAboveDockIcons && !isVerticalBarLayout()) {
+            hotseatBarSizePx = getHotseatProfile().getQsbHeight()
+                    - getHotseatProfile().getQsbShadowHeight() + mDockQsbGap
+                    + hotseatCellHeightPx * numHotseatRows + getHotseatBarBottomPadding();
         }
         var isHotseatEnabled = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.isHotseatEnabled());
         if (!isHotseatEnabled) {
@@ -1776,7 +1803,9 @@ public class DeviceProfile {
                 paddingBottom +=
                         workspacePageIndicatorHeight - mWorkspacePageIndicatorOverlapWorkspace;
             }
-            int paddingTop = workspaceTopPadding + (mIsScalableGrid ? 0 : edgeMarginPx);
+            // Fugueti: the pages start below a search bar at the top of the screen.
+            int paddingTop = workspaceTopPadding + (mIsScalableGrid ? 0 : edgeMarginPx)
+                    + getScreenTopQsbSpace();
             int paddingLeft = desiredWorkspaceHorizontalMarginPx;
             int paddingRight = desiredWorkspaceHorizontalMarginPx;
 
@@ -1921,7 +1950,7 @@ public class DeviceProfile {
             } else {
                 hotseatBarPadding.left += qsbWidth;
             }
-        } else if (isQsbOnTop() || isQsbInline) {
+        } else if ((isQsbOnTop() && !mQsbAboveDockIcons) || isQsbInline) {
             // Keep the hotseat icons in the lower section so the QSB can sit above them.
             int hotseatBarBottomPadding = getHotseatBarBottomPadding();
             int hotseatBarTopPadding =
@@ -1973,6 +2002,15 @@ public class DeviceProfile {
                     hotseatAdjustment + workspacePadding.right + cellLayoutPaddingPx.right
                             + mInsets.right,
                     getHotseatBarBottomPadding());
+        }
+        // Fugueti: search bar above the dock icons on a phone. The icons keep the phone's
+        // spacing (the tablet layout above packs them in the middle); they only move down so
+        // the bar sits above them.
+        if (mQsbAboveDockIcons && !isVerticalBarLayout()) {
+            int hotseatBarBottomPadding = getHotseatBarBottomPadding();
+            hotseatBarPadding.top = Math.max(0,
+                    hotseatBarSizePx - hotseatBarBottomPadding - hotseatCellHeightPx * numHotseatRows);
+            hotseatBarPadding.bottom = hotseatBarBottomPadding;
         }
         return hotseatBarPadding;
     }
@@ -2026,9 +2064,25 @@ public class DeviceProfile {
                 + additionalQsbSpace;
     }
 
-    /** LC-Note: For ID'ing tablet/foldable mode */
+    /** LC-Note: For ID'ing tablet/foldable mode. Fugueti: or the search bar set above the dock icons. */
     private boolean isQsbOnTop() {
-        return isTaskbarPresent || mDeviceProperties.isTwoPanels();
+        return isTaskbarPresent || mDeviceProperties.isTwoPanels() || mQsbAboveDockIcons;
+    }
+
+    /** Fugueti: the home screen search bar sits at the top of the screen, not in the dock. */
+    public boolean isQsbAtScreenTop;
+    /** Fugueti: the home screen search bar sits above the dock icons. */
+    private boolean mQsbAboveDockIcons;
+    /** Fugueti: height of the search bar at the top of the screen, shadow included. */
+    public int mScreenTopQsbHeight;
+    private int mScreenTopQsbGap;
+    /** Fugueti: space between the search bar's slot and the dock icons below it. */
+    private int mDockQsbGap;
+
+    /** Fugueti: room the search bar at the top of the screen takes above the workspace. */
+    public int getScreenTopQsbSpace() {
+        if (!isQsbAtScreenTop) return 0;
+        return mScreenTopQsbHeight + mScreenTopQsbGap;
     }
 
     /**
